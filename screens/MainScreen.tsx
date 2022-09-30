@@ -1,19 +1,21 @@
-// import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
-// import EditScreenInfo from '../components/EditScreenInfo';
-// import LogInForm from '../components/LogInForm';
-// import { Text, View } from '../components/Themed';
-// import { RootTabScreenProps } from '../types';
+import { RootStackScreenProps } from '../types';
 
-// export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.title}>Log In</Text>
-//       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-//       <LogInForm />
-//     </View>
-//   );
-// }
+
+import EditScreenInfo from '../components/EditScreenInfo';
+import LogInForm from '../components/LogInForm';
+import { Text, View } from '../components/Themed';
+
+export default function MainScreen({ navigation }: RootStackScreenProps<'MainScreen'>) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Log In</Text>
+      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+      {/* <LogInForm /> */}
+    </View>
+  );
+}
 
 // const styles = StyleSheet.create({
 //   container: {
@@ -59,25 +61,25 @@
 //     );
 //   }
 
-//   async function handleChangeClick(event) {
-//     event.preventDefault();
+  async function handleChangeClick(event) {
+    event.preventDefault();
 
-//     setIsChanging(true);
+    setIsChanging(true);
 
-//     try {
-//       const currentUser = await Auth.currentAuthenticatedUser();
-//       await Auth.changePassword(
-//         currentUser,
-//         fields.oldPassword,
-//         fields.password
-//       );
+    try {
+      const currentUser = await Auth.currentAuthenticatedUser();
+      await Auth.changePassword(
+        currentUser,
+        fields.oldPassword,
+        fields.password
+      );
 
-//       history.push("/settings");
-//     } catch (error) {
-//       onError(error);
-//       setIsChanging(false);
-//     }
-//   }
+      history.push("/settings");
+    } catch (error) {
+      onError(error);
+      setIsChanging(false);
+    }
+  }
 
 //   return (
 //     <div className="ChangePassword">
@@ -121,8 +123,13 @@
 //   );
 // }
 
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
-// import { API } from "aws-amplify";
 import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, ListGroup, ListGroupItem } from "react-bootstrap";
@@ -133,6 +140,7 @@ import { onError } from "../lib/errorLib";
 
 
 export default function Home() {
+ 
   //const [notes, setNotes] = useState([]);
   // const { isAuthenticated } = useAppContext();
   //const [isLoading, setIsLoading] = useState(true);
@@ -211,7 +219,30 @@ export default function Home() {
   return (
     <div className="Home">
       {/* {isAuthenticated ? renderNotes() : renderLander()} */}
-      "Hola mundo"
+      "Hola mundo"      
     </div>
   );
 }
+
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  link: {
+    marginTop: 15,
+    paddingVertical: 15,
+  },
+  linkText: {
+    fontSize: 14,
+    color: '#2e78b7',
+  },
+});
