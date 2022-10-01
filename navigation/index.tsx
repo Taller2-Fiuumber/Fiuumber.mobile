@@ -28,7 +28,8 @@ const RootNavigator = () => {
   const [isSignedIn, setSignedIn] = useState<boolean>(false);
 
   useEffect(() => {
-
+    // Descomentar para probar el Home
+    // setSignedIn(true); 
   }, []);
 
   return (

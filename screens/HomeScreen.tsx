@@ -7,8 +7,7 @@ const styles = StyleSheet.create({
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 20,
-      marginTop: 200
+      padding: 20
     },
     title: {
         color: 'red'
@@ -17,7 +16,7 @@ const styles = StyleSheet.create({
 export const HomeScreen = () => {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Home</Text>
+        <Text style={styles.title}>Esto es el Home</Text>
       </View>
     );
   }
