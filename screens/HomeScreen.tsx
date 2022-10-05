@@ -1,6 +1,7 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import * as React from 'react';
+import { Dimensions, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
+import MapView from 'react-native-maps';
 
 const styles = StyleSheet.create({
     container: {
@@ -12,12 +13,20 @@ const styles = StyleSheet.create({
     title: {
         color: 'red'
     },
+    map: {
+      width: Dimensions.get('window').width,
+      height: Dimensions.get('window').height,
+    },
 });
 export const HomeScreen = () => {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Esto es el Home</Text>
+        <MapView style={styles.map} initialRegion={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }} />
       </View>
     );
   }
-  
