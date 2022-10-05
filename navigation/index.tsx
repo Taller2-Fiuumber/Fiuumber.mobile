@@ -3,9 +3,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
 import LinkingConfiguration from './LinkingConfiguration';
-import { WelcomeScreen } from '../screens/WelcomeScreen';
+import { OnBoardingScreen } from '../screens/OnBoardingScreen';
 import { RootStackParamList } from '../types';
 import { HomeScreen } from '../screens/HomeScreen';
+import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import AuthContext from '../contexts/AuthContext';
@@ -104,6 +105,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
           ) : (
             <>
               <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
               <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>

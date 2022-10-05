@@ -3,20 +3,23 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 
-export const WelcomeScreen = ({ navigation }: NavigationProps) => {
+export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
 
     return (
     <>
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <View style={styles.imgContainer}>
-        <Image source={require('../assets/images/welcome.png')} style={styles.image} />
+        <Image source={require('../assets/images/onBoarding.png')} style={styles.image} />
         </View>
         <Text style={styles.title}>Fiuumber</Text>
         <Text style={styles.title}>enjoy the ride</Text>
         <Text style={styles.description}>Premium and prestige car daily rental.Experience the thrill at a lower price.</Text>
-        <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('OnBoardingScreen')}>
-          <Text style={{...styles.buttonText, ...styles.colorSignIn}}> Let's Go</Text>
+        <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
+          <Text style={{...styles.buttonText, ...styles.colorSignIn}}>Sign In</Text>
+        </Pressable>
+        <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('SignUpScreen')}>
+          <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Sign Up</Text>
         </Pressable>
       </View>
     </View>
