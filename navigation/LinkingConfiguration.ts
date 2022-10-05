@@ -11,7 +11,8 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       WelcomeScreen: '',
       SignInScreen: 'SignIn',
-      SignUpScreen: 'SignUp'
+      SignUpScreen: 'SignUp',
+      PantallaXD: 'Pantalla',
     //   Root: {
     //     screens: {
     //       TabOne: {

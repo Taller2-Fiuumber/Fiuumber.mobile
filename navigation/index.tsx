@@ -9,7 +9,7 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import AuthContext from '../contexts/AuthContext';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+//import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

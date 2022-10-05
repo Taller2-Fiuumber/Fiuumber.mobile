@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dimensions, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import MapView from 'react-native-maps';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+//import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { Pallete } from '../constants/Pallete';
 import { TextInput, Button } from 'react-native-paper';
@@ -53,27 +53,28 @@ export const HomeScreen = () => {
     }, []);
 
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <MapView style={styles.map} initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }} />
-          <BottomSheet
-            ref={bottomSheetRef}
-            index={0}
-            snapPoints={snapPoints}
-            onChange={handleSheetChanges}
-          >
-            <View style={styles.contentContainer}>
-            <Text style={styles.description}>Welcome back to Fiuumber!</Text>
-              <Text style={styles.welcomeText}>Where we go?</Text>
-              <TextInput left={<TextInput.Icon icon="magnify" />} label="Enter your route" style={{marginBottom: 20}} onChangeText={(text) => setSearchQuery(text)}/>
-            </View>
-          </BottomSheet>
-        </View>
-      </GestureHandlerRootView>
+      <></>
+      // <GestureHandlerRootView style={{ flex: 1 }}>
+      //   <View style={styles.container}>
+      //     <MapView style={styles.map} initialRegion={{
+      //       latitude: 37.78825,
+      //       longitude: -122.4324,
+      //       latitudeDelta: 0.0922,
+      //       longitudeDelta: 0.0421,
+      //     }} />
+      //     <BottomSheet
+      //       ref={bottomSheetRef}
+      //       index={0}
+      //       snapPoints={snapPoints}
+      //       onChange={handleSheetChanges}
+      //     >
+      //       <View style={styles.contentContainer}>
+      //       <Text style={styles.description}>Welcome back to Fiuumber!</Text>
+      //         <Text style={styles.welcomeText}>Where we go?</Text>
+      //         <TextInput left={<TextInput.Icon icon="magnify" />} label="Enter your route" style={{marginBottom: 20}} onChangeText={(text) => setSearchQuery(text)}/>
+      //       </View>
+      //     </BottomSheet>
+      //   </View>
+      // </GestureHandlerRootView>
     );
   }
