@@ -1,31 +1,23 @@
 import React, { FC, ReactElement } from "react";
 import { TextInput, Button } from 'react-native-paper';
-import { useForm } from 'react-hook-form'
-import { User } from "../models/user";
-import { Form } from "react-bootstrap";
 import { useState } from "react";
 
-interface LoginFormProps {
-  user: User;
+interface LogInFormProps {
+  handleLogin: (email: string, password: string) => void;
 }
 
-export const LogInForm: FC<LoginFormProps> = (props: LoginFormProps): ReactElement => {
+export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): ReactElement => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleSubmit = () => {
-    console.log(email);
-    console.log(password);
-  };
+  const onLogin = () => handleLogin(email, password);
 
   return (
     <>
-    <TextInput label="Email" value={email}/>
-    <TextInput label="Password" value={password}/>
-    <Button icon="camera" mode="contained" onPress={handleSubmit}>
-      Press me
-    </Button>
+    <TextInput label="Email" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
+    <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
+    <Button mode="contained" onPress={onLogin}>Log In</Button>
     </>      
   );
 };

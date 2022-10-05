@@ -1,5 +1,5 @@
 import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { NavigationProps } from "../types";
 
@@ -23,8 +23,6 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
         <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('SignUpScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Sign Up</Text>
         </Pressable>
-        {/* <button style={{...styles.button, ...styles.colorBtnSignIn, ...{marginBottom: '20px'}}} onClick={() => navigation.navigate('SignUpScreen')}>Sign Up</button> */}
-        {/* <button style={{...styles.button, ...styles.colorBtnSignUp}} onClick={() => navigation.navigate('SignInScreen')}>Log In</button> */}
       </View>
     </View>
     </>

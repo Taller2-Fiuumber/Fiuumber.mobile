@@ -43,7 +43,7 @@ const RootNavigator = () => {
           ) : (
             <>
               <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerShown: false }} />
             </>
           )   
