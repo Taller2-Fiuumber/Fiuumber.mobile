@@ -14,11 +14,11 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
         </View>
         <Text style={styles.title}>Fiuumber</Text>
         <Text style={styles.title}>enjoy the ride</Text>
-        <Text style={styles.description}>Premium and prestige car daily rental.Experience the thrill at a lower price.</Text>
+        <Text style={styles.description}>Request a ride. Experience the thrill at a lower price.</Text>
         <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignIn}}>Sign In</Text>
         </Pressable>
-        <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('SignUpScreen')}>
+        <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('RoleSelectionScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Sign Up</Text>
         </Pressable>
       </View>

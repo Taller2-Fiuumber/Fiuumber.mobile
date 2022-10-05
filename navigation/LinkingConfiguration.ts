@@ -9,10 +9,11 @@ const linking: LinkingOptions<RootStackParamList> = {
   ],
   config: {
     screens: {
-      WelcomeScreen: '',
+      WelcomeScreen: 'WelcomeScreen',
       OnBoardingScreen:'OnBoarding',
       SignInScreen: 'SignIn',
       SignUpScreen: 'SignUp',
+      RoleSelectionScreen: 'RoleSelection',
       PantallaXD: 'Pantalla',
     //   Root: {
     //     screens: {

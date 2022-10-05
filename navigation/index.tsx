@@ -9,6 +9,7 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
+import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
 import AuthContext from '../contexts/AuthContext';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -108,6 +109,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
               <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           )   
         }    
