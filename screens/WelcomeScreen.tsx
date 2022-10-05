@@ -1,6 +1,7 @@
 import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 
 const Stack = createNativeStackNavigator();
@@ -34,7 +35,7 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#2C2B34',
+      backgroundColor: Pallete.darkBackground,
       fontFamily: 'Roboto',
     },
     container: {
@@ -51,7 +52,7 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
     title: {
       fontSize: 35,
       fontWeight: 'bold',
-      color: '#FFFFFF',
+      color: Pallete.whiteColor,
       margin: 0
     },
     description: {
@@ -73,16 +74,16 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
       fontWeight: 'bold',
     },
     colorSignIn: {
-      color: '#2D4990'
+      color: Pallete.primaryColor
     },
     bgSignIn: {
-      backgroundColor: '#F5F5F5',
+      backgroundColor: Pallete.lightColor,
     },
     bgSignUp: {
-      backgroundColor: '#2D4990',
+      backgroundColor: Pallete.primaryColor,
     },
     colorSignUp: {
-      color: '#F5F5F5',
+      color: Pallete.lightColor,
     },
     image: { height: 330, borderRadius: 20, maxWidth: 300 },
     imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50},

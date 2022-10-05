@@ -13,6 +13,9 @@ export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): Re
 
   const onLogin = () => handleLogin(email, password);
 
+  // TODO:
+  // Validar email con una regex
+
   return (
     <>
     <TextInput label="Email" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
