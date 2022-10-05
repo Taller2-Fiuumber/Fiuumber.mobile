@@ -1,10 +1,7 @@
-import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
-
-const Stack = createNativeStackNavigator();
 
 export const WelcomeScreen = ({ navigation }: NavigationProps) => {
 

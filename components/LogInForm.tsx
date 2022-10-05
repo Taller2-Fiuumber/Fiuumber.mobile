@@ -1,6 +1,7 @@
 import React, { FC, ReactElement } from "react";
 import { TextInput, Button } from 'react-native-paper';
 import { useState } from "react";
+import { Pallete } from "../constants/Pallete";
 
 interface LogInFormProps {
   handleLogin: (email: string, password: string) => void;
@@ -20,7 +21,7 @@ export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): Re
     <>
     <TextInput label="Email" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
     <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
-    <Button mode="contained" onPress={onLogin}>Log In</Button>
+    <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onLogin}>Log In</Button>
     </>      
   );
 };

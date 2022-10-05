@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 import LogInForm from "../components/LogInForm";
 import { Text, View } from "../components/Themed";
 import { Pallete } from "../constants/Pallete";
-import { User } from "../models/user";
+import AuthContext from "../contexts/AuthContext";
+import { NavigationProps } from "../types";
 
 const styles = StyleSheet.create({
     container: {
@@ -20,17 +21,15 @@ const styles = StyleSheet.create({
     },
 });
 export const SignInScreen = () => {
-  const handleLogin = (email: string, password: string) => {
-    console.log(email);
-    console.log(password);
-    // TODO: llamar al back y loguearse
-  };
+
+  const { signIn } = React.useContext(AuthContext);
+
 
     return (
       <>
       <View style={styles.container}>
         <Text style={styles.title}>Welcome back to <Text style={{...styles.title,...{fontWeight: "bold"}}}>Fiuumber</Text>!</Text>
-        <LogInForm handleLogin={handleLogin}></LogInForm>
+        <LogInForm handleLogin={signIn}></LogInForm>
       </View>
       </>
     );
