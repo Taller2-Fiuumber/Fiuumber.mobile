@@ -1,31 +1,32 @@
 import React, { FC, ReactElement } from "react";
-import { Outlet, Route, Routes} from "react-router-dom";
-import ResetPassword from './ResetPassword';
+import { TextInput, Button } from 'react-native-paper';
+import { useForm } from 'react-hook-form'
+import { User } from "../models/user";
+import { Form } from "react-bootstrap";
+import { useState } from "react";
 
-export const LogInForm: FC = (): ReactElement => {
+interface LoginFormProps {
+  user: User;
+}
+
+export const LogInForm: FC<LoginFormProps> = (props: LoginFormProps): ReactElement => {
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleSubmit = () => {
+    console.log(email);
+    console.log(password);
+  };
+
   return (
-
-    <form>
-    <label>
-      Usuario:
-      <input type="text" name="user" />
-    </label>
-    <br/>
-    <label>
-      Contraseña:
-      <input type="password" name="password" />
-    </label>
-    <br/>
-    <input type="submit" value="Ingresar" />
-    <br/>
-    <a href="">¿Olvidó su contraseña?</a>
-    
-    {/* <Routes>
-        <Route path="/resetPassword" element={<ResetPassword />} />
-  </Routes> */}
-    
-    
-  </form> 
+    <>
+    <TextInput label="Email" value={email}/>
+    <TextInput label="Password" value={password}/>
+    <Button icon="camera" mode="contained" onPress={handleSubmit}>
+      Press me
+    </Button>
+    </>      
   );
 };
 
