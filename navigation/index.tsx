@@ -3,14 +3,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
 import LinkingConfiguration from './LinkingConfiguration';
-import { useState, useEffect } from 'react';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { RootStackParamList } from '../types';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import AuthContext from '../contexts/AuthContext';
-import { Text } from '../components/Themed';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -92,7 +91,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   );
   
   return (
-    <AuthContext.Provider value={authContext}>
+      <AuthContext.Provider value={authContext}>
        <NavigationContainer
         linking={LinkingConfiguration}
         theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -100,7 +99,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         {
           state.userToken !== null ? (
             <>
-              <Stack.Screen name="Home" component={HomeScreen}/>
+              <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
             </>
           ) : (
             <>
@@ -109,7 +108,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           )   
-        }
+        }    
       </Stack.Navigator>
 
       </NavigationContainer>
