@@ -14,7 +14,7 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
         </View>
         <Text style={styles.title}>Fiuumber</Text>
         <Text style={styles.title}>enjoy the ride</Text>
-        <Text style={styles.description}>Premium and prestige car daily rental.Experience the thrill at a lower price.</Text>
+        <Text style={styles.description}>Premium and prestige car daily rental. Experience the thrill at a lower price.</Text>
         <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('OnBoardingScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignIn}}> Let's Go</Text>
         </Pressable>
