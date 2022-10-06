@@ -13,10 +13,10 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
         <View style={styles.imgContainer}>
         <Image source={require('../assets/images/roleSelectionImg.png')} style={styles.image} />
         </View>
-        <Pressable style={{...styles.button, ...styles.bgPassenger, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignUpScreen')}>
+        <Pressable style={{...styles.button, ...styles.bgPassenger, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignUpSuccesfullyScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorPassenger}}>I'm a <Text style={{...styles.buttonText, ...styles.colorPassenger,...{fontWeight: "bold"}}}>passenger</Text></Text>
         </Pressable>
-        <Pressable style={{...styles.button, ...styles.bgDriver}} onPress={() => navigation.navigate('SignUpScreen')}>
+        <Pressable style={{...styles.button, ...styles.bgDriver}} onPress={() => navigation.navigate('VehicleDataScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorPassenger}}>I'm a <Text style={{...styles.buttonText, ...styles.colorPassenger,...{fontWeight: "bold"}}}>driver</Text></Text>
         </Pressable>
       </View>
@@ -87,7 +87,7 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
     colorDriver: {
       color: Pallete.primaryColor,
     },
-    image: { height: 400, borderRadius: 20, maxWidth: 600 },
-    imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50, position: 'relative', marginLeft: '53%', alignSelf:'center'},
+    image: { height: 400, borderRadius: 20, width:'100%' },
+    imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50, position: 'relative', alignSelf:'center'},
 
   });

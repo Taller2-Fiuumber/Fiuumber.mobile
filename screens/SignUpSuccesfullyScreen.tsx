@@ -3,21 +3,23 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 
-export const WelcomeScreen = ({ navigation }: NavigationProps) => {
+export const SignUpSuccesfullyScreen = ({ navigation }: NavigationProps) => {
 
     return (
     <>
     <View style={styles.mainContainer}>
+  
       <View style={styles.container}>
         <View style={styles.imgContainer}>
-        <Image source={require('../assets/images/welcome.png')} style={styles.image} />
+        <Image source={require('../assets/images/tick.png')} style={styles.image} />
         </View>
-        <Text style={styles.title}>Fiuumber</Text>
-        <Text style={styles.title}>enjoy the ride</Text>
-        <Text style={styles.description}>Request a ride. Experience the thrill at a lower price.</Text>
-        <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('OnBoardingScreen')}>
-          <Text style={{...styles.buttonText, ...styles.colorSignIn}}> Let's Go</Text>
+        <Text style={styles.title}>Your Sign Up was successfull</Text>
+        <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
+          <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Continue to Home</Text>
         </Pressable>
+        <View style={styles.imgContainer}>
+        <Image source={require('../assets/images/vehicle_ok.png')} style={styles.bottom_image} />
+        </View>
       </View>
     </View>
     </>
@@ -29,7 +31,7 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: Pallete.darkBackground,
+      backgroundColor: Pallete.whiteColor,
       fontFamily: 'Roboto',
     },
     container: {
@@ -44,10 +46,12 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
       marginBottom: 0,
     },
     title: {
-      fontSize: 35,
-      fontWeight: 'bold',
-      color: Pallete.whiteColor,
-      margin: 0
+      fontSize: 25,
+      color: Pallete.darkColor,
+      margin: 0,
+      paddingTop:'10%',
+      paddingBottom: '10%',
+      paddingLeft:'4%'
     },
     description: {
       fontSize: 15,
@@ -79,7 +83,7 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
     colorSignUp: {
       color: Pallete.lightColor,
     },
-    image: { height: 330,borderRadius: 15, width: '110%', marginLeft:'-9%' },
+    image: { height: 75, borderRadius: 20, width: 100, marginLeft:'40%' },
     bottom_image: { height: 330, width: '110%', marginLeft:-15, marginBottom:-125},
     imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50},
 

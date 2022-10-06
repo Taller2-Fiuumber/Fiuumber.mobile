@@ -10,7 +10,8 @@ import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
-import { DriverRoleFormScreen } from '../screens/DriverRoleFormScreen';
+import { VehicleDataScreen } from '../screens/VehicleDataScreen';
+import { SignUpSuccesfullyScreen } from '../screens/SignUpSuccesfullyScreen';
 import AuthContext from '../contexts/AuthContext';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -33,23 +34,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
             isSignout: false,
             userToken: action.token,
           };
-        case 'SIGN_UP':
-          return {
-            ...prevState,
-            isSignout: false,
-            userToken: action.token,
-          };
         case 'SIGN_OUT':
           return {
             ...prevState,
             isSignout: true,
             userToken: null,
-          };
-        case 'VEHICLE_DATA':
-          return {
-            ...prevState,
-            isSignout: false,
-            userToken: action.token,
           };
       }
     },
@@ -84,7 +73,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (_data: any) => {
+      signIn: async (email:string, password:string) => {
         // In a production app, we need to send some data (usually username, password) to server and get a token
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
@@ -100,9 +89,6 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         // In the example, we'll use a dummy token
 
         dispatch({ type: 'SIGN_UP', token: 'dummy-auth-token' });
-      },
-      vehicleData: async (_data: any) => {
-        dispatch({ type: 'VEHICLE_DATA', token: 'dummy-auth-token' });
       },
     }),
     []
@@ -126,7 +112,8 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="DriverRoleFormScreen" component={DriverRoleFormScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="SignUpSuccesfullyScreen" component={SignUpSuccesfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           )   
         }    

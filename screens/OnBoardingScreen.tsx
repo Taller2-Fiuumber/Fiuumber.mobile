@@ -50,13 +50,15 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
       fontSize: 35,
       fontWeight: 'bold',
       color: Pallete.whiteColor,
-      margin: 0
+      textAlign: "center",
+      marginBottom:'3%'
     },
     description: {
       fontSize: 15,
       fontWeight: 'normal',
       color: '#8E8E8E',
-      marginBottom: 20
+      marginBottom: 20,
+      textAlign: "center",
     },
     button: {
       borderRadius: 100,
@@ -82,7 +84,7 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
     colorSignUp: {
       color: Pallete.lightColor,
     },
-    image: { height: 330, borderRadius: 20, maxWidth: 300 },
+    image: { height: 330, borderRadius: 20, maxWidth: 300 , marginLeft:'9%'},
     imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50},
 
   });

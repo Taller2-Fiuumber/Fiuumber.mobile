@@ -23,8 +23,9 @@ export type RootStackParamList = {
   WelcomeScreen: undefined;
   PantallaXD: undefined;
   OnBoardingScreen: undefined;
-  DriverRoleFormScreen: undefined,
+  VehicleDataScreen: undefined,
   RoleSelectionScreen: undefined;
+  SignUpSuccesfullyScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
