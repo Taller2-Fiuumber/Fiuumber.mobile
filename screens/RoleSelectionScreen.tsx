@@ -51,7 +51,7 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
       margin: 0
     },
     header: {
-      color: Pallete.whiteColor,
+      color: Pallete.darkColor,
       fontWeight: 'bold',
       marginBottom: 20,
       textAlign: 'center', 
@@ -87,7 +87,7 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
     colorDriver: {
       color: Pallete.primaryColor,
     },
-    image: { height: 400, borderRadius: 20, width:'100%' },
+    image: { height: 200, borderRadius: 20, width:'100%' },
     imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50, position: 'relative', alignSelf:'center'},
 
   });

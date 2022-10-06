@@ -15,7 +15,7 @@ export const SignUpSuccesfullyScreen = ({ navigation }: NavigationProps) => {
         </View>
         <Text style={styles.title}>Your Sign Up was successfull</Text>
         <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
-          <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Continue to Home</Text>
+          <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Continue</Text>
         </Pressable>
         <View style={styles.imgContainer}>
         <Image source={require('../assets/images/vehicle_ok.png')} style={styles.bottom_image} />

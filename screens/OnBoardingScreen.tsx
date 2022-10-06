@@ -84,8 +84,8 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
     colorSignUp: {
       color: Pallete.lightColor,
     },
-    image: { height: 330, borderRadius: 20, maxWidth: 300 , marginLeft:'9%'},
-    imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50},
+    image: { height: '100%', borderRadius: 20, width: 300},
+    imgContainer: {width: '100%', height: 300, marginBottom: 50, alignItems: 'center', justifyContent: 'center'},
 
   });
   
