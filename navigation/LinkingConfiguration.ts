@@ -15,6 +15,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       SignUpScreen: 'SignUp',
       RoleSelectionScreen: 'RoleSelection',
       PantallaXD: 'Pantalla',
+      DriverRoleFormScreen: 'DriverRoleForm'
     //   Root: {
     //     screens: {
     //       TabOne: {

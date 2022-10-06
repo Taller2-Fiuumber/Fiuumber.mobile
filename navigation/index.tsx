@@ -10,6 +10,7 @@ import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
+import { DriverRoleFormScreen } from '../screens/DriverRoleFormScreen';
 import AuthContext from '../contexts/AuthContext';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -32,11 +33,23 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
             isSignout: false,
             userToken: action.token,
           };
+        case 'SIGN_UP':
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+          };
         case 'SIGN_OUT':
           return {
             ...prevState,
             isSignout: true,
             userToken: null,
+          };
+        case 'VEHICLE_DATA':
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
           };
       }
     },
@@ -86,7 +99,10 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
 
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        dispatch({ type: 'SIGN_UP', token: 'dummy-auth-token' });
+      },
+      vehicleData: async (_data: any) => {
+        dispatch({ type: 'VEHICLE_DATA', token: 'dummy-auth-token' });
       },
     }),
     []
@@ -110,6 +126,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="DriverRoleFormScreen" component={DriverRoleFormScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           )   
         }    

@@ -18,7 +18,7 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
         <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignIn}}>Sign In</Text>
         </Pressable>
-        <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('RoleSelectionScreen')}>
+        <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('SignUpScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Sign Up</Text>
         </Pressable>
       </View>

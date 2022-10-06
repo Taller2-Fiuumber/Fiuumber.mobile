@@ -23,6 +23,7 @@ export type RootStackParamList = {
   WelcomeScreen: undefined;
   PantallaXD: undefined;
   OnBoardingScreen: undefined;
+  DriverRoleFormScreen: undefined,
   RoleSelectionScreen: undefined;
 };
 

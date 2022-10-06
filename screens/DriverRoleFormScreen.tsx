@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import SignUpForm from "../components/SignUpForm";
+import VehicleDataForm from "../components/VehicleDataForm";
 import { Text, View } from "../components/Themed";
 import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
@@ -26,16 +26,15 @@ const styles = StyleSheet.create({
         fontSize: 24
     },
 });
-export const SignUpScreen = () => {
+export const DriverRoleFormScreen = () => {
 
-  const { signUp } = React.useContext(AuthContext);
+  const { vehicleData } = React.useContext(AuthContext);
 
     return (
       <>
       <View style={styles.container}>
-        <Text style={styles.header}>Welcome!</Text>
-        <Text style={styles.title}>Sign up for the Fiuumber app</Text>
-        <SignUpForm handleSignUp={signUp}></SignUpForm>
+        <Text style={styles.header}>Vehicle Data</Text>
+        <VehicleDataForm handleVehicleDataForm={vehicleData}></VehicleDataForm>
       </View>
       </>
     );

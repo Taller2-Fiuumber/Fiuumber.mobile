@@ -1,7 +1,10 @@
 import React, { FC, ReactElement } from "react";
-import { TextInput, Button } from 'react-native-paper';
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Button, TextInput } from 'react-native-paper';
 import { useState } from "react";
 import { Pallete } from "../constants/Pallete";
+import { NavigationProps } from "../types";
+
 
 interface SignUpFormProps {
   //Ver que chequee que la pass == passcheck
@@ -32,5 +35,4 @@ export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp}: SignUpFormProps)
     </>      
   );
 };
-
 export default SignUpForm;
