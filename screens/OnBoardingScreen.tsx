@@ -15,8 +15,8 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
         <Text style={styles.title}>Fiuumber</Text>
         <Text style={styles.title}>enjoy the ride</Text>
         <Text style={styles.description}>Request a ride. Experience the thrill at a lower price.</Text>
-        <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
-          <Text style={{...styles.buttonText, ...styles.colorSignIn}}>Sign In</Text>
+        <Pressable style={{...styles.button, ...styles.bgLogIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('LogInScreen')}>
+          <Text style={{...styles.buttonText, ...styles.colorLogIn}}>Sign In</Text>
         </Pressable>
         <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('SignUpScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Sign Up</Text>
@@ -72,10 +72,10 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
       fontSize: 20,
       fontWeight: 'bold',
     },
-    colorSignIn: {
+    colorLogIn: {
       color: Pallete.primaryColor
     },
-    bgSignIn: {
+    bgLogIn: {
       backgroundColor: Pallete.lightColor,
     },
     bgSignUp: {

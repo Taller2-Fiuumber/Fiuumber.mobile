@@ -39,39 +39,28 @@ const styles = StyleSheet.create({
       fontSize: 20,
       fontWeight: 'bold',
     },
-    colorSignIn: {
+    colorLogIn: {
       color: Pallete.primaryColor
     },
-    bgSignIn: {
+    bgLogIn: {
       backgroundColor: Pallete.lightColor,
     },
 });
-export const SignUpScreen = ({ navigation }: NavigationProps) => {
 
-  const [name, setName] = useState<string>("");  
-  const [lastName, setLastName] = useState<string>("");  
-  const [email, setEmail] = useState<string>("");  
-  const [password, setPassword] = useState<string>("");
-  const [passwordChecker, setPasswordChecker] = useState<string>("");
-
+export const SignUpScreen = () => {
 
   const { signUp } = React.useContext(AuthContext);
+
 
     return (
       <>
       <View style={styles.container}>
         <Text style={styles.header}>Welcome!</Text>
         <Text style={styles.title}>Sign up for the Fiuumber app</Text>
-        <TextInput label="Enter your name" style={{marginBottom: 20}} onChangeText={(text) => setName(text)}/>
-        <TextInput label="Last name" style={{marginBottom: 20}} onChangeText={(text) => setLastName(text)}/>
-        <TextInput label="Email/phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
-        <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
-        <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPasswordChecker(text)}/>
-        <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('RoleSelectionScreen')}>
-              <Text style={{...styles.buttonText, ...styles.colorSignIn}}> Next</Text>
-        </Pressable> 
+        <SignUpForm handleSignUp={signUp}></SignUpForm>
       </View>
       </>
     );
   }
   
+

@@ -11,7 +11,7 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       WelcomeScreen: 'Welcome',
       OnBoardingScreen:'OnBoarding',
-      SignInScreen: 'SignIn',
+      LogInScreen: 'LogIn',
       SignUpScreen: 'SignUp',
       RoleSelectionScreen: 'RoleSelection',
       PantallaXD: 'Pantalla',

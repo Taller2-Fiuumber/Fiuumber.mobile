@@ -15,8 +15,8 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
         <Text style={styles.title}>Fiuumber</Text>
         <Text style={styles.title}>enjoy the ride</Text>
         <Text style={styles.description}>Request a ride. Experience the thrill at a lower price.</Text>
-        <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('OnBoardingScreen')}>
-          <Text style={{...styles.buttonText, ...styles.colorSignIn}}> Let's Go</Text>
+        <Pressable style={{...styles.button, ...styles.bgLogIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('OnBoardingScreen')}>
+          <Text style={{...styles.buttonText, ...styles.colorLogIn}}> Let's Go</Text>
         </Pressable>
       </View>
     </View>
@@ -67,10 +67,10 @@ export const WelcomeScreen = ({ navigation }: NavigationProps) => {
       fontSize: 20,
       fontWeight: 'bold',
     },
-    colorSignIn: {
+    colorLogIn: {
       color: Pallete.primaryColor
     },
-    bgSignIn: {
+    bgLogIn: {
       backgroundColor: Pallete.lightColor,
     },
     bgSignUp: {

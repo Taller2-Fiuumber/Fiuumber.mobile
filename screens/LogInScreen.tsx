@@ -17,19 +17,19 @@ const styles = StyleSheet.create({
         color: '#000',
         marginBottom: 70,
         textAlign: 'center',
-        fontSize: 24
+        fontSize: 24 
     },
 });
-export const SignInScreen = () => {
+export const LogInScreen = () => {
 
-  const { signIn } = React.useContext(AuthContext);
+  const { logIn } = React.useContext(AuthContext);
 
 
     return (
       <>
       <View style={styles.container}>
         <Text style={styles.title}>Welcome back to <Text style={{...styles.title,...{fontWeight: "bold"}}}>Fiuumber</Text>!</Text>
-        <LogInForm handleLogin={signIn}></LogInForm>
+        <LogInForm handleLogin={logIn}></LogInForm>
       </View>
       </>
     );

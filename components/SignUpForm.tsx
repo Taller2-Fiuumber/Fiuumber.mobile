@@ -6,12 +6,14 @@ import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 
 
+
 interface SignUpFormProps {
+  navigation: NavigationProps
   //Ver que chequee que la pass == passcheck
   handleSignUp: (name: string, lastName: string, email: string, password: string, passwordChecker: string) => void;
 }
 
-export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp}: SignUpFormProps,{ navigation }: NavigationProps): ReactElement => {
+export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp, navigation}: SignUpFormProps): ReactElement => { 
 
   const [name, setName] = useState<string>("");  
   const [lastName, setLastName] = useState<string>("");  
@@ -19,7 +21,14 @@ export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp}: SignUpFormProps,
   const [password, setPassword] = useState<string>("");
   const [passwordChecker, setPasswordChecker] = useState<string>("");
 
-  const onSignUp = () => handleSignUp(name, lastName, email, password, passwordChecker);
+  const onSignUp = () => {
+    handleSignUp(name, lastName, email, password, passwordChecker);
+    if (password != passwordChecker) { 
+      console.log("raviol");
+      //navigation.navigate('RoleSelectionScreen');
+    }
+  
+  }
 
   // TODO:
   // Validar email con una regex
@@ -31,10 +40,9 @@ export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp}: SignUpFormProps,
     <TextInput label="Email/phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
     <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
     <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPasswordChecker(text)}/>
-    <Pressable style={{...styles.button}} onPress={() => navigation.navigate('RoleSelectionScreen')}>
-          <Text style={{...styles.buttonText}}> Next</Text>
-    </Pressable>
-    </>      
+    <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onSignUp}>Next</Button>
+  
+  </>
   );
 
 };
@@ -82,10 +90,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  colorSignIn: {
+  colorLogIn: {
     color: Pallete.primaryColor
   },
-  bgSignIn: {
+  bgLogIn: {
     backgroundColor: Pallete.lightColor,
   },
   bgSignUp: {
@@ -96,4 +104,4 @@ const styles = StyleSheet.create({
   },
 
 });
-export default SignUpForm;
+

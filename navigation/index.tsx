@@ -7,7 +7,7 @@ import { OnBoardingScreen } from '../screens/OnBoardingScreen';
 import { RootStackParamList } from '../types';
 import { HomeScreen } from '../screens/HomeScreen';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
-import { SignInScreen } from '../screens/SignInScreen';
+import { LogInScreen } from '../screens/LogInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
 import { VehicleDataScreen } from '../screens/VehicleDataScreen';
@@ -73,7 +73,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (email:string, password:string) => {
+      LogIn: async (email:string, password:string) => {
         // In a production app, we need to send some data (usually username, password) to server and get a token
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
@@ -109,7 +109,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
             <>
               <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
               <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="LogInScreen" component={LogInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />

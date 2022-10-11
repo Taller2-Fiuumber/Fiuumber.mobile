@@ -18,7 +18,7 @@ export type RootStackParamList = {
   Modal: undefined;
   NotFound: undefined;
   Home: undefined;
-  SignInScreen: undefined;
+  LogInScreen: undefined;
   SignUpScreen: undefined;
   WelcomeScreen: undefined;
   PantallaXD: undefined;

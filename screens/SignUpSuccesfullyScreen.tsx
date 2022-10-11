@@ -14,7 +14,7 @@ export const SignUpSuccesfullyScreen = ({ navigation }: NavigationProps) => {
         <Image source={require('../assets/images/tick.png')} style={styles.image} />
         </View>
         <Text style={styles.title}>Your Sign Up was successfull</Text>
-        <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
+        <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => navigation.navigate('LogInScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Continue</Text>
         </Pressable>
         <View style={styles.imgContainer}>
@@ -71,10 +71,10 @@ export const SignUpSuccesfullyScreen = ({ navigation }: NavigationProps) => {
       fontSize: 20,
       fontWeight: 'bold',
     },
-    colorSignIn: {
+    colorLogIn: {
       color: Pallete.primaryColor
     },
-    bgSignIn: {
+    bgLogIn: {
       backgroundColor: Pallete.lightColor,
     },
     bgSignUp: {
