@@ -10,39 +10,54 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 
 export const SignUpScreen= ({ navigation }: NavigationProps) => {
-  var incorrect_password = false;
+  const [showPasswordErrorText, setPasswordErrorText] = useState(false);
+  const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
+  const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
+
   const [name, setName] = useState<string>("");  
   const [lastName, setLastName] = useState<string>("");  
   const [email, setEmail] = useState<string>("");  
   const [password, setPassword] = useState<string>("");
   const [passwordChecker, setPasswordChecker] = useState<string>("");
   const onSignUp = () => {
-
-    if (password != passwordChecker) { 
-      console.log("Las contraseñas no coinciden"); 
-      alert("Error! Passwords do not match");
+    if (name == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
+      setMissingFieldsErrorText(true);
+    }
+    else if (password.length < 8) {
+      setMissingFieldsErrorText(false);
+      setPasswordIsTooShortErrorText(true);
+    }
+    else if (password != passwordChecker) { 
+      setMissingFieldsErrorText(false);
+      setPasswordIsTooShortErrorText(false);
+      setPasswordErrorText(true);
     }
     else {
+      setMissingFieldsErrorText(false);
+      setPasswordIsTooShortErrorText(false);
+      setPasswordErrorText(false);
+      // Lógica de guardarse la info que ingrese (ya validada)
       navigation.navigate('RoleSelectionScreen')
     }
 
-  
   }
     return (
       <>
       <View style={styles.container}>
         <Text style={styles.header}>Welcome!</Text>
         <Text style={styles.title}>Sign up for the Fiuumber app</Text>
-        {/* <Text style={styles.error}>Passwords do not match. Retry!</Text> */}
         <TextInput label="Enter your name" style={{marginBottom: 20}} onChangeText={(text) => setName(text)}/>
         <TextInput label="Last name" style={{marginBottom: 20}} onChangeText={(text) => setLastName(text)}/>
-        <TextInput label="Email/phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
+        <TextInput label="Email or phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
         <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
         <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPasswordChecker(text)}/>
-        <Text style={styles.error}>Passwords do not match. Retry!</Text>
+        {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
+        {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
+        {showPasswordErrorText ? <Text style={styles.error}>Passwords do not match. Retry!</Text> : null}
         <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onSignUp}>Next</Button>
       </View>
       </>
+
     );
   }
 
@@ -67,12 +82,11 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
     },
     error: {
       color: '#FF0000',
-      marginBottom: 70,
+      marginBottom: 10,
       textAlign: 'center', 
       justifyContent: 'center',
       fontSize: 20,
       fontWeight: 'bold',
-      display: "none"
     },
     button: {
       borderRadius: 100,
