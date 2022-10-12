@@ -45,14 +45,31 @@ const styles = StyleSheet.create({
     colorSignUp: {
       color: Pallete.lightColor,
     },
+    error: {
+      color: '#FF0000',
+      marginBottom: 10,
+      textAlign: 'center', 
+      justifyContent: 'center',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
 });
 export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
+  const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
 
   const [domain, setDomain] = useState<string>("");  
   const [brandAndModel, setBrandAndModel] = useState<string>("");  
   const [license, setLicense] = useState<string>("");  
 
-
+  const vehicleDataValidation = () => {
+    if (domain == "" || brandAndModel == "" || license == ""){
+      setMissingFieldsErrorText(true);
+    }
+    else {
+      setMissingFieldsErrorText(false);
+      navigation.navigate('SignUpSuccesfullyScreen')
+    }
+  }
   const { vehicleData } = React.useContext(AuthContext);
 
     return (
@@ -62,7 +79,8 @@ export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
         <TextInput label="Domain" style={{marginBottom: 20}} onChangeText={(text) => setDomain(text)}/>
         <TextInput label="Brand and Model" style={{marginBottom: 20}} onChangeText={(text) => setBrandAndModel(text)}/>
         <TextInput label="License (file)" style={{marginBottom: 20}} onChangeText={(text) => setLicense(text)}/>
-        <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignUpSuccesfullyScreen')}>
+        {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
+        <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => vehicleDataValidation()}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Next</Text>
         </Pressable>
       </View>
