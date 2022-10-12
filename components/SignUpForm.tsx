@@ -8,12 +8,12 @@ import { NavigationProps } from "../types";
 
 
 interface SignUpFormProps {
-  navigation: NavigationProps
+  //navigation: NavigationProps
   //Ver que chequee que la pass == passcheck
   handleSignUp: (name: string, lastName: string, email: string, password: string, passwordChecker: string) => void;
 }
 
-export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp, navigation}: SignUpFormProps): ReactElement => { 
+export const SignUpForm = ({handleSignUp}: SignUpFormProps, {navigation}: NavigationProps) => { 
 
   const [name, setName] = useState<string>("");  
   const [lastName, setLastName] = useState<string>("");  
@@ -23,9 +23,10 @@ export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp, navigation}: Sign
 
   const onSignUp = () => {
     handleSignUp(name, lastName, email, password, passwordChecker);
-    if (password != passwordChecker) { 
+    if (password == passwordChecker) { 
       console.log("raviol");
-      //navigation.navigate('RoleSelectionScreen');
+      navigation.navigate('RoleSelectionScreen');
+      console.log("raviolsitos");
     }
   
   }
@@ -41,7 +42,6 @@ export const SignUpForm: FC<SignUpFormProps> = ({handleSignUp, navigation}: Sign
     <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
     <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPasswordChecker(text)}/>
     <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onSignUp}>Next</Button>
-  
   </>
   );
 
@@ -105,3 +105,4 @@ const styles = StyleSheet.create({
 
 });
 
+export default SignUpForm;
