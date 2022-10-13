@@ -124,12 +124,10 @@ export const HomeScreen = () => {
   const [_searchQuery, setSearchQuery] = React.useState<string>("");
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <DirectionBox></DirectionBox>
         <View style={styles.container}>
             <View style={styles.contentContainer}>
-            <Text style={styles.description}>Welcome back to Fiuumber!</Text>
-              <Text style={styles.welcomeText}>Where we go?</Text>
-              <TextInput left={<TextInput.Icon icon="magnify" />} label="Enter your route" style={{marginBottom: 20}} onChangeText={(text) => setSearchQuery(text)}/>
+              <Text style={styles.description}>Welcome back to Fiuumber!</Text>
+              <DirectionBox></DirectionBox>
             </View>
         </View>
       </GestureHandlerRootView>

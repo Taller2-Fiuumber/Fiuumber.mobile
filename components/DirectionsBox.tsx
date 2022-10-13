@@ -2,6 +2,7 @@ import React, { FC, ReactElement, Component} from "react";
 import { TextInput, Button } from 'react-native-paper';
 import { Pallete } from "../constants/Pallete";
 import { StyleSheet } from "react-native";
+import { Text, View } from "../components/Themed";
 
 // Guide  https://github.com/trulymittal/google-maps-directions-tutorial
 import {
@@ -20,6 +21,32 @@ const center = {
 
 const map_libraries: Libraries[] = ['places'];
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20
+  },
+  title: {
+      color: 'red'
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: Pallete.whiteColor,
+  },
+  description: {
+    color: Pallete.contentColor,
+    fontSize: 12
+  },
+  welcomeText: {
+    color: Pallete.darkColor,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    fontSize: 16
+  }
+});
 export const DireccionBox = (): ReactElement => {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -38,23 +65,20 @@ export const DireccionBox = (): ReactElement => {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null)
   }, [])
+  const [_searchQuery, setSearchQuery] = React.useState<string>("");
 
 
   return isLoaded ? (
     <>
 
+    <Text style={styles.welcomeText}>Origin</Text>
     <Autocomplete>
-      <input
-        type='text'
-        placeholder='Origin'
-      />
+       <TextInput left={<TextInput.Icon icon="magnify" />} label="Enter your route" style={{marginBottom: 20}} onChangeText={(text) => setSearchQuery(text)}/>
     </Autocomplete>
 
+    <Text style={styles.welcomeText}>Destination</Text>
     <Autocomplete>
-      <input
-        type='text'
-        placeholder='Destination'
-      />
+       <TextInput left={<TextInput.Icon icon="magnify" />} label="Enter your route" style={{marginBottom: 20}} onChangeText={(text) => setSearchQuery(text)}/>
     </Autocomplete>
 
     <GoogleMap
