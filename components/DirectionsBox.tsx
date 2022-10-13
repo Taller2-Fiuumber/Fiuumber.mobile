@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: Pallete.whiteColor,
-    padding: 20,
   },
   map: {
     flex: 1,
@@ -32,16 +31,27 @@ const styles = StyleSheet.create({
     color: Pallete.darkColor,
     fontSize: 12
   },
+  errorMessage: {
+    color: "#FF0000",
+    fontSize: 12,
+    textAlign: "center"
+  },
   welcomeText: {
     color: Pallete.darkColor,
     fontWeight: 'bold',
     margin: 10,
-    fontSize: 20
+    fontSize: 12
+  },
+  inputText: {
+    color: Pallete.darkBackground,
+    marginBottom: 14,
+    fontSize: 12
   },
   button: {
-    color: Pallete.greenBackground,
+    color: Pallete.darkBackground,
     margin: 10,
   }
+
 });
 
 
@@ -69,6 +79,7 @@ export const DireccionBox = (): ReactElement => {
   let destiantionRef = React.useRef('San Telmo, Buenos Aires')
   const [distance, setDistance] = React.useState('')
   const [duration, setDuration] =  React.useState('')
+  const [routeNotFound, setRouteNotFound] =  React.useState('')
 
   let [searchOriginQuery, setSearchOriginQuery] = React.useState<string>("");
   let [searchDestinationQuery, setSearchDestinationQuery] = React.useState<string>("");
@@ -80,62 +91,64 @@ export const DireccionBox = (): ReactElement => {
 
     console.log("Looking for route between {searchOriginQuery} and {searchDestinationQuery}");
 
-    if (origin === '' || destination === '') {
-      console.log("No locations");
+    if (origin === '') {
+      setRouteNotFound('Something went wrong.\nNo origin location was set.')
       return
     }
 
-    const directionsService = new google.maps.DirectionsService()
-    let results = await directionsService.route({
-      origin: origin,
-      destination: destination,
-      travelMode: google.maps.TravelMode.DRIVING,
-    })
-
-    console.log(directionsService)
-
-    setDirectionsResponse(results)
-    setDistance(results.routes[0].legs[0].distance.text)
-    setDuration(results.routes[0].legs[0].duration.text)
-
-    console.log(results)
-  }, [])
-
-
-
-  const onPlaceChangedAutocomplete = React.useCallback(function callback() {
-    if (autocomplete) {
-      console.log(autocomplete.getPlace().name);
+    if (destination === '') {
+      setRouteNotFound('Something went wrong.\nNo destination location was set.')
+      return
     }
+
+    const directionsService = new google.maps.DirectionsService();
+    try {
+      let results = await directionsService.route({
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      })
+
+      if (results != null && results.routes != null && results.routes.length > 0) {
+        setDirectionsResponse(results)
+        setDistance(results.routes[0].legs[0].distance.text)
+        setDuration(results.routes[0].legs[0].duration.text)
+        setRouteNotFound('')
+      }
+    } catch(e) {
+      setRouteNotFound('Something went wrong. Route was not found.')
+    }
+
   }, [])
 
 
   const onPress = () => {
     console.log("Looking for directions...")
-    calculateRoute(searchOriginQuery, searchDestinationQuery);
+      setRouteNotFound('')
+      calculateRoute(searchOriginQuery, searchDestinationQuery);
+      setSearchOriginQuery('');
+      setSearchDestinationQuery('');
   }
 
   return isLoaded ? (
     <View style={styles.container}>
 
       <Text style={styles.welcomeText}>Origin</Text>
-      <Autocomplete
-        onLoad = {(text) => setAutocomplete(text)}
-        onPlaceChanged={onPlaceChangedAutocomplete}
-      >
-        <TextInput left={<TextInput.Icon icon="magnify" />} label="Enter your route" value={searchOriginQuery} style={{marginBottom: 20}} onChangeText={(text) => setSearchOriginQuery(text)}/>
+      <Autocomplete>
+        <TextInput
+          left={<TextInput.Icon icon="magnify" />}
+          label="Enter your route" value={searchOriginQuery}
+          style={styles.inputText}
+          onChangeText={(text) => setSearchOriginQuery(text)}/>
       </Autocomplete>
 
       <Text style={styles.welcomeText}>Destination</Text>
-      <Autocomplete
-        onLoad = {(text) => setAutocomplete(text)}
-        onPlaceChanged={onPlaceChangedAutocomplete}
-      >
+      <Autocomplete>
         <TextInput
           left={<TextInput.Icon icon="magnify" />}
           label="Enter your route"
           value={searchDestinationQuery}
-          style={{marginBottom: 20}}
+          style={styles.inputText}
           onChangeText={(text) => setSearchDestinationQuery(text)}/>
       </Autocomplete>
 
@@ -144,9 +157,6 @@ export const DireccionBox = (): ReactElement => {
         center={center}
         onLoad={onLoad}
       >
-        <Marker position={center} />
-        <Marker position={center} />
-
         {directionsResponse != null && (
             <DirectionsRenderer directions={directionsResponse} />
         )}
@@ -154,6 +164,7 @@ export const DireccionBox = (): ReactElement => {
 
       <Text style={styles.descriptionRoute}>Duration: {duration}</Text>
       <Text style={styles.descriptionRoute}>Distance: {distance}</Text>
+      <Text style={styles.errorMessage}>{routeNotFound}</Text>
 
       <Button mode="contained" style={styles.button} onPress={onPress}>Search</Button>
 
