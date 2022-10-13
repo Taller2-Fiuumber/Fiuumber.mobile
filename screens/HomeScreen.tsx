@@ -91,37 +91,24 @@ import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import DirectionBox from "../components/DirectionsBox";
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
       flex: 1,
-      alignItems: 'center',
       justifyContent: 'center',
-      padding: 20
-    },
-    title: {
-        color: 'red'
-    },
-    map: {
-      width: Dimensions.get('window').width,
-      height: Dimensions.get('window').height,
+      backgroundColor: Pallete.whiteColor,
+      padding: 30,
     },
     contentContainer: {
       flex: 1,
-      padding: 20,
       backgroundColor: Pallete.whiteColor,
     },
     description: {
       color: Pallete.contentColor,
-      fontSize: 12
+      fontSize: 16,
+      padding: 20,
     },
-    welcomeText: {
-      color: Pallete.darkColor,
-      fontWeight: 'bold',
-      marginBottom: 10,
-      fontSize: 16
-    }
 });
 export const HomeScreen = () => {
-  const [_searchQuery, setSearchQuery] = React.useState<string>("");
+
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={styles.container}>

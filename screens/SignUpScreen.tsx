@@ -14,9 +14,9 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
   const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
 
-  const [name, setName] = useState<string>("");  
-  const [lastName, setLastName] = useState<string>("");  
-  const [email, setEmail] = useState<string>("");  
+  const [name, setName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordChecker, setPasswordChecker] = useState<string>("");
   const onSignUp = () => {
@@ -27,7 +27,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(true);
     }
-    else if (password != passwordChecker) { 
+    else if (password != passwordChecker) {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(true);
@@ -37,6 +37,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
       // Lógica de guardarse la info que ingrese (ya validada)
+
       navigation.navigate('RoleSelectionScreen')
     }
 
@@ -71,19 +72,19 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
     header: {
       color: '#000',
       marginBottom: 20,
-      textAlign: 'center', 
+      textAlign: 'center',
       fontSize: 30
   },
     title: {
         color: '#000',
         marginBottom: 70,
-        textAlign: 'center', 
+        textAlign: 'center',
         fontSize: 24
     },
     error: {
       color: '#FF0000',
       marginBottom: 10,
-      textAlign: 'center', 
+      textAlign: 'center',
       justifyContent: 'center',
       fontSize: 20,
       fontWeight: 'bold',
