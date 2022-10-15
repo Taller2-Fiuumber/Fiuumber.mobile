@@ -11,7 +11,7 @@ import {
 
 
 
-const center = {
+const center = {  
   lat: -34.6175841,
   lng: -58.3682286,
 };
