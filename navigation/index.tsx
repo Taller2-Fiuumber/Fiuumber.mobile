@@ -12,6 +12,7 @@ import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
 import { VehicleDataScreen } from '../screens/VehicleDataScreen';
 import { SignUpSuccesfullyScreen } from '../screens/SignUpSuccesfullyScreen';
+import {TripScreen} from '../screens/TripScreen';
 import AuthContext from '../contexts/AuthContext';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -114,6 +115,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpSuccesfullyScreen" component={SignUpSuccesfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="TripScreen" component={TripScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           )   
         }    
@@ -123,3 +125,4 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
     </AuthContext.Provider>
   );
 }
+
