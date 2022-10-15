@@ -5,8 +5,14 @@ import { useState } from "react";
 import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
 import { NavigationProps } from "../types";
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button } from "react-native-paper";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import axios from "axios";
+
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 
 
 export const SignUpScreen= ({ navigation }: NavigationProps) => {
@@ -19,6 +25,10 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordChecker, setPasswordChecker] = useState<string>("");
+
+  const [post, setPost] = React.useState(null);
+
+
   const onSignUp = () => {
     if (name == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
       setMissingFieldsErrorText(true);
@@ -37,11 +47,39 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
       // Lógica de guardarse la info que ingrese (ya validada)
+      let url = process.env.API_USERS_URL;
+      axios.post((url + "/users")  || "", {
+        name: name,
+        lastName: lastName,
+        email: email,
+        password: password,
+      })
+      .then((response) => {
+        setPost(response.data);
+      });
+      //-----------------------------------------------------
+
+
 
       navigation.navigate('RoleSelectionScreen')
     }
 
   }
+  //--------------------------------------------------------------------------------
+  //Esto lo vamos a refactorizar y hacer todo el post y get en otro modulo
+  
+  let url = process.env.API_USERS_URL;   
+  React.useEffect(() => {
+    axios.get(`${(url + "/users")}/1`).then((response) => {
+      setPost(response.data);
+    });
+  }, []);
+
+  
+
+
+
+  //-------------------------------------------------------------------------------
     return (
       <>
       <View style={styles.container}>
