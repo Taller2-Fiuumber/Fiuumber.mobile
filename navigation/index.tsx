@@ -7,8 +7,11 @@ import { OnBoardingScreen } from '../screens/OnBoardingScreen';
 import { RootStackParamList } from '../types';
 import { HomeScreen } from '../screens/HomeScreen';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
-import { SignInScreen } from '../screens/SignInScreen';
+import { LogInScreen } from '../screens/LogInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
+import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
+import { VehicleDataScreen } from '../screens/VehicleDataScreen';
+import { SignUpSuccesfullyScreen } from '../screens/SignUpSuccesfullyScreen';
 import AuthContext from '../contexts/AuthContext';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -70,7 +73,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (_data: any) => {
+      logIn: async (email:string, password:string) => {
         // In a production app, we need to send some data (usually username, password) to server and get a token
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
@@ -85,7 +88,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
 
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        dispatch({ type: 'SIGN_UP', token: 'dummy-auth-token' });
       },
     }),
     []
@@ -106,8 +109,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
             <>
               <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
               <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="LogInScreen" component={LogInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="SignUpSuccesfullyScreen" component={SignUpSuccesfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           )   
         }    

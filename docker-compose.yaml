@@ -1,0 +1,30 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "bash"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - 19006:19006
+      - 19000:19000
+      - 19001:19001
+    expose:
+      - 19006
+    volumes:
+        - ./:/app
+    networks:
+      - default
+    environment:
+      - NODE_ENV=development
+      - NODE_OPTIONS=--openssl-legacy-provider
+
+networks:
+  default:
+    name: localdev
+
+volumes:
+  database_data:
+    driver: local

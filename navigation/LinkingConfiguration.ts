@@ -9,11 +9,14 @@ const linking: LinkingOptions<RootStackParamList> = {
   ],
   config: {
     screens: {
-      WelcomeScreen: '',
+      WelcomeScreen: 'Welcome',
       OnBoardingScreen:'OnBoarding',
-      SignInScreen: 'SignIn',
+      LogInScreen: 'LogIn',
       SignUpScreen: 'SignUp',
+      RoleSelectionScreen: 'RoleSelection',
       PantallaXD: 'Pantalla',
+      VehicleDataScreen: 'VehicleData',
+      SignUpSuccesfullyScreen: 'SignUpSuccesfully'
     //   Root: {
     //     screens: {
     //       TabOne: {

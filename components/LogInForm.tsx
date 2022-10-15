@@ -2,6 +2,7 @@ import React, { FC, ReactElement } from "react";
 import { TextInput, Button } from 'react-native-paper';
 import { useState } from "react";
 import { Pallete } from "../constants/Pallete";
+import {  StyleSheet, Text } from "react-native";
 
 interface LogInFormProps {
   handleLogin: (email: string, password: string) => void;
@@ -11,8 +12,15 @@ export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): Re
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
-  const onLogin = () => handleLogin(email, password);
+  const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
+  const onLogin = () => {
+    if (email == "" || password == ""){
+      setMissingFieldsErrorText(true);
+    }
+    else {
+      handleLogin(email, password);
+    }
+  };
 
   // TODO:
   // Validar email con una regex
@@ -21,9 +29,21 @@ export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): Re
     <>
     <TextInput label="Email" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
     <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
+    {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
     <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onLogin}>Log In</Button>
     </>      
   );
 };
 
 export default LogInForm;
+
+const styles = StyleSheet.create({
+  error: {
+    color: '#FF0000',
+    marginBottom: 10,
+    textAlign: 'center', 
+    justifyContent: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+});

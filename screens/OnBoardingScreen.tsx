@@ -14,9 +14,9 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
         </View>
         <Text style={styles.title}>Fiuumber</Text>
         <Text style={styles.title}>enjoy the ride</Text>
-        <Text style={styles.description}>Premium and prestige car daily rental.Experience the thrill at a lower price.</Text>
-        <Pressable style={{...styles.button, ...styles.bgSignIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignInScreen')}>
-          <Text style={{...styles.buttonText, ...styles.colorSignIn}}>Sign In</Text>
+        <Text style={styles.description}>Request a ride. Experience the thrill at a lower price.</Text>
+        <Pressable style={{...styles.button, ...styles.bgLogIn, ...{marginBottom: 20}}} onPress={() => navigation.navigate('LogInScreen')}>
+          <Text style={{...styles.buttonText, ...styles.colorLogIn}}>Sign In</Text>
         </Pressable>
         <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('SignUpScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Sign Up</Text>
@@ -50,13 +50,15 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
       fontSize: 35,
       fontWeight: 'bold',
       color: Pallete.whiteColor,
-      margin: 0
+      textAlign: "center",
+      marginBottom:'3%'
     },
     description: {
       fontSize: 15,
       fontWeight: 'normal',
       color: '#8E8E8E',
-      marginBottom: 20
+      marginBottom: 20,
+      textAlign: "center",
     },
     button: {
       borderRadius: 100,
@@ -70,10 +72,10 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
       fontSize: 20,
       fontWeight: 'bold',
     },
-    colorSignIn: {
+    colorLogIn: {
       color: Pallete.primaryColor
     },
-    bgSignIn: {
+    bgLogIn: {
       backgroundColor: Pallete.lightColor,
     },
     bgSignUp: {
@@ -82,8 +84,8 @@ export const OnBoardingScreen = ({ navigation }: NavigationProps) => {
     colorSignUp: {
       color: Pallete.lightColor,
     },
-    image: { height: 330, borderRadius: 20, maxWidth: 300 },
-    imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50},
+    image: { height: '100%', borderRadius: 20, width: 300},
+    imgContainer: {width: '100%', height: 300, marginBottom: 50, alignItems: 'center', justifyContent: 'center'},
 
   });
   
