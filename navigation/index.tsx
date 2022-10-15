@@ -105,6 +105,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
           state.userToken !== null ? (
             <>
               <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+              <Stack.Screen name="TripScreen" component={TripScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           ) : (
             <>
@@ -115,7 +116,6 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpSuccesfullyScreen" component={SignUpSuccesfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="TripScreen" component={TripScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
             </>
           )   
         }    
