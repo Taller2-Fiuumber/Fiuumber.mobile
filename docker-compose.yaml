@@ -3,7 +3,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     command: "bash"
     stdin_open: true # docker run -i
     tty: true        # docker run -t
