@@ -76,7 +76,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
   const authContext = React.useMemo(
     () => ({
-      logIn: async (email:string, password:string) => {
+      logIn: async (email:string, password:string): Promise<string | null> => {
         // In a production app, we need to send some data (usually username, password) to server and get a token
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
@@ -84,11 +84,12 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         const userToken: UserToken | null = await AuthService.login(email, password);
 
         if (!userToken) {
-          alert("Usuario o contraseña incorrectos"); // TODO: laburarlo de otra manera
-          return;
+          return "Usuario o contraseña incorrectos";
         }
 
         dispatch({ type: 'SIGN_IN', token: userToken.token, user: userToken.user });
+        
+        return null;
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
       signUp: async (_data: any) => {
