@@ -1,3 +1,4 @@
-# Microservices
-API_USERS_URL="https://fiuumber-api.herokuapp.com/"
-API_USERS_BASE_PATH="/api/users-service"
+REACT_APP_API_GATEWAY_URL=http://localhost:8080
+
+# Microservices paths
+REACT_APP_API_USERS_BASE_PATH=/api/users-service

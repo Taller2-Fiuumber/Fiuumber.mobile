@@ -14,6 +14,8 @@ import { VehicleDataScreen } from '../screens/VehicleDataScreen';
 import { SignUpSuccesfullyScreen } from '../screens/SignUpSuccesfullyScreen';
 import {TripScreen} from '../screens/TripScreen';
 import AuthContext from '../contexts/AuthContext';
+import { AuthService } from '../services/AuthService';
+import { UserToken } from '../models/user-token';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -79,8 +81,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
+        const userToken: UserToken | null = await AuthService.login(email, password);
 
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        if (!userToken) {
+          alert("Usuario o contraseña incorrectos"); // TODO: laburarlo de otra manera
+          return;
+        }
+
+        dispatch({ type: 'SIGN_IN', token: userToken.token, user: userToken.user });
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
       signUp: async (_data: any) => {
