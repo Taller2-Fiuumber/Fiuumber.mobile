@@ -1,4 +1,4 @@
-import { User } from "./user";
+import { User } from "./user_bkp";
 
 export interface UserToken {
     user: User;
