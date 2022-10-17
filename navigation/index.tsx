@@ -77,10 +77,6 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   const authContext = React.useMemo(
     () => ({
       logIn: async (email:string, password:string): Promise<string | null> => {
-        // In a production app, we need to send some data (usually username, password) to server and get a token
-        // We will also need to handle errors if sign in failed
-        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
-        // In the example, we'll use a dummy token
         const userToken: UserToken | null = await AuthService.login(email, password);
 
         if (!userToken) {

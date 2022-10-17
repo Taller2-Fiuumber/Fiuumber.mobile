@@ -12,7 +12,7 @@ export const AuthService = {
             return userToken;
         } 
         catch (error: any) {
-            if (error.response.status == 401) return null;
+            if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
     },
@@ -20,7 +20,6 @@ export const AuthService = {
         try {
             const url = `${URL_USERS}/register-passenger`;
             const response = await axios.post(url, {passenger}, HEADERS);
-            console.log(response.data);
             return true;
         } 
         catch (error: any) {

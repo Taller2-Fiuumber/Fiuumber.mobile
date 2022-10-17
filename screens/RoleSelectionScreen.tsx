@@ -12,7 +12,6 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
       const strPassenger: string | null = await StorageService.getData("temp_user");
       if (!strPassenger) return;
       const passenger: Passenger = JSON.parse(strPassenger);
-      console.log(passenger);
       await AuthService.registerPassenger(passenger);
       navigation.navigate('SignUpSuccesfullyScreen');
     }

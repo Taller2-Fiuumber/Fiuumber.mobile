@@ -10,12 +10,12 @@ import { TextInput, Button } from "react-native-paper";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import axios from "axios";
 
-import * as dotenv from "dotenv";
+// import * as dotenv from "dotenv";
 import { Passenger } from "../models/passenger";
 import { Wallet } from "../models/wallet";
 import { StorageService } from "../services/StorageService";
 
-dotenv.config();
+// dotenv.config();
 
 
 
@@ -62,6 +62,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       //   setPost(response.data);
       // });
       //-----------------------------------------------------
+      
       const passenger: Passenger = new Passenger(-1, email, name, lastName, "", new Wallet("", "address", "password"), password);
       await StorageService.storeData("temp_user", JSON.stringify(passenger));
       navigation.navigate('RoleSelectionScreen')

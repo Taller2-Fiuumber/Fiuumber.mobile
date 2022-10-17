@@ -94,8 +94,6 @@ export const DireccionBox = (): ReactElement => {
 
   const calculateRoute = React.useCallback(async function callback(origin:string, destination: string) {
 
-    console.log("Looking for route between {searchOriginQuery} and {searchDestinationQuery}");
-
     if (origin === '') {
       setRouteNotFound('Something went wrong.\nNo origin location was set.')
       return
@@ -128,7 +126,6 @@ export const DireccionBox = (): ReactElement => {
 
 
   const onPress = () => {
-    console.log("Looking for directions...")
       setRouteNotFound('')
       calculateRoute(searchOriginQuery, searchDestinationQuery);
       setSearchOriginQuery('');
