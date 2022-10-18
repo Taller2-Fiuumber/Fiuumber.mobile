@@ -1,7 +1,7 @@
 import React, { FC, ReactElement} from "react";
 import { Pallete } from "../constants/Pallete";
 import { TextInput, Button } from 'react-native-paper';
-import { StyleSheet, View, Text, } from "react-native";
+import { StyleSheet, View, Text, Dimensions, } from "react-native";
 import MapView from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
@@ -10,7 +10,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Pallete.whiteColor,
-    marginTop: 40
   },
   map: {
     flex: 1,
@@ -48,7 +47,9 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   containerInputs: {
-    height: 200
+    marginTop: 80,
+    width: '100%',
+    height: 100
   }
 
 });
@@ -59,11 +60,8 @@ export const DirectionsBoxNative = (): ReactElement => {
   const [duration, setDuration] =  React.useState('');
   const [routeNotFound, setRouteNotFound] =  React.useState('');
 
-  const [origin, setOrigin] =  React.useState({latitude: 37.3318456, longitude: -122.0296002});
-  const [destination, setDestination] =  React.useState({latitude: 37.771707, longitude: -122.4053769});
-
-  // const origin = {latitude: 37.3318456, longitude: -122.0296002};
-  // const destination = {latitude: 37.771707, longitude: -122.4053769};
+  const [origin, setOrigin] =  React.useState<any>(null);
+  const [destination, setDestination] =  React.useState<any>(null);
 
   return (
   <>
@@ -82,7 +80,7 @@ export const DirectionsBoxNative = (): ReactElement => {
       </View>
 
        <MapView
-          style={{width: '100%', height: 200}}
+          style={{width: '100%', height: Dimensions.get('window').height - 260 /* ALTO PANTALLA - (70 de la barra + 100 de inputs origin y destination + X de duration)*/}}
           initialRegion={{
             latitude: -34.6175841,
             longitude: -58.3682286,
@@ -90,17 +88,22 @@ export const DirectionsBoxNative = (): ReactElement => {
             longitudeDelta: 0.0421,
           }}
         >
-          <MapViewDirections
-            origin={origin}
-            destination={destination}
-            apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
-          />
+          {origin && destination ? 
+            <MapViewDirections
+              origin={origin}
+              destination={destination}
+              apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
+              strokeWidth={5}
+              strokeColor="hotpink"
+            /> : <></>
+          }
+          
         </MapView>
         <Text style={styles.descriptionRoute}>Duration: {duration}</Text>
         <Text style={styles.descriptionRoute}>Distance: {distance}</Text>
         <Text style={styles.errorMessage}>{routeNotFound}</Text>
 
-        <Button mode="contained" style={styles.button} onPress={() => {}}>Search</Button>
+        <Button mode="contained" style={styles.button} onPress={() => {}}>Get your Fiuumber!</Button>
     </View>
   </>
   );

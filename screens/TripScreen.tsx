@@ -26,15 +26,14 @@ const styles = StyleSheet.create({
 export const TripScreen = () => {
 
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      // <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={styles.container}>
             <View style={styles.contentContainer}>
-              <Text style={styles.description}>Select your ride!</Text>
               {/* <DirectionBox></DirectionBox> */}
               <DirectionsBoxNative></DirectionsBoxNative>
             </View>
         </View>
-      </GestureHandlerRootView>
+      // </GestureHandlerRootView>
 
     );
   }
