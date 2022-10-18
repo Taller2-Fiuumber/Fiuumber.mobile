@@ -4,6 +4,7 @@ import { Text, View } from "../components/Themed";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Pallete } from '../constants/Pallete';
 import DirectionBox from "../components/DirectionsBox";
+import { DirectionsBoxNative } from '../components/DirectionsBoxNative';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,7 +30,8 @@ export const TripScreen = () => {
         <View style={styles.container}>
             <View style={styles.contentContainer}>
               <Text style={styles.description}>Select your ride!</Text>
-              <DirectionBox></DirectionBox>
+              {/* <DirectionBox></DirectionBox> */}
+              <DirectionsBoxNative></DirectionsBoxNative>
             </View>
         </View>
       </GestureHandlerRootView>
