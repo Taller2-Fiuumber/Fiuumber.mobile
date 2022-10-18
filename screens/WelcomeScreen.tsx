@@ -3,7 +3,19 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 
+// import { set, ref } from "firebase/database";
+// import { FirebaseService } from "../services/FirebaseService";
+
 export const WelcomeScreen = ({ navigation }: NavigationProps) => {
+
+    // const testFirebase = () => {
+    //   const reference = ref(FirebaseService.db, 'test/pepe');
+    //   set(reference, {
+    //     saludo: "Alohaaaa",
+    //   });
+    // }
+
+    // testFirebase();
 
     return (
     <>

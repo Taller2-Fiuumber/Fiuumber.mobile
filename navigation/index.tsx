@@ -77,13 +77,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   const authContext = React.useMemo(
     () => ({
       logIn: async (email:string, password:string): Promise<string | null> => {
-        const userToken: UserToken | null = await AuthService.login(email, password);
+        // const userToken: UserToken | null = await AuthService.login(email, password);
 
-        if (!userToken) {
-          return "Usuario o contraseña incorrectos";
-        }
+        // if (!userToken) {
+        //   return "Usuario o contraseña incorrectos";
+        // }
 
-        dispatch({ type: 'SIGN_IN', token: userToken.token, user: userToken.user });
+        // dispatch({ type: 'SIGN_IN', token: userToken.token, user: userToken.user });
+        dispatch({ type: 'SIGN_IN', token: "asdasd", user: {} });
         
         return null;
       },
