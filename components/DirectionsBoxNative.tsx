@@ -80,7 +80,7 @@ export const DirectionsBoxNative = (): ReactElement => {
       </View>
 
        <MapView
-          style={{width: '100%', height: Dimensions.get('window').height - 260 /* ALTO PANTALLA - (70 de la barra + 100 de inputs origin y destination + X de duration)*/}}
+          style={{marginTop: "10%", width: '100%', height: Dimensions.get('window').height - 500 /* (antes decia 260 en vez de 500!), se habia calculado asi: ALTO PANTALLA - (70 de la barra + 100 de inputs origin y destination + X de duration)*/}}
           initialRegion={{
             latitude: -34.6175841,
             longitude: -58.3682286,

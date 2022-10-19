@@ -1,6 +1,7 @@
 import React, { FC, ReactElement } from 'react';
 import { GooglePlacesAutocomplete, GooglePlaceData, GooglePlaceDetail } from 'react-native-google-places-autocomplete';
 import { StyleSheet } from "react-native";
+import { Pallete } from "../constants/Pallete";
 
 const styles = StyleSheet.create({
   listView: {
@@ -22,7 +23,7 @@ export const GooglePlacesInput: FC<GooglePlacesInputProps> = ({placeholder, cont
   return (
     <GooglePlacesAutocomplete
       placeholder={placeholder}
-      styles={{listView: styles.listView, container: containerStyles, }}
+      styles={{listView: styles.listView, container: containerStyles, color: Pallete.darkColor, fontWeight: "bold",}}
       onPress={onPress}
       query={{
         key: 'AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I',
