@@ -129,3 +129,6 @@ package-lock.json
 
 # Expo 
 .expo
+
+#Env
+.env

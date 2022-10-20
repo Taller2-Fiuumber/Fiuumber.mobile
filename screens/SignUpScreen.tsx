@@ -1,12 +1,22 @@
 import React, { FC, ReactElement } from "react";
 import { useState } from "react";
 // import SignUpForm from "../components/SignUpForm";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
 import { NavigationProps } from "../types";
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button } from "react-native-paper";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import axios from "axios";
+
+// import * as dotenv from "dotenv";
+import { Passenger } from "../models/passenger";
+import { Wallet } from "../models/wallet";
+import { StorageService } from "../services/StorageService";
+
+// dotenv.config();
+
 
 
 export const SignUpScreen= ({ navigation }: NavigationProps) => {
@@ -19,7 +29,11 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordChecker, setPasswordChecker] = useState<string>("");
-  const onSignUp = () => {
+
+  const [post, setPost] = React.useState(null);
+
+
+  const onSignUp = async () => {
     if (name == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
       setMissingFieldsErrorText(true);
     }
@@ -37,11 +51,39 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
       // Lógica de guardarse la info que ingrese (ya validada)
-
+      // let url = process.env.API_USERS_URL;
+      // axios.post((url + "/users")  || "", {
+      //   name: name,
+      //   lastName: lastName,
+      //   email: email,
+      //   password: password,
+      // })
+      // .then((response) => {
+      //   setPost(response.data);
+      // });
+      //-----------------------------------------------------
+      
+      const passenger: Passenger = new Passenger(-1, email, name, lastName, "", new Wallet("", "address", "password"), password);
+      await StorageService.storeData("temp_user", JSON.stringify(passenger));
       navigation.navigate('RoleSelectionScreen')
     }
 
   }
+  //--------------------------------------------------------------------------------
+  //Esto lo vamos a refactorizar y hacer todo el post y get en otro modulo
+  
+  let url = process.env.API_USERS_URL;   
+  React.useEffect(() => {
+    axios.get(`${(url + "/users")}/1`).then((response) => {
+      setPost(response.data);
+    });
+  }, []);
+
+  
+
+
+
+  //-------------------------------------------------------------------------------
     return (
       <>
       <View style={styles.container}>

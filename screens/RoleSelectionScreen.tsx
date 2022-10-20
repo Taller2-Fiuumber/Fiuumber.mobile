@@ -1,9 +1,20 @@
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
+import { Passenger } from "../models/passenger";
+import { AuthService } from "../services/AuthService";
+import { StorageService } from "../services/StorageService";
 import { NavigationProps } from "../types";
 
 export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
+
+    const createPassenger = async () => {
+      const strPassenger: string | null = await StorageService.getData("temp_user");
+      if (!strPassenger) return;
+      const passenger: Passenger = JSON.parse(strPassenger);
+      await AuthService.registerPassenger(passenger);
+      navigation.navigate('SignUpSuccesfullyScreen');
+    }
 
     return (
     <>
@@ -13,7 +24,7 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
         <View style={styles.imgContainer}>
         <Image source={require('../assets/images/roleSelectionImg.png')} style={styles.image} />
         </View>
-        <Pressable style={{...styles.button, ...styles.bgPassenger, ...{marginBottom: 20}}} onPress={() => navigation.navigate('SignUpSuccesfullyScreen')}>
+        <Pressable style={{...styles.button, ...styles.bgPassenger, ...{marginBottom: 20}}} onPress={createPassenger}>
           <Text style={{...styles.buttonText, ...styles.colorPassenger}}>I'm a <Text style={{...styles.buttonText, ...styles.colorPassenger,...{fontWeight: "bold"}}}>passenger</Text></Text>
         </Pressable>
         <Pressable style={{...styles.button, ...styles.bgDriver}} onPress={() => navigation.navigate('VehicleDataScreen')}>

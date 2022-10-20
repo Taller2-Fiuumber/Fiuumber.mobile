@@ -1,10 +1,10 @@
 import React from "react";
+import { useState } from "react";
 import { StyleSheet } from "react-native";
 import LogInForm from "../components/LogInForm";
 import { Text, View } from "../components/Themed";
 import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
-import { NavigationProps } from "../types";
 
 const styles = StyleSheet.create({
     container: {
@@ -24,12 +24,21 @@ export const LogInScreen = () => {
 
   const { logIn } = React.useContext(AuthContext);
 
+  const [message, setMessage] = useState<string | null>(null);
+
+  const handleLogin = async (email: string, password: string) => {
+    const message = await logIn(email, password);
+    setMessage(message);
+  }
 
     return (
       <>
       <View style={styles.container}>
         <Text style={styles.title}>Welcome back to <Text style={{...styles.title,...{fontWeight: "bold"}}}>Fiuumber</Text>!</Text>
-        <LogInForm handleLogin={logIn}></LogInForm>
+        <LogInForm handleLogin={handleLogin}></LogInForm>
+        {
+          message !== null ? (<Text>{message}</Text>) : <></>
+        }
       </View>
       </>
     );

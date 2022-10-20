@@ -4,6 +4,7 @@ import { Pallete } from "../constants/Pallete";
 import { StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 
+
 // Guide  https://github.com/trulymittal/google-maps-directions-tutorial
 import {
   GoogleMap,Marker,useJsApiLoader,DirectionsRenderer,Autocomplete, Libraries
@@ -83,13 +84,15 @@ export const DireccionBox = (): ReactElement => {
 
   let [searchOriginQuery, setSearchOriginQuery] = React.useState<string>("");
   let [searchDestinationQuery, setSearchDestinationQuery] = React.useState<string>("");
-  let [autocomplete, setAutocomplete] = React.useState<google.maps.places.Autocomplete>();
+  let [autocompleteOrigin, setAutocompleteOrigin] = React.useState<google.maps.places.Autocomplete>();
+  let [autocompleteDestination, setAutocompleteDestination] = React.useState<google.maps.places.Autocomplete>();
+
   let [directionsResponse, setDirectionsResponse] = React.useState<google.maps.DirectionsResult>()
 
 
-  const calculateRoute = React.useCallback(async function callback(origin:string, destination: string) {
 
-    console.log("Looking for route between {searchOriginQuery} and {searchDestinationQuery}");
+
+  const calculateRoute = React.useCallback(async function callback(origin:string, destination: string) {
 
     if (origin === '') {
       setRouteNotFound('Something went wrong.\nNo origin location was set.')
@@ -123,33 +126,38 @@ export const DireccionBox = (): ReactElement => {
 
 
   const onPress = () => {
-    console.log("Looking for directions...")
       setRouteNotFound('')
       calculateRoute(searchOriginQuery, searchDestinationQuery);
       setSearchOriginQuery('');
       setSearchDestinationQuery('');
+      //setAutocomplete('');
   }
 
   return isLoaded ? (
     <View style={styles.container}>
 
       <Text style={styles.welcomeText}>Origin</Text>
-      <Autocomplete>
+      <Autocomplete 
+       onPlaceChanged={() => {setSearchOriginQuery(autocompleteOrigin.getPlace().formatted_address);}}
+       onLoad = {(autocompleteOrigin) => setAutocompleteOrigin(autocompleteOrigin)}>
         <TextInput
           left={<TextInput.Icon icon="magnify" />}
-          label="Enter your route" value={searchOriginQuery}
-          style={styles.inputText}
+          label="Enter your route" 
+          value={searchOriginQuery}         
+          style={styles.inputText}         
           onChangeText={(text) => setSearchOriginQuery(text)}/>
       </Autocomplete>
 
       <Text style={styles.welcomeText}>Destination</Text>
-      <Autocomplete>
+      <Autocomplete 
+       onPlaceChanged={() => {setSearchDestinationQuery(autocompleteDestination.getPlace().formatted_address);}}
+       onLoad = {(autocompleteDestination) => setAutocompleteDestination(autocompleteDestination)}>
         <TextInput
           left={<TextInput.Icon icon="magnify" />}
           label="Enter your route"
-          value={searchDestinationQuery}
+          value={searchDestinationQuery}          
           style={styles.inputText}
-          onChangeText={(text) => setSearchDestinationQuery(text)}/>
+          onChangeText={(text) => setSearchDestinationQuery(text)}/>          
       </Autocomplete>
 
       <GoogleMap

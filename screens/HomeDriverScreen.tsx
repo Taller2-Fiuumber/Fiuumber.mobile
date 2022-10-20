@@ -4,35 +4,14 @@ import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 import AuthContext from "../contexts/AuthContext";
 
-export const HomeScreen = ({ navigation }: NavigationProps) => {
+export const HomeDriverScreen = ({ navigation }: NavigationProps) => {
 
-  const { signOut } = React.useContext(AuthContext);
   
   return (
     <>
     <View style={styles.mainContainer}>
       <View style={styles.container}>
-        <Text style={styles.title}>Hello, passenger!</Text>
-        <Pressable style={{...styles.viewProfileButton, ...styles.bgLogIn}} onPress={() => navigation.navigate('TripScreen')}>
-          <Text style={{...styles.viewProfileButtonText, ...styles.colorLogIn}}> My profile </Text>
-        </Pressable>
-        <Pressable style={{...styles.viewHistoryButton, ...styles.bgLogIn}} onPress={() => navigation.navigate('TripScreen')}>
-          <Text style={{...styles.viewProfileButtonText, ...styles.colorLogIn}}> History </Text>
-        </Pressable>   
-
-        <Pressable style={{...styles.viewHistoryButton, ...styles.bgLogIn}} onPress={signOut}>
-          <Text style={{...styles.viewProfileButtonText, ...styles.colorLogIn}}> Sign out </Text>
-        </Pressable>          
-
-        <View style={styles.imgContainer}>
-        <Image source={require('../assets/images/blueTaxiPng.png')} style={styles.image} />
-        </View>
-        <Pressable style={{...styles.button, ...styles.bgSignUp}} onPress={() => navigation.navigate('TripScreen')}>
-          <Text style={{...styles.buttonText, ...styles.colorSignUp}}> Start Trip </Text>
-        </Pressable>
-
-        
-
+        <Text>Hola driver!!!</Text>
       </View>
     </View>
     </>

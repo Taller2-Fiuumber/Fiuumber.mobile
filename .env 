@@ -1,0 +1,4 @@
+REACT_APP_API_GATEWAY_URL=http://localhost:8080
+
+# Microservices paths
+REACT_APP_API_USERS_BASE_PATH=/api/users-service

@@ -18,14 +18,15 @@ export type RootStackParamList = {
   Modal: undefined;
   NotFound: undefined;
   Home: undefined;
+  HomeDriver: undefined;
   LogInScreen: undefined;
   SignUpScreen: undefined;
   WelcomeScreen: undefined;
-  PantallaXD: undefined;
   OnBoardingScreen: undefined;
   VehicleDataScreen: undefined,
   RoleSelectionScreen: undefined;
   SignUpSuccesfullyScreen: undefined;
+  TripScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
