@@ -35,7 +35,7 @@ export const TripsService = {
         try {
             const url = `${URL_TRIPS}/trips/${tripId}/status`;
             const tripReq = {status};
-            const response = await axios.put(url, tripReq, HEADERS);
+            const response = await axios.patch(url, tripReq, HEADERS);
             const tripResponse: Trip = response.data;
             return tripResponse;
         } 
