@@ -2,7 +2,7 @@ import React, { FC, ReactElement} from "react";
 import { Pallete } from "../constants/Pallete";
 import { TextInput, Button } from 'react-native-paper';
 import { StyleSheet, View, Text, Dimensions, } from "react-native";
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
 
@@ -68,14 +68,12 @@ export const DirectionsBoxNative = (): ReactElement => {
     <View style={styles.container}>
       <View style={styles.containerInputs}>
         <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        console.log({ latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0});
-        setOrigin({ latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0});
+        const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
+        setOrigin(position);
       }}></GooglePlacesInput>
         <GooglePlacesInput placeholder="Destination" onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        console.log({ latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0});
-        setDestination({ latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0});
+        const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
+        setDestination(position);
       }}></GooglePlacesInput>
       </View>
 
@@ -88,6 +86,8 @@ export const DirectionsBoxNative = (): ReactElement => {
             longitudeDelta: 0.0421,
           }}
         >
+          {destination ? <Marker coordinate={destination} /> : <></>}
+          {origin ? <Marker coordinate={origin} /> : <></>}
           {origin && destination ? 
             <MapViewDirections
               origin={origin}
@@ -95,7 +95,8 @@ export const DirectionsBoxNative = (): ReactElement => {
               apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
               strokeWidth={5}
               strokeColor="hotpink"
-            /> : <></>
+            />
+            : <></>
           }
           
         </MapView>
