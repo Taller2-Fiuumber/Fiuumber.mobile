@@ -16,6 +16,8 @@ import {TripScreen} from '../screens/TripScreen';
 import AuthContext from '../contexts/AuthContext';
 import { AuthService } from '../services/AuthService';
 import { UserToken } from '../models/user-token';
+import { AuthAction } from '../models/auth-action';
+import { HomeDriverScreen } from '../screens/HomeDriverScreen';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -23,21 +25,24 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 
   const [state, dispatch] = React.useReducer(
-    (prevState: any, action: any) => {
+    (prevState: any, action: AuthAction) => {
       switch (action.type) {
         case 'RESTORE_TOKEN':
+          AuthService.setCurrentUserToken(action.userToken);
           return {
             ...prevState,
-            userToken: action.token,
+            userToken: action.userToken,
             isLoading: false,
           };
         case 'SIGN_IN':
+          AuthService.setCurrentUserToken(action.userToken);
           return {
             ...prevState,
             isSignout: false,
-            userToken: action.token,
+            userToken: action.userToken,
           };
         case 'SIGN_OUT':
+          AuthService.setCurrentUserToken(null);
           return {
             ...prevState,
             isSignout: true,
@@ -68,7 +73,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
-      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+      dispatch({ type: 'RESTORE_TOKEN', userToken: userToken });
     };
 
     bootstrapAsync();
@@ -83,19 +88,20 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
           return "Usuario o contraseña incorrectos";
         }
 
-        dispatch({ type: 'SIGN_IN', token: userToken.token, user: userToken.user });
-        // dispatch({ type: 'SIGN_IN', token: "asdasd", user: {} });
-        
+        const authAction: AuthAction = {userToken: userToken, type: 'SIGN_IN'};
+
+        dispatch(authAction);        
+
         return null;
       },
-      signOut: () => dispatch({ type: 'SIGN_OUT' }),
+      signOut: () => dispatch({ type: 'SIGN_OUT', userToken: null }),
       signUp: async (_data: any) => {
         // In a production app, we need to send user data to server and get a token
         // We will also need to handle errors if sign up failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
 
-        dispatch({ type: 'SIGN_UP', token: 'dummy-auth-token' });
+        dispatch({ type: 'SIGN_UP', userToken: null });
       },
     }),
     []
@@ -109,10 +115,20 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         <Stack.Navigator>
         {
           state.userToken !== null ? (
-            <>
-              <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
-              <Stack.Screen name="TripScreen" component={TripScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-            </>
+            state.userToken.user.profile === "PASSENGER" ? 
+            (
+              <>
+                <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+                <Stack.Screen name="TripScreen" component={TripScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              </>
+            )
+            :
+            (
+              <>
+                <Stack.Screen name="HomeDriver" component={HomeDriverScreen} options={{ headerShown: false }}/>
+              </>
+            )
+            
           ) : (
             <>
               <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />

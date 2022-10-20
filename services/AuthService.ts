@@ -3,11 +3,13 @@ import { UserToken } from '../models/user-token';
 import { HEADERS, URL_USERS } from "./Constants";
 import { Passenger } from '../models/passenger';
 
+let _userToken: UserToken | null;
 export const AuthService = {
+    getCurrentUserToken: (): UserToken | null => _userToken,
+    setCurrentUserToken: (userToken: UserToken | null): void => {_userToken = userToken},
     login: async (email: string, password: string): Promise<UserToken | null> => {
         try {
             const url = `${URL_USERS}/login?email=${email}&password=${password}`;
-            console.log(url);
             const response = await axios.get(url, HEADERS);
             const userToken: UserToken = response.data;
             return userToken;
@@ -20,10 +22,8 @@ export const AuthService = {
     },
     registerPassenger: async (passenger: Passenger): Promise<boolean> => {
         try {
-            console.log(passenger);
             const url = `${URL_USERS}/register-passenger`;
-            console.log(url);
-            const response = await axios.post(url, {passenger}, HEADERS);
+            await axios.post(url, {passenger}, HEADERS);
             return true;
         } 
         catch (error: any) {
