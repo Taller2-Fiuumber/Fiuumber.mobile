@@ -8,7 +8,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import { TripsService } from "../services/TripsService";
 import { Trip } from "../models/trip";
 import { FirebaseService } from "../services/FirebaseService";
-import { set, ref } from "firebase/database";
+import { set, ref, get, onValue, onChildAdded } from "firebase/database";
 import axios from 'axios';// For API consuming
 import { HEADERS } from "../services/Constants";
 import { AuthService } from "../services/AuthService";
@@ -79,6 +79,8 @@ export const DirectionsBoxNative = (): ReactElement => {
   const [duration, setDuration] =  React.useState('');
   const [routeNotFound, setRouteNotFound] =  React.useState('');
 
+  const [notification, setNotification] =  React.useState<string | null>(null);
+
   const [origin, setOrigin] =  React.useState<any>(null);
   const [destination, setDestination] =  React.useState<any>(null);
 
@@ -88,9 +90,10 @@ export const DirectionsBoxNative = (): ReactElement => {
       status: status,
     });
   }
+  const user: User | undefined = AuthService.getCurrentUserToken()?.user;
 
   const startTrip = async () => {
-    const user: User | undefined = AuthService.getCurrentUserToken()?.user;
+    
 
     if (!user) return;
     if (!origin || !destination) return;
@@ -119,21 +122,37 @@ export const DirectionsBoxNative = (): ReactElement => {
     }
   }
 
+  const watchTrips = () => {
+      const reference = ref(FirebaseService.db, `/trips/{tripID}`);
+      onChildAdded(reference, snapshot => {
+          console.log("NUEVOO", snapshot);
+          //setNotification(snapshot.key);
+      });
+  };
+
+  if (user?.profile === "DRIVER") watchTrips();
+
   return (
   <>
     <View style={styles.mainContainer}>
+      {
+        user?.profile === "PASSENGER"  ? (<>
+         <View style={styles.containerAutocomplete}>
+          <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} onPress={(data, details = null) => {
+            const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
+            setOrigin(position);
+          }}></GooglePlacesInput>
 
-      <View style={styles.containerAutocomplete}>
-        <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} onPress={(data, details = null) => {
-          const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
-          setOrigin(position);
-        }}></GooglePlacesInput>
-
-        <GooglePlacesInput placeholder="Destination" containerStyles={styles.autocomplete} onPress={(data, details = null) => {
-          const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
-          setDestination(position);
-        }}></GooglePlacesInput>
-      </View>
+          <GooglePlacesInput placeholder="Destination" containerStyles={styles.autocomplete} onPress={(data, details = null) => {
+            const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
+            setDestination(position);
+          }}></GooglePlacesInput>
+        </View>
+        </>) : <></>
+      }
+     {
+      notification ? (<><Text>{notification}</Text></>)  : (<></>)
+     }
 
       <View style={styles.containerMap}>
         <View style={styles.map}>
@@ -162,8 +181,10 @@ export const DirectionsBoxNative = (): ReactElement => {
         </View>
 
         <Text style={styles.errorMessage}>{routeNotFound}</Text>
-
-        <Button mode="contained" style={styles.button} onPress={startTrip}>Get your Fiuumber!</Button>
+        
+        { user?.profile === "PASSENGER" ?
+            <Button mode="contained" style={styles.button} onPress={startTrip}>Get your Fiuumber!</Button> : <></>
+        }
       </View>
 
     </View>
