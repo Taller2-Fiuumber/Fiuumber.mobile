@@ -7,42 +7,35 @@ import { OnBoardingScreen } from '../screens/OnBoardingScreen';
 import { RootStackParamList } from '../types';
 import { HomeScreen } from '../screens/HomeScreen';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
+import { ProfileNavBarScreen } from '../screens/ProfileNavBarScreen';
+import { MyProfileScreen } from '../screens/MyProfileScreen';
 import { LogInScreen } from '../screens/LogInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
 import { VehicleDataScreen } from '../screens/VehicleDataScreen';
 import { SignUpSuccesfullyScreen } from '../screens/SignUpSuccesfullyScreen';
-import {TripScreen} from '../screens/TripScreen';
 import AuthContext from '../contexts/AuthContext';
-import { AuthService } from '../services/AuthService';
-import { UserToken } from '../models/user-token';
-import { AuthAction } from '../models/auth-action';
-import { HomeDriverScreen } from '../screens/HomeDriverScreen';
-//import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 
   const [state, dispatch] = React.useReducer(
-    (prevState: any, action: AuthAction) => {
+    (prevState: any, action: any) => {
       switch (action.type) {
         case 'RESTORE_TOKEN':
-          AuthService.setCurrentUserToken(action.userToken);
           return {
             ...prevState,
-            userToken: action.userToken,
+            userToken: action.token,
             isLoading: false,
           };
         case 'SIGN_IN':
-          AuthService.setCurrentUserToken(action.userToken);
           return {
             ...prevState,
             isSignout: false,
-            userToken: action.userToken,
+            userToken: action.token,
           };
         case 'SIGN_OUT':
-          AuthService.setCurrentUserToken(null);
           return {
             ...prevState,
             isSignout: true,
@@ -73,7 +66,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
-      dispatch({ type: 'RESTORE_TOKEN', userToken: userToken });
+      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
     };
 
     bootstrapAsync();
@@ -81,32 +74,27 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
   const authContext = React.useMemo(
     () => ({
-      logIn: async (email:string, password:string): Promise<string | null> => {
-        const userToken: UserToken | null = await AuthService.login(email, password);
+      logIn: async (email:string, password:string) => {
+        // In a production app, we need to send some data (usually username, password) to server and get a token
+        // We will also need to handle errors if sign in failed
+        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
+        // In the example, we'll use a dummy token
 
-        if (!userToken) {
-          return "Usuario o contraseña incorrectos";
-        }
-
-        const authAction: AuthAction = {userToken: userToken, type: 'SIGN_IN'};
-
-        dispatch(authAction);        
-
-        return null;
+        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
       },
-      signOut: () => dispatch({ type: 'SIGN_OUT', userToken: null }),
+      signOut: () => dispatch({ type: 'SIGN_OUT' }),
       signUp: async (_data: any) => {
         // In a production app, we need to send user data to server and get a token
         // We will also need to handle errors if sign up failed
         // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
         // In the example, we'll use a dummy token
 
-        dispatch({ type: 'SIGN_UP', userToken: null });
+        dispatch({ type: 'SIGN_UP', token: 'dummy-auth-token' });
       },
     }),
     []
   );
-  
+
   return (
       <AuthContext.Provider value={authContext}>
        <NavigationContainer
@@ -115,20 +103,9 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         <Stack.Navigator>
         {
           state.userToken !== null ? (
-            state.userToken.user.profile === "PASSENGER" ? 
-            (
-              <>
-                <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
-                <Stack.Screen name="TripScreen" component={TripScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              </>
-            )
-            :
-            (
-              <>
-                <Stack.Screen name="HomeDriver" component={HomeDriverScreen} options={{ headerShown: false }}/>
-              </>
-            )
-            
+            <>
+              <Stack.Screen name="ProfileNavBarScreen" component={ProfileNavBarScreen} options={{ headerShown: false }} />
+            </>
           ) : (
             <>
               <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
@@ -138,13 +115,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpSuccesfullyScreen" component={SignUpSuccesfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+
             </>
-          )   
-        }    
+          )
+        }
       </Stack.Navigator>
 
       </NavigationContainer>
     </AuthContext.Provider>
   );
 }
-

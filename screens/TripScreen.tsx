@@ -1,40 +1,35 @@
 import * as React from 'react';
 import { StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Pallete } from '../constants/Pallete';
-import DirectionBox from "../components/DirectionsBox";
 import { DirectionsBoxNative } from '../components/DirectionsBoxNative';
 
 const styles = StyleSheet.create({
   container: {
       flex: 1,
       justifyContent: 'center',
-      backgroundColor: Pallete.whiteColor,
-      padding: 20,
+      backgroundColor: Pallete.greenBackground,
+      padding: "5%",
     },
     contentContainer: {
       flex: 1,
-      backgroundColor: Pallete.whiteColor,
+      backgroundColor: Pallete.greenBackground,
     },
-    description: {
-      color: Pallete.contentColor,
-      fontSize: 16,
+    title: {
+      color: Pallete.darkColor,
       textAlign: 'center',
-    },
+      fontSize: 24
+  },
 });
 export const TripScreen = () => {
 
     return (
-      // <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={styles.container}>
             <View style={styles.contentContainer}>
-              {/* <DirectionBox></DirectionBox> */}
+              <Text style={styles.title}>Choose your next ride!</Text>
               <DirectionsBoxNative></DirectionsBoxNative>
             </View>
         </View>
-      // </GestureHandlerRootView>
-
     );
   }
 
