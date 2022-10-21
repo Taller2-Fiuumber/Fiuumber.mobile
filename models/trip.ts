@@ -1,14 +1,14 @@
 export interface Trip {
   
-  id: string;
+  _id: string;
   passengerId: string; // En postgresql son numbers
-  driverId: string; // En postgresql son numbers
+  driverId: string | undefined; // En postgresql son numbers
   fromLatitude: number;
   fromLongitude: number;
   toLatitude: number;
   toLongitude: number;
-  start: Date;
-  finish: Date;
+  start: Date | undefined;
+  finish: Date | undefined;
   subscription: any;
   status: string;
   finalPrice: number;
