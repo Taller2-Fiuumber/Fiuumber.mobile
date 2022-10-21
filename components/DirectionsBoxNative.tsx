@@ -85,7 +85,6 @@ export const DirectionsBoxNative = (): ReactElement => {
     if (!origin || !destination) return;
 
     try {
-      console.log(user.id.toString())
       let trip: Trip | null = {
         _id: "",
         passengerId: user.id.toString(),
