@@ -5,7 +5,8 @@ import { TripScreen } from '../screens/TripScreen';
 import { MyProfileScreen } from '../screens/MyProfileScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
+import AuthContext from '../contexts/AuthContext';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,12 +17,25 @@ const styles = StyleSheet.create({
     },
 });
 
+
 export const ProfileNavBarScreen = () => {
 
     const Drawer = createDrawerNavigator();
 
+    const { signOut } = React.useContext(AuthContext);
+
+    const CustomDrawerContent = (props: any) => {
+      return (
+        <DrawerContentScrollView {...props}>
+          <DrawerItemList {...props} />
+          <DrawerItem label="Log out" onPress={signOut} />
+        </DrawerContentScrollView>
+      );
+    }
+
+
     return (
-        <Drawer.Navigator useLegacyImplementation initialRouteName="Home">
+        <Drawer.Navigator useLegacyImplementation initialRouteName="Home" drawerContent={props => <CustomDrawerContent {...props} />}>
           <Drawer.Screen name="Home" component={TripScreen} />
           <Drawer.Screen name="My Profile" component={MyProfileScreen} />
           <Drawer.Screen name="My trips" component={MyProfileScreen} />

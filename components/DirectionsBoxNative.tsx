@@ -106,7 +106,7 @@ export const DirectionsBoxNative = (): ReactElement => {
         toLongitude: destination.longitude,
         start: new Date(),// Debería ser autogenerado en la DB
         finish: new Date(),// Debería ser autogenerado en la DB
-        subscription: "VIP",
+        subscription: "NORMAL",
         status: "PENDING",
         finalPrice: 0
       };
