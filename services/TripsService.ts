@@ -7,7 +7,8 @@ export const TripsService = {
     create: async (trip: Trip): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip`;
-            const tripReq = {
+              const tripReq2 =
+            {
                 "passengerId": trip.passengerId,
                 "driverId": trip.driverId,
                 "from_latitude": trip.fromLatitude,
@@ -17,23 +18,22 @@ export const TripsService = {
                 "start": trip.start,
                 "finish": trip.finish,
                 "subscription": trip.subscription,
-                // "status": trip.status,
+                "status": trip.status,
                 "finalPrice": trip.finalPrice
             };
-            const response = await axios.post(url, tripReq, HEADERS);
-            const tripResponse: Trip = response.data;
-            return tripResponse;
+            console.log(tripReq2);
+            return await (await axios.post(url, {...tripReq2}, HEADERS,)).data;
         } 
         catch (error: any) {
             console.error(error);
-            if (error && error.response && error.response.status == 401) return null;
+            // if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
     },
 
-    updateStatus: async (tripId: number, status: string): Promise<Trip | null> => {
+    updateStatus: async (tripId: string, status: string): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/trips/${tripId}/status`;
+            const url = `${URL_TRIPS}/trip/${tripId}/status`;
             const tripReq = {status};
             const response = await axios.patch(url, tripReq, HEADERS);
             const tripResponse: Trip = response.data;
@@ -45,9 +45,9 @@ export const TripsService = {
             throw error;
         }
     },
-    get: async (tripId: number): Promise<Trip | null> => {
+    get: async (tripId: string): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/trips/${tripId}`;
+            const url = `${URL_TRIPS}/trip/${tripId}`;
             const response = await axios.get(url, HEADERS);
             const tripResponse: Trip = response.data;
             return tripResponse;

@@ -5,6 +5,14 @@ import { StyleSheet, View, Text, Dimensions, } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
+import { TripsService } from "../services/TripsService";
+import { Trip } from "../models/trip";
+import { FirebaseService } from "../services/FirebaseService";
+import { set, ref } from "firebase/database";
+import axios from 'axios';// For API consuming
+import { HEADERS } from "../services/Constants";
+import { AuthService } from "../services/AuthService";
+import { User } from "../models/user";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -74,6 +82,43 @@ export const DirectionsBoxNative = (): ReactElement => {
   const [origin, setOrigin] =  React.useState<any>(null);
   const [destination, setDestination] =  React.useState<any>(null);
 
+  const addTripFirebase = (tripId: string, status: string) => {
+    const reference = ref(FirebaseService.db, `trips/${tripId}`);
+    set(reference, {
+      status: status,
+    });
+  }
+
+  const startTrip = async () => {
+    const user: User | undefined = AuthService.getCurrentUserToken()?.user;
+
+    if (!user) return;
+    if (!origin || !destination) return;
+
+    try {
+      let trip: Trip | null = {
+        _id: "",
+        passengerId: user.id.toString(),
+        driverId: "",
+        fromLatitude: origin.latitude,
+        fromLongitude: origin.longitude,
+        toLatitude: destination.latitude,
+        toLongitude: destination.longitude,
+        start: new Date(),// Debería ser autogenerado en la DB
+        finish: new Date(),// Debería ser autogenerado en la DB
+        subscription: "NORMAL",
+        status: "PENDING",
+        finalPrice: 0
+      };
+      trip = await TripsService.create(trip);
+      if (trip?._id) addTripFirebase(trip?._id, trip?.status);
+    }
+    catch(error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   return (
   <>
     <View style={styles.mainContainer}>
@@ -118,7 +163,7 @@ export const DirectionsBoxNative = (): ReactElement => {
 
         <Text style={styles.errorMessage}>{routeNotFound}</Text>
 
-        <Button mode="contained" style={styles.button} onPress={() => {}}>Get your Fiuumber!</Button>
+        <Button mode="contained" style={styles.button} onPress={startTrip}>Get your Fiuumber!</Button>
       </View>
 
     </View>

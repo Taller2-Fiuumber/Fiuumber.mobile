@@ -3,6 +3,8 @@ import { StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
 import { DirectionsBoxNative } from '../components/DirectionsBoxNative';
+import { User } from '../models/user';
+import { AuthService } from '../services/AuthService';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,15 +20,17 @@ const styles = StyleSheet.create({
     title: {
       color: Pallete.darkColor,
       textAlign: 'center',
-      fontSize: 24
+      fontSize: 18
   },
 });
 export const TripScreen = () => {
 
+    const user: User | undefined = AuthService.getCurrentUserToken()?.user;
+
     return (
         <View style={styles.container}>
             <View style={styles.contentContainer}>
-              <Text style={styles.title}>Choose your next ride!</Text>
+              <Text style={styles.title}>Welcome back {user?.firstName}!</Text>
               <DirectionsBoxNative></DirectionsBoxNative>
             </View>
         </View>

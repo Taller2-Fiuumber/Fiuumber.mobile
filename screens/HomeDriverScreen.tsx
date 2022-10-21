@@ -3,9 +3,21 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 import AuthContext from "../contexts/AuthContext";
+import { FirebaseService } from "../services/FirebaseService";
+import { ref, get, child } from "@firebase/database";
 
 export const HomeDriverScreen = ({ navigation }: NavigationProps) => {
 
+    // const []
+
+    const watchTrips = () => {
+        const reference = ref(FirebaseService.db, `trips`);
+        get(reference).then(snapshot => {
+            console.log(snapshot);
+        });
+    };
+
+    watchTrips();
   
   return (
     <>
@@ -103,4 +115,3 @@ export const HomeDriverScreen = ({ navigation }: NavigationProps) => {
     imgContainer: {width: '100%', height: 300, marginBottom: 50, alignItems: 'center', justifyContent: 'center'},
 
   });
-  
