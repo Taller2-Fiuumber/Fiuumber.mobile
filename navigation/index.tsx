@@ -104,11 +104,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         {
           state.userToken !== null ? (
             <>
-              <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+              {/* <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/> */}
+              <Stack.Screen name="ProfileNavBarScreen" component={ProfileNavBarScreen} options={{ headerShown: false }} />
             </>
           ) : (
             <>
-              <Stack.Screen name="ProfileNavBarScreen" component={ProfileNavBarScreen} options={{ headerShown: false }} />
               <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
               <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
               <Stack.Screen name="LogInScreen" component={LogInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
