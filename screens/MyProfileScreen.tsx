@@ -2,34 +2,42 @@ import * as React from 'react';
 import { StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
-import { DirectionsBoxNative } from '../components/DirectionsBoxNative';
 
 const styles = StyleSheet.create({
   container: {
       flex: 1,
       justifyContent: 'center',
-      backgroundColor: Pallete.greenBackground,
-      padding: "5%",
+      backgroundColor: Pallete.whiteColor,
+      padding: 20,
     },
     contentContainer: {
       flex: 1,
-      backgroundColor: Pallete.greenBackground,
+      backgroundColor: Pallete.whiteColor,
     },
     description: {
       color: Pallete.contentColor,
       fontSize: 16,
       textAlign: 'center',
     },
+    title: {
+      fontSize: 35,
+      fontWeight: 'bold',
+      color: Pallete.darkColor,
+      textAlign: "center",
+      marginBottom:'3%',
+      paddingBottom: "10%"
+    },
 });
-export const TripScreen = () => {
+export const MyProfileScreen = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.contentContainer}>
-              <DirectionsBoxNative></DirectionsBoxNative>
-            </View>
+             <Text style={styles.title}>Hello, passenger!</Text>
+
+
         </View>
+
     );
   }
 
-  export default TripScreen;
+  export default MyProfileScreen;

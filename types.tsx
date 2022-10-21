@@ -27,6 +27,9 @@ export type RootStackParamList = {
   RoleSelectionScreen: undefined;
   SignUpSuccesfullyScreen: undefined;
   TripScreen: undefined;
+  ProfileNavBarScreen: undefined;
+  MyProfileScreen: undefined;
+  HomeScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

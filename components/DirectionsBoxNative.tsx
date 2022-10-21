@@ -7,15 +7,32 @@ import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
+    position:"relative",
     flex: 1,
-    backgroundColor: Pallete.whiteColor,
+    height: "100%",
+    backgroundColor: Pallete.greenBackground,
   },
+
+  containerAutocomplete: {
+    flex: 0.3,
+    backgroundColor: Pallete.greenBackground,
+    paddingTop: "5%",
+    paddingBottom: "5%",
+    minWidth: 50,
+  },
+
+  containerMap: {
+    flex: 1,
+    height: "100%",
+    backgroundColor: Pallete.greenBackground,
+  },
+
   map: {
     flex: 1,
-    justifyContent: 'center',
-    padding: "10%",
-    backgroundColor: Pallete.whiteColor,
+    height: "80%",
+    paddingTop: "5%",
+    paddingBottom: "5%",
   },
   descriptionRoute: {
     color: Pallete.darkColor,
@@ -26,30 +43,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center"
   },
-  welcomeText: {
-    color: Pallete.darkColor,
-    fontWeight: 'bold',
-    margin: 10,
-    fontSize: 12
-  },
   inputText: {
+    position: 'relative',
     color: Pallete.darkBackground,
-    marginBottom: 14,
-    fontSize: 12
+    fontSize: 12,
+    width: '100%',
+    paddingTop: "5%",
+    paddingBottom: "5%",
   },
+
   button: {
     color: Pallete.darkBackground,
-    margin: 10,
+    margin: "5%",
   },
   autocomplete: {
-    // marginTop: 100,
-    // marginBottom: 0,
-    zIndex: 1
+    flex: 1,
+    width: '100%',
+    paddingTop: "10%",
+    paddingBottom: "5%",
   },
   containerInputs: {
-    marginTop: 80,
-    width: '100%',
-    height: 100
+    flex: 1,
   }
 
 });
@@ -65,47 +79,55 @@ export const DirectionsBoxNative = (): ReactElement => {
 
   return (
   <>
-    <View style={styles.container}>
-      <View style={styles.containerInputs}>
+    <View style={styles.mainContainer}>
+
+      <View style={styles.containerAutocomplete}>
         <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} onPress={(data, details = null) => {
-        const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
-        setOrigin(position);
-      }}></GooglePlacesInput>
-        <GooglePlacesInput placeholder="Destination" onPress={(data, details = null) => {
-        const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
-        setDestination(position);
-      }}></GooglePlacesInput>
+          const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
+          setOrigin(position);
+        }}></GooglePlacesInput>
+
+        <GooglePlacesInput placeholder="Destination" containerStyles={styles.autocomplete} onPress={(data, details = null) => {
+          const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
+          setDestination(position);
+        }}></GooglePlacesInput>
       </View>
 
-       <MapView
-          style={{marginTop: "10%", width: '100%', height: Dimensions.get('window').height - 500 /* (antes decia 260 en vez de 500!), se habia calculado asi: ALTO PANTALLA - (70 de la barra + 100 de inputs origin y destination + X de duration)*/}}
-          initialRegion={{
-            latitude: -34.6175841,
-            longitude: -58.3682286,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          {destination ? <Marker coordinate={destination} /> : <></>}
-          {origin ? <Marker coordinate={origin} /> : <></>}
-          {origin && destination ? 
-            <MapViewDirections
-              origin={origin}
-              destination={destination}
-              apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
-              strokeWidth={5}
-              strokeColor="hotpink"
-            />
-            : <></>
-          }
-          
-        </MapView>
+      <View style={styles.containerMap}>
+        <View style={styles.map}>
+          <MapView
+              style={{width: '100%', height: "80%"}}
+              initialRegion={{
+                latitude: -34.6175841,
+                longitude: -58.3682286,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+            >
+              {destination ? <Marker coordinate={destination} /> : <></>}
+              {origin ? <Marker coordinate={origin} /> : <></>}
+              {origin && destination ?
+                <MapViewDirections
+                  origin={origin}
+                  destination={destination}
+                  apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
+                  strokeWidth={5}
+                  strokeColor="hotpink"
+                />
+                : <></>
+              }
+          </MapView>
+        </View>
+
         <Text style={styles.descriptionRoute}>Duration: {duration}</Text>
         <Text style={styles.descriptionRoute}>Distance: {distance}</Text>
         <Text style={styles.errorMessage}>{routeNotFound}</Text>
 
         <Button mode="contained" style={styles.button} onPress={() => {}}>Get your Fiuumber!</Button>
+      </View>
+
     </View>
+
   </>
   );
 };
