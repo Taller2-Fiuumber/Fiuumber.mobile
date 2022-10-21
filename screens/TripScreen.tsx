@@ -15,17 +15,18 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: Pallete.greenBackground,
     },
-    description: {
-      color: Pallete.contentColor,
-      fontSize: 16,
+    title: {
+      color: Pallete.darkColor,
       textAlign: 'center',
-    },
+      fontSize: 24
+  },
 });
 export const TripScreen = () => {
 
     return (
         <View style={styles.container}>
             <View style={styles.contentContainer}>
+              <Text style={styles.title}>Choose your next ride!</Text>
               <DirectionsBoxNative></DirectionsBoxNative>
             </View>
         </View>

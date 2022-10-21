@@ -9,34 +9,27 @@ import MapViewDirections from 'react-native-maps-directions';
 const styles = StyleSheet.create({
   mainContainer: {
     position:"relative",
-    flex: 1,
     height: "100%",
     backgroundColor: Pallete.greenBackground,
   },
 
   containerAutocomplete: {
-    flex: 0.3,
+    position:"relative",
     backgroundColor: Pallete.greenBackground,
-    paddingTop: "5%",
-    paddingBottom: "5%",
+    paddingBottom: "10%",
     minWidth: 50,
   },
 
   containerMap: {
-    flex: 1,
-    height: "100%",
+    position:"relative",
+    height: "80%",
     backgroundColor: Pallete.greenBackground,
   },
 
   map: {
-    flex: 1,
+    position:"relative",
     height: "80%",
     paddingTop: "5%",
-    paddingBottom: "5%",
-  },
-  descriptionRoute: {
-    color: Pallete.darkColor,
-    fontSize: 12
   },
   errorMessage: {
     color: "#FF0000",
@@ -53,9 +46,13 @@ const styles = StyleSheet.create({
   },
 
   button: {
+    position:"relative",
+
     color: Pallete.darkBackground,
-    margin: "5%",
+    marginLeft: "5%",
+    marginRight: "5%",
   },
+
   autocomplete: {
     flex: 1,
     width: '100%',
@@ -119,8 +116,6 @@ export const DirectionsBoxNative = (): ReactElement => {
           </MapView>
         </View>
 
-        <Text style={styles.descriptionRoute}>Duration: {duration}</Text>
-        <Text style={styles.descriptionRoute}>Distance: {distance}</Text>
         <Text style={styles.errorMessage}>{routeNotFound}</Text>
 
         <Button mode="contained" style={styles.button} onPress={() => {}}>Get your Fiuumber!</Button>
