@@ -21,7 +21,6 @@ export const TripsService = {
                 "status": trip.status,
                 "finalPrice": trip.finalPrice
             };
-            console.log(tripReq2);
             return await (await axios.post(url, {...tripReq2}, HEADERS,)).data;
         } 
         catch (error: any) {
@@ -30,7 +29,6 @@ export const TripsService = {
             throw error;
         }
     },
-
     updateStatus: async (tripId: string, status: string): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}/status`;
