@@ -4,4 +4,5 @@ export const CONFIG = {
     // gatewayURL: "https://fiuumber-gateway-1.herokuapp.com",
     usersBasePath: "/api/users-service",
     tripsBasePath: "/api/trips",
+    bypassLogin: false, // Setear en true para testear
 };
