@@ -2,6 +2,8 @@ import * as React from 'react';
 import { StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
+import { User } from '../models/user';
+import { AuthService } from '../services/AuthService';
 
 const styles = StyleSheet.create({
   container: {
@@ -30,9 +32,11 @@ const styles = StyleSheet.create({
 });
 export const MyProfileScreen = () => {
 
+  const user: User | undefined = AuthService.getCurrentUserToken()?.user;
+
     return (
         <View style={styles.container}>
-             <Text style={styles.title}>Hello, passenger!</Text>
+             <Text style={styles.title}>Hello, {user?.profile}!</Text>
 
 
         </View>
