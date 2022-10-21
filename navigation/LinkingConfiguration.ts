@@ -17,6 +17,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       VehicleDataScreen: 'VehicleData',
       SignUpSuccesfullyScreen: 'SignUpSuccesfully',
       TripScreen: 'Trip',
+      MyProfileScreeen: 'MyProfile',
     //   Root: {
     //     screens: {
     //       TabOne: {
@@ -33,7 +34,7 @@ const linking: LinkingOptions<RootStackParamList> = {
     //   },
     //   Modal: 'modal',
     //   NotFound: '*',
-      
+
     }
   },
 };
