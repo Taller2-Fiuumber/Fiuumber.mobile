@@ -8,7 +8,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import { TripsService } from "../services/TripsService";
 import { Trip } from "../models/trip";
 import { FirebaseService } from "../services/FirebaseService";
-import { set, ref, get, onValue, onChildAdded } from "firebase/database";
+import { set, ref, onChildAdded, query, limitToLast } from "firebase/database";
 import axios from 'axios';// For API consuming
 import { HEADERS } from "../services/Constants";
 import { AuthService } from "../services/AuthService";
@@ -89,6 +89,7 @@ export const DirectionsBoxNative = (): ReactElement => {
   const addTripFirebase = (tripId: string, status: string) => {
     const reference = ref(FirebaseService.db, `trips/${tripId}`);
     set(reference, {
+      tripId: tripId,
       status: status,
     });
   }
@@ -96,7 +97,6 @@ export const DirectionsBoxNative = (): ReactElement => {
 
   const startTrip = async () => {
     
-    showModal();
     if (!user) return;
     if (!origin || !destination) return;
 
@@ -116,7 +116,10 @@ export const DirectionsBoxNative = (): ReactElement => {
         finalPrice: 0
       };
       trip = await TripsService.create(trip);
-      if (trip?._id) addTripFirebase(trip?._id, trip?.status);
+      if (trip?._id) {
+        addTripFirebase(trip?._id, trip?.status);
+        showModal();
+      }
       
     }
     catch(error) {
@@ -125,11 +128,11 @@ export const DirectionsBoxNative = (): ReactElement => {
     }
   }
 
-  const watchTrips = () => {
-      const reference = ref(FirebaseService.db, `/trips/{tripID}`);
-      onChildAdded(reference, snapshot => {
-          console.log("NUEVOO", snapshot);
-          //setNotification(snapshot.key);
+  const watchNewTrips = () => {
+      const reference = ref(FirebaseService.db, `/trips`);
+      onChildAdded(query(reference), snapshot => {
+        // const tripStatus: {tripId: number, status: string} = snapshot.val();
+        console.log(snapshot.val());
       });
   };
 
@@ -138,7 +141,7 @@ export const DirectionsBoxNative = (): ReactElement => {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  if (user?.profile === "DRIVER") watchTrips();
+  if (user?.profile === "DRIVER") watchNewTrips();
 
   return (
   <>
