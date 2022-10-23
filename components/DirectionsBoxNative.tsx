@@ -1,6 +1,6 @@
 import React, { FC, ReactElement} from "react";
 import { Pallete } from "../constants/Pallete";
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, Modal, Portal , Provider} from 'react-native-paper';
 import { StyleSheet, View, Text, Dimensions, } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
@@ -13,12 +13,14 @@ import axios from 'axios';// For API consuming
 import { HEADERS } from "../services/Constants";
 import { AuthService } from "../services/AuthService";
 import { User } from "../models/user";
+import FindTripModal from "../modals/FindTripModal";
 
 const styles = StyleSheet.create({
   mainContainer: {
     position:"relative",
     height: "100%",
     backgroundColor: Pallete.greenBackground,
+    padding: "5%",
   },
 
   containerAutocomplete: {
@@ -94,7 +96,7 @@ export const DirectionsBoxNative = (): ReactElement => {
 
   const startTrip = async () => {
     
-
+    showModal();
     if (!user) return;
     if (!origin || !destination) return;
 
@@ -115,6 +117,7 @@ export const DirectionsBoxNative = (): ReactElement => {
       };
       trip = await TripsService.create(trip);
       if (trip?._id) addTripFirebase(trip?._id, trip?.status);
+      
     }
     catch(error) {
       console.error(error);
@@ -130,11 +133,21 @@ export const DirectionsBoxNative = (): ReactElement => {
       });
   };
 
+  const [visible, setVisible] = React.useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
   if (user?.profile === "DRIVER") watchTrips();
 
   return (
   <>
+  <Provider>
+    <Portal>
+      <FindTripModal visible={visible} onDismiss={hideModal} contentContainerStyle={{}}></FindTripModal>
+    </Portal>
     <View style={styles.mainContainer}>
+   
       {
         user?.profile === "PASSENGER"  ? (<>
          <View style={styles.containerAutocomplete}>
@@ -180,15 +193,15 @@ export const DirectionsBoxNative = (): ReactElement => {
           </MapView>
         </View>
 
-        <Text style={styles.errorMessage}>{routeNotFound}</Text>
+        <Text style={styles.errorMessage}>{routeNotFound}</Text>    
         
         { user?.profile === "PASSENGER" ?
             <Button mode="contained" style={styles.button} onPress={startTrip}>Get your Fiuumber!</Button> : <></>
         }
       </View>
-
     </View>
-
+  </Provider>
+    
   </>
   );
 };
