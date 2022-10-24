@@ -24,8 +24,7 @@ export const TripsService = {
             return await (await axios.post(url, {...tripReq2}, HEADERS,)).data;
         } 
         catch (error: any) {
-            console.error(error);
-            // if (error && error.response && error.response.status == 401) return null;
+            console.log(`TripsService create(): ${error}`);
             throw error;
         }
     },
@@ -38,7 +37,7 @@ export const TripsService = {
             return tripResponse;
         } 
         catch (error: any) {
-            console.error(error);
+            console.log(`TripsService updateStatus(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
@@ -51,7 +50,7 @@ export const TripsService = {
             return tripResponse;
         } 
         catch (error: any) {
-            console.error(error);
+            console.log(`TripsService get(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
@@ -67,7 +66,7 @@ export const TripsService = {
             return tripResponse;
         } 
         catch (error: any) {
-            console.error(error);
+            console.log(`TripsService getMyTrips(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }

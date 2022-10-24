@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       backgroundColor: Pallete.greenBackground,
-      padding: "5%",
     },
     contentContainer: {
       flex: 1,

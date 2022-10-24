@@ -1,24 +1,23 @@
-import React, { FC, ReactElement} from "react";
+import React, { ReactElement} from "react";
 import { Pallete } from "../constants/Pallete";
-import { TextInput, Button } from 'react-native-paper';
-import { StyleSheet, View, Text, Dimensions, } from "react-native";
+import { Button, Portal , Provider} from 'react-native-paper';
+import { StyleSheet, View, } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
-import { TripsService } from "../services/TripsService";
-import { Trip } from "../models/trip";
 import { FirebaseService } from "../services/FirebaseService";
-import { set, ref, get, onValue, onChildAdded } from "firebase/database";
-import axios from 'axios';// For API consuming
-import { HEADERS } from "../services/Constants";
+import { ref, onChildAdded, query, limitToFirst } from "firebase/database";
 import { AuthService } from "../services/AuthService";
 import { User } from "../models/user";
+import FindTripModal from "../modals/FindTripModal";
+import RequestedTripModal from "../modals/RequestedTripModal";
 
 const styles = StyleSheet.create({
   mainContainer: {
     position:"relative",
     height: "100%",
     backgroundColor: Pallete.greenBackground,
+    padding: "5%",
   },
 
   containerAutocomplete: {
@@ -55,7 +54,6 @@ const styles = StyleSheet.create({
 
   button: {
     position:"relative",
-
     color: Pallete.darkBackground,
     marginLeft: "5%",
     marginRight: "5%",
@@ -75,65 +73,54 @@ const styles = StyleSheet.create({
 
 export const DirectionsBoxNative = (): ReactElement => {
 
-  const [distance, setDistance] = React.useState('');
-  const [duration, setDuration] =  React.useState('');
-  const [routeNotFound, setRouteNotFound] =  React.useState('');
-
-  const [notification, setNotification] =  React.useState<string | null>(null);
+  const user: User | undefined = AuthService.getCurrentUserToken()?.user;
 
   const [origin, setOrigin] =  React.useState<any>(null);
   const [destination, setDestination] =  React.useState<any>(null);
 
-  const addTripFirebase = (tripId: string, status: string) => {
-    const reference = ref(FirebaseService.db, `trips/${tripId}`);
-    set(reference, {
-      status: status,
-    });
-  }
-  const user: User | undefined = AuthService.getCurrentUserToken()?.user;
+  const [findTripvisible, setFindTripVisible] = React.useState(false);
+  const [requestedTripvisible, setRequestedTripVisible] = React.useState(false);
+  const [requestedTripId, setRequestedTripId] = React.useState("");
+  const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
 
-  const startTrip = async () => {
-    
+  const showFindTripModal = () => setFindTripVisible(true);
+  const hideFindTripModal = () => setFindTripVisible(false);
 
-    if (!user) return;
-    if (!origin || !destination) return;
-
-    try {
-      let trip: Trip | null = {
-        _id: "",
-        passengerId: user.id.toString(),
-        driverId: "",
-        fromLatitude: origin.latitude,
-        fromLongitude: origin.longitude,
-        toLatitude: destination.latitude,
-        toLongitude: destination.longitude,
-        start: new Date(),// Debería ser autogenerado en la DB
-        finish: new Date(),// Debería ser autogenerado en la DB
-        subscription: "NORMAL",
-        status: "PENDING",
-        finalPrice: 0
-      };
-      trip = await TripsService.create(trip);
-      if (trip?._id) addTripFirebase(trip?._id, trip?.status);
-    }
-    catch(error) {
-      console.error(error);
-      throw error;
-    }
+  const showRequestedTripModal = (tripId: string) => {
+    setRequestedTripVisible(true);
+    setRequestedTripId(tripId);
   }
 
-  const watchTrips = () => {
-      const reference = ref(FirebaseService.db, `/trips/{tripID}`);
-      onChildAdded(reference, snapshot => {
-          console.log("NUEVOO", snapshot);
-          //setNotification(snapshot.key);
+  const hideRequestedTripModal = () => {
+    rejectedTrips.push(requestedTripId);
+    setRejectedTrips(rejectedTrips);
+    setRequestedTripId("");
+    setRequestedTripVisible(false);
+  }
+
+  const watchForNewTrips = () => {
+      const reference = ref(FirebaseService.db, `/trips`);
+      onChildAdded(query(reference), snapshot => {
+        const tripStatus: {tripId: string, status: string} | null = snapshot.val();
+        if (tripStatus && !requestedTripvisible && !rejectedTrips.find(t => t == tripStatus?.tripId)) {
+          showRequestedTripModal(tripStatus.tripId);
+        }
       });
   };
 
-  if (user?.profile === "DRIVER") watchTrips();
+  React.useEffect(() => {
+    if (user?.profile === "DRIVER") {
+      watchForNewTrips();
+    }
+  }, []);
 
   return (
   <>
+  <Provider>
+    <Portal>
+      {origin && destination && findTripvisible ? <FindTripModal visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination}></FindTripModal> : <></>}      
+      {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
+    </Portal>
     <View style={styles.mainContainer}>
       {
         user?.profile === "PASSENGER"  ? (<>
@@ -150,9 +137,6 @@ export const DirectionsBoxNative = (): ReactElement => {
         </View>
         </>) : <></>
       }
-     {
-      notification ? (<><Text>{notification}</Text></>)  : (<></>)
-     }
 
       <View style={styles.containerMap}>
         <View style={styles.map}>
@@ -179,16 +163,14 @@ export const DirectionsBoxNative = (): ReactElement => {
               }
           </MapView>
         </View>
-
-        <Text style={styles.errorMessage}>{routeNotFound}</Text>
         
         { user?.profile === "PASSENGER" ?
-            <Button mode="contained" style={styles.button} onPress={startTrip}>Get your Fiuumber!</Button> : <></>
+            <Button mode="contained" style={styles.button} onPress={showFindTripModal}>Get your Fiuumber!</Button> : <></>
         }
       </View>
-
     </View>
-
+  </Provider>
+    
   </>
   );
 };
