@@ -2,11 +2,11 @@ import React, { ReactElement} from "react";
 import { Pallete } from "../constants/Pallete";
 import { Button, Portal , Provider, Text } from 'react-native-paper';
 import { StyleSheet, View, } from "react-native";
-import MapView, { LatLng, Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
 import { FirebaseService } from "../services/FirebaseService";
-import { ref, onChildAdded, query, limitToFirst } from "firebase/database";
+import { ref, onChildAdded, query } from "firebase/database";
 import { AuthService } from "../services/AuthService";
 import { User } from "../models/user";
 import FindTripModal from "../modals/FindTripModal";
@@ -164,6 +164,7 @@ export const DirectionsBoxNative = (): ReactElement => {
         </View>
         </>) : <></>
       }
+      
       <View style={styles.containerMap}>
         <View style={styles.map}>
           <MapView
