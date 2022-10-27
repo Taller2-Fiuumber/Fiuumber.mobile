@@ -29,7 +29,6 @@ export const TripScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.contentContainer}>
-              <Text style={styles.title}>Welcome back {user?.firstName}!</Text>
               <DirectionsBoxNative></DirectionsBoxNative>
             </View>
         </View>
