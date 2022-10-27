@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
     backgroundColor: Pallete.greenBackground,
   },
   map: {
-    position:"relative",
     height: "55%",
-    zIndex: 10
+    zIndex: 10,
+    minHeight: 300
   },
   button: {
     color: Pallete.darkBackground,
