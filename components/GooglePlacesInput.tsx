@@ -3,27 +3,22 @@ import { GooglePlacesAutocomplete, GooglePlaceData, GooglePlaceDetail } from 're
 import { StyleSheet } from "react-native";
 import { Pallete } from "../constants/Pallete";
 
-const styles = StyleSheet.create({
-  listView: {
-    position: 'absolute',
-    zIndex: 9999,
-    top: 40
-  }
-});
+const styles = StyleSheet.create({});
 
 interface GooglePlacesInputProps {
   onPress: ((data: GooglePlaceData, detail: GooglePlaceDetail | null) => void) | undefined;
   placeholder: string;
   containerStyles?: any;
+  listView?: any;
 }
 
-const defaultProps: GooglePlacesInputProps = {placeholder: 'Search', containerStyles: {}, onPress: undefined};
+const defaultProps: GooglePlacesInputProps = {placeholder: 'Search', containerStyles: {}, listView: {}, onPress: undefined};
 
-export const GooglePlacesInput: FC<GooglePlacesInputProps> = ({placeholder, containerStyles, onPress}: GooglePlacesInputProps): ReactElement => {
+export const GooglePlacesInput: FC<GooglePlacesInputProps> = ({placeholder, containerStyles, listView, onPress}: GooglePlacesInputProps): ReactElement => {
   return (
     <GooglePlacesAutocomplete
       placeholder={placeholder}
-      styles={{listView: styles.listView, container: containerStyles, color: Pallete.darkColor, fontWeight: "bold",}}
+      styles={{listView: listView, container: containerStyles, color: Pallete.darkColor, fontWeight: "bold",}}
       onPress={onPress}
       query={{
         key: 'AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I',

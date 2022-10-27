@@ -53,7 +53,7 @@ export const FindTripModal: FC<FindTripModalPros> = ({visible, onDismiss, conten
             finish: new Date(),// Debería ser autogenerado en la DB
             subscription: "NORMAL",
             status: "PENDING",
-            finalPrice: 420.0, // Deberia calcularse en back
+            finalPrice: 0, // Deberia calcularse en back
           };
 
           return await TripsService.create(trip);
@@ -74,11 +74,13 @@ export const FindTripModal: FC<FindTripModalPros> = ({visible, onDismiss, conten
 
     const requestTrip = async () => {
 
-        let createdTrip: Trip | null = await addTrip();
+        const createdTrip: Trip | null = await addTrip();
 
         if (createdTrip) {
             await addTripToFirebase(createdTrip?._id, createdTrip?.status);
         }
+
+
     }
 
     React.useEffect(() => {

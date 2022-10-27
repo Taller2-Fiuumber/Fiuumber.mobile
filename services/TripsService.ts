@@ -30,8 +30,8 @@ export const TripsService = {
     },
     updateStatus: async (tripId: string, status: string): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/trip/${tripId}/status`;
-            const tripReq = {status};
+            const url = `${URL_TRIPS}/trip/${tripId}`;
+            const tripReq = {"status": status};
             const response = await axios.patch(url, tripReq, HEADERS);
             const tripResponse: Trip = response.data;
             return tripResponse;
@@ -68,6 +68,19 @@ export const TripsService = {
         catch (error: any) {
             console.log(`TripsService getMyTrips(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+    getFare: async (fromLatitude: number, toLatitude: number, fromLongitude: number, toLongitude: number): Promise<number> => {
+        try {
+            const url = `${URL_TRIPS}/fare?from_latitude=${fromLatitude}&to_latitude=${toLatitude}&from_longitude=${fromLongitude}&to_longitude=${toLongitude}`;
+            const response = await axios.get(url, HEADERS);
+            const tripResponse: number = response.data;
+            return tripResponse;
+        } 
+        catch (error: any) {
+            console.log(`TripsService getFare(): ${error}`);
+            if (error && error.response && error.response.status == 401) return 0;
             throw error;
         }
     },

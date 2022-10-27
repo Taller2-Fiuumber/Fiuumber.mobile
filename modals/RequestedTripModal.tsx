@@ -34,11 +34,14 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({visible, onDism
     
     const [user, setUser] = React.useState<User | null>();
     const [trip, setTrip] = React.useState<Trip | null>();
+    // const [fare, setFare] = React.useState<number>();
 
     const loadData = async () => {
         const trip: Trip | null = await TripsService.get(tripId);
 
         if (trip) {
+            // const tripFare: number = await TripsService.getFare(tripId);
+            // setFare(tripFare);
             setTrip(trip);
             const userId: number = Number.parseInt(trip.passengerId);
             const user: User | null = await UsersService.getUser(userId);
@@ -55,7 +58,7 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({visible, onDism
             <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={{...defaultStyles, ...contentContainerStyle}}>
                 {user ? <Text variant="titleSmall" style={styles.title}>{user.firstName} {user.lastName} wants to travel</Text> : <></>}
                 {trip ?  <Text variant="titleMedium">15 min</Text> : <></>}
-                {trip ?  <Text variant="displayLarge">$ {trip?.finalPrice}</Text> : <></>}
+                {/* {trip ?  <Text variant="displayLarge">$ {fare}</Text> : <></>} */}
                 <Button style={styles.cancelButton} textColor='red' mode='outlined' onPress={onDismiss}>
                     DECLINE
                 </Button>
