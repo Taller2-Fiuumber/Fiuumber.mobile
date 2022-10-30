@@ -7,7 +7,7 @@ export const TripsService = {
     create: async (trip: Trip): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip`;
-              const tripReq2 =
+              const tripReq =
             {
                 "passengerId": trip.passengerId,
                 "driverId": trip.driverId,
@@ -21,7 +21,10 @@ export const TripsService = {
                 "status": trip.status,
                 "finalPrice": trip.finalPrice
             };
-            return await (await axios.post(url, {...tripReq2}, HEADERS,)).data;
+            const response = await axios.post(url, {...tripReq}, );
+            console.log(url);
+            console.log(response.data);
+            return response.data;
         } 
         catch (error: any) {
             console.log(`TripsService create(): ${error}`);
@@ -72,14 +75,14 @@ export const TripsService = {
         }
     },
     getFare: async (fromLatitude: number, toLatitude: number, fromLongitude: number, toLongitude: number): Promise<number> => {
+        const url = `${URL_TRIPS}/fare?from_latitude=${fromLatitude}&to_latitude=${toLatitude}&from_longitude=${fromLongitude}&to_longitude=${toLongitude}`;
         try {
-            const url = `${URL_TRIPS}/fare?from_latitude=${fromLatitude}&to_latitude=${toLatitude}&from_longitude=${fromLongitude}&to_longitude=${toLongitude}`;
             const response = await axios.get(url, HEADERS);
             const tripResponse: number = response.data;
             return tripResponse;
         } 
         catch (error: any) {
-            console.log(`TripsService getFare(): ${error}`);
+            console.log(`TripsService getFare(): ${url} ${error}`);
             if (error && error.response && error.response.status == 401) return 0;
             throw error;
         }

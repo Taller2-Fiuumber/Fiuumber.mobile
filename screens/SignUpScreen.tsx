@@ -72,12 +72,12 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
   //--------------------------------------------------------------------------------
   //Esto lo vamos a refactorizar y hacer todo el post y get en otro modulo
   
-  let url = process.env.API_USERS_URL;   
-  React.useEffect(() => {
-    axios.get(`${(url + "/users")}/1`).then((response) => {
-      setPost(response.data);
-    });
-  }, []);
+  // let url = process.env.API_USERS_URL;   
+  // React.useEffect(() => {
+  //   axios.get(`${(url + "/users")}/1`).then((response) => {
+  //     setPost(response.data);
+  //   });
+  // }, []);
 
   
 
