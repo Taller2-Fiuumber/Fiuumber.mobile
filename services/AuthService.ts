@@ -2,6 +2,7 @@ import axios from 'axios';// For API consuming
 import { UserToken } from '../models/user-token';
 import { HEADERS, URL_AUTH, URL_USERS } from "./Constants";
 import { Passenger } from '../models/passenger';
+import { Driver } from '../models/driver';
 
 let _userToken: UserToken | null;
 export const AuthService = {
@@ -51,5 +52,26 @@ export const AuthService = {
             console.log(error);
             throw error;
         }
-    }
+    },
+    updateDriver: async (driver: Driver): Promise<boolean> => {
+        try {
+            if (_userToken != null) {
+                const url = `${URL_USERS}/driver`;
+                const header = {
+                    headers: {
+                     "Accept": 'application/json',
+                     "auth-token": _userToken.token
+                    },
+                }
+                await axios.put(url, driver, header);
+                _userToken.user = driver;
+                return true;
+            }
+            return false;
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },
 };

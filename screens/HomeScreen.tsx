@@ -3,7 +3,6 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 import AuthContext from "../contexts/AuthContext";
-import { MyProfileScreen } from '../screens/MyProfileScreen';
 import { DirectionsBoxNative } from '../components/DirectionsBoxNative';
 
 export const HomeScreen = ({ navigation }: NavigationProps) => {

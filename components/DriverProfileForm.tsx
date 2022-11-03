@@ -7,14 +7,14 @@ import {  StyleSheet, Text, View} from "react-native";
 import { User } from '../models/user';
 
 // import * as dotenv from "dotenv";
-import { Passenger } from "../models/passenger";
+import { Driver } from "../models/driver";
 import { Wallet } from "../models/wallet";
 import { AuthService } from "../services/AuthService";
 
-interface PassengerProfileFormProps {
+interface DriverProfileFormProps {
 }
 
-export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElement => {
+export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement => {
   let user = AuthService.getCurrentUserToken()?.user;
 
   const [showPasswordErrorText, setPasswordErrorText] = useState(false);
@@ -90,8 +90,8 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
 
 
       if (_userId) {
-        const passenger: Passenger = new Passenger(_userId, email, firstName, lastName, "address", password, "username", new Wallet("", "address", "password"));
-        await AuthService.updatePassenger(passenger);
+        const driver: Driver = new Driver(_userId, email, firstName, lastName, "address", password, "username", new Wallet("", "address", "password"));
+        await AuthService.updateDriver(driver);
         setPassword("")
         user = AuthService.getCurrentUserToken()?.user;
       }
@@ -130,6 +130,11 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
       <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setPasswordChecker(text)}/>
      }
 
+
+    <Text style={styles.subtitle}>Car information</Text>
+
+
+
       {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
       {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
       {showPasswordErrorText ? <Text style={styles.error}>Passwords do not match. Retry!</Text> : null}
@@ -140,7 +145,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
   )
 };
 
-export default PassengerProfileForm;
+export default DriverProfileForm;
 
 const styles = StyleSheet.create({
   container: {

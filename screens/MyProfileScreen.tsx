@@ -5,6 +5,8 @@ import { Pallete } from '../constants/Pallete';
 import { User } from '../models/user';
 import { AuthService } from '../services/AuthService';
 import {PassengerProfileForm} from "../components/PassengerProfileForm";
+import {DriverProfileForm} from "../components/DriverProfileForm";
+
 import { useState } from "react";
 import AuthContext from "../contexts/AuthContext";
 
@@ -33,12 +35,6 @@ const styles = StyleSheet.create({
       textAlign: "center",
       margin: '3%',
     },
-    subtitle: {
-      fontSize: 25,
-      color: Pallete.greenBackground,
-      textAlign: "left",
-      margin:'3%',
-    },
 });
 
 export const MyProfileScreen = () => {
@@ -52,14 +48,16 @@ export const MyProfileScreen = () => {
     //setMessage(message);
   }
 
+    const user = AuthService.getCurrentUserToken()?.user;
 
     return (
       <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
-             <Text style={styles.subtitle}>Personal information</Text>
-
-              <PassengerProfileForm></PassengerProfileForm>
+          { user?.profile == "PASSENGER" ?
+            <PassengerProfileForm></PassengerProfileForm> :
+            <DriverProfileForm></DriverProfileForm>
+          }
         </View>
         </ScrollView>
     </SafeAreaView>
