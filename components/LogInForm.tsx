@@ -31,7 +31,7 @@ export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): Re
     <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
     {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
     <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onLogin}>Log In</Button>
-    </>      
+    </>
   );
 };
 
@@ -41,9 +41,8 @@ const styles = StyleSheet.create({
   error: {
     color: '#FF0000',
     marginBottom: 10,
-    textAlign: 'center', 
+    textAlign: 'center',
     justifyContent: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 15,
   },
 });

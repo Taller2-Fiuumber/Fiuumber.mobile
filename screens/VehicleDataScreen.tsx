@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     header: {
       color: '#000',
       marginBottom: 20,
-      textAlign: 'center', 
+      textAlign: 'center',
       fontSize: 30
   },
     title: {
@@ -48,18 +48,17 @@ const styles = StyleSheet.create({
     error: {
       color: '#FF0000',
       marginBottom: 10,
-      textAlign: 'center', 
+      textAlign: 'center',
       justifyContent: 'center',
-      fontSize: 20,
-      fontWeight: 'bold',
+      fontSize: 15,
     },
 });
 export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
 
-  const [domain, setDomain] = useState<string>("");  
-  const [brandAndModel, setBrandAndModel] = useState<string>("");  
-  const [license, setLicense] = useState<string>("");  
+  const [domain, setDomain] = useState<string>("");
+  const [brandAndModel, setBrandAndModel] = useState<string>("");
+  const [license, setLicense] = useState<string>("");
 
   const vehicleDataValidation = () => {
     if (domain == "" || brandAndModel == "" || license == ""){
@@ -88,5 +87,4 @@ export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
     );
   }
 
-  
-  
+

@@ -1,16 +1,21 @@
 import * as React from 'react';
-import { StyleSheet } from "react-native";
+import { StyleSheet, SafeAreaView, ScrollView, StatusBar} from "react-native";
 import { Text, View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
 import { User } from '../models/user';
 import { AuthService } from '../services/AuthService';
+import {UserBasicInfoForm} from "../components/UserBasicInfoForm";
+import { useState } from "react";
+import AuthContext from "../contexts/AuthContext";
 
 const styles = StyleSheet.create({
   container: {
       flex: 1,
-      justifyContent: 'center',
       backgroundColor: Pallete.whiteColor,
-      padding: 20,
+      paddingTop: StatusBar.currentHeight,
+    },
+    scrollView: {
+      marginHorizontal: 20,
     },
     contentContainer: {
       flex: 1,
@@ -26,21 +31,39 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       color: Pallete.darkColor,
       textAlign: "center",
-      marginBottom:'3%',
-      paddingBottom: "10%"
+      margin: '3%',
+    },
+    subtitle: {
+      fontSize: 25,
+      color: Pallete.greenBackground,
+      textAlign: "left",
+      margin:'3%',
     },
 });
+
 export const MyProfileScreen = () => {
+
+  const { logIn } = React.useContext(AuthContext);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const handleEditUserBasicInfo = async (user: User) => {
+    //const message = await logIn(email, password);
+    //setMessage(message);
+  }
 
   const user: User | undefined = AuthService.getCurrentUserToken()?.user;
 
     return (
+      <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
-             <Text style={styles.title}>Hello, {user?.profile}!</Text>
+             <Text style={styles.subtitle}>Personal information</Text>
 
-
+              <UserBasicInfoForm user={user}></UserBasicInfoForm>
         </View>
-
+        </ScrollView>
+    </SafeAreaView>
     );
   }
 

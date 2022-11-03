@@ -7,19 +7,16 @@ import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
 import { NavigationProps } from "../types";
 import { TextInput, Button } from "react-native-paper";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import axios from "axios";
 
-// import * as dotenv from "dotenv";
 import { Passenger } from "../models/passenger";
 import { Wallet } from "../models/wallet";
 import { StorageService } from "../services/StorageService";
 
-// dotenv.config();
+export const PassengerProfileScreen= ({ navigation }: NavigationProps) => {
+  const [shouldEdit, setShouldEdit] = useState(false);
 
-
-
-export const SignUpScreen= ({ navigation }: NavigationProps) => {
   const [showPasswordErrorText, setPasswordErrorText] = useState(false);
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
   const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
@@ -32,6 +29,12 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
 
   const [post, setPost] = React.useState(null);
 
+  const onEdit = async () => {
+    setShouldEdit(true)
+  }
+  const onSave = async () => {
+    setShouldEdit(false)
+  }
 
   const onSignUp = async () => {
     if (name == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
@@ -50,54 +53,38 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
-      // Lógica de guardarse la info que ingrese (ya validada)
-      // let url = process.env.API_USERS_URL;
-      // axios.post((url + "/users")  || "", {
-      //   name: name,
-      //   lastName: lastName,
-      //   email: email,
-      //   password: password,
-      // })
-      // .then((response) => {
-      //   setPost(response.data);
-      // });
-      //-----------------------------------------------------
-
       const passenger: Passenger = new Passenger(-1, email, name, lastName, "", new Wallet("", "address", "password"), password);
       await StorageService.storeData("temp_user", JSON.stringify(passenger));
       navigation.navigate('RoleSelectionScreen')
     }
 
   }
-  //--------------------------------------------------------------------------------
-  //Esto lo vamos a refactorizar y hacer todo el post y get en otro modulo
-
-  // let url = process.env.API_USERS_URL;
-  // React.useEffect(() => {
-  //   axios.get(`${(url + "/users")}/1`).then((response) => {
-  //     setPost(response.data);
-  //   });
-  // }, []);
+  let url = process.env.API_USERS_URL;
+  React.useEffect(() => {
+    axios.get(`${(url + "/users")}/1`).then((response) => {
+      setPost(response.data);
+    });
+  }, []);
 
 
-
-
-
-  //-------------------------------------------------------------------------------
     return (
       <>
       <View style={styles.container}>
         <Text style={styles.header}>Welcome!</Text>
         <Text style={styles.title}>Sign up for the Fiuumber app</Text>
-        <TextInput label="Enter your name" style={{marginBottom: 20}} onChangeText={(text) => setName(text)}/>
-        <TextInput label="Last name" style={{marginBottom: 20}} onChangeText={(text) => setLastName(text)}/>
-        <TextInput label="Email or phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
-        <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
-        <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPasswordChecker(text)}/>
+
+        <TextInput label="Name" style={{marginBottom: 20}} onChangeText={(text) => setName(text)}/>
+        <TextInput label="Last Name" style={{marginBottom: 20}} onChangeText={(text) => setLastName(text)}/>
+        <TextInput label="Email" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
+        <TextInput label="Phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
+
         {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
         {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
         {showPasswordErrorText ? <Text style={styles.error}>Passwords do not match. Retry!</Text> : null}
-        <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onSignUp}>Next</Button>
+
+        <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onEdit}>Edit</Button>
+
+        <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onSave}>Save</Button>
       </View>
       </>
 

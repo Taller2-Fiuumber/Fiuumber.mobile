@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
         color: '#000',
         marginBottom: 70,
         textAlign: 'center',
-        fontSize: 24 
+        fontSize: 24
     },
 });
 export const LogInScreen = () => {
@@ -43,4 +43,3 @@ export const LogInScreen = () => {
       </>
     );
   }
-  
