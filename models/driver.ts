@@ -1,7 +1,7 @@
 import { User } from "./user";
 import { Wallet } from "./wallet";
 
-export class Passenger extends User {
+export class Driver extends User {
   profile: string;
   wallet: Wallet;
 
@@ -19,6 +19,6 @@ export class Passenger extends User {
     super(userId, email, firstName, lastName, address, password, username, wallet.walletPrivateKey);
     this.wallet = wallet;
 
-    this.profile = "PASSENGER";
+    this.profile = "Driver";
   }
 }

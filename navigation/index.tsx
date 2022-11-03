@@ -19,6 +19,9 @@ import { UserToken } from '../models/user-token';
 import { AuthAction } from '../models/auth-action';
 import { AuthService } from '../services/AuthService';
 import { CONFIG } from '../config';
+import { User } from '../models/user';
+import { Passenger } from '../models/passenger';
+import { Wallet } from '../models/wallet';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -85,11 +88,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
         if (CONFIG.bypassLogin) {
           const userToken: UserToken = {
-            user: {id: 1, firstName: "Pepita", lastName: "La Pistolera", email: "pepita@fiuumber.com", location: "", blocked: false, password: "", profile: ""},
+            user: new Passenger(666, "email", "firstName", "lastName", "address", "password", "username", new Wallet("", "address", "password")),
             token: 'EL_TOKEN'
           }
           const authAction: AuthAction = {userToken: userToken, type: 'SIGN_IN'};
-          dispatch(authAction);        
+          dispatch(authAction);
           return null;
         }
 
@@ -101,7 +104,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
         const authAction: AuthAction = {userToken: userToken, type: 'SIGN_IN'};
 
-        dispatch(authAction);        
+        dispatch(authAction);
 
         return null;
       },
