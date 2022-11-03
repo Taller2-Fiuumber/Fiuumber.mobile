@@ -4,7 +4,7 @@ import { Text, View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
 import { User } from '../models/user';
 import { AuthService } from '../services/AuthService';
-import {UserBasicInfoForm} from "../components/UserBasicInfoForm";
+import {PassengerProfileForm} from "../components/PassengerProfileForm";
 import { useState } from "react";
 import AuthContext from "../contexts/AuthContext";
 
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
       paddingTop: StatusBar.currentHeight,
     },
     scrollView: {
-      marginHorizontal: 20,
+      marginHorizontal: "2%",
     },
     contentContainer: {
       flex: 1,
@@ -52,7 +52,6 @@ export const MyProfileScreen = () => {
     //setMessage(message);
   }
 
-  const user: User | undefined = AuthService.getCurrentUserToken()?.user;
 
     return (
       <SafeAreaView style={styles.container}>
@@ -60,7 +59,7 @@ export const MyProfileScreen = () => {
         <View style={styles.container}>
              <Text style={styles.subtitle}>Personal information</Text>
 
-              <UserBasicInfoForm user={user}></UserBasicInfoForm>
+              <PassengerProfileForm></PassengerProfileForm>
         </View>
         </ScrollView>
     </SafeAreaView>

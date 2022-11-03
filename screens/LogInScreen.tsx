@@ -19,6 +19,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 24
     },
+    error: {
+      color: '#FF0000',
+      marginTop: 10,
+      marginBottom: 10,
+      textAlign: 'center',
+      justifyContent: 'center',
+      fontSize: 15,
+    },
 });
 export const LogInScreen = () => {
 
@@ -37,7 +45,7 @@ export const LogInScreen = () => {
         <Text style={styles.title}>Welcome back to <Text style={{...styles.title,...{fontWeight: "bold"}}}>Fiuumber</Text>!</Text>
         <LogInForm handleLogin={handleLogin}></LogInForm>
         {
-          message !== null ? (<Text>{message}</Text>) : <></>
+          message !== null ? (<Text style={styles.error}>{message}</Text>) : <></>
         }
       </View>
       </>

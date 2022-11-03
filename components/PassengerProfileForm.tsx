@@ -9,27 +9,45 @@ import { User } from '../models/user';
 // import * as dotenv from "dotenv";
 import { Passenger } from "../models/passenger";
 import { Wallet } from "../models/wallet";
-import { StorageService } from "../services/StorageService";
+import { AuthService } from "../services/AuthService";
 
-interface UserBasicInfoFormProps {
-  user: User | undefined;
+interface PassengerProfileFormProps {
 }
 
-export const UserBasicInfoForm: FC<UserBasicInfoFormProps> = ({user}: UserBasicInfoFormProps): ReactElement => {
+export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElement => {
+  let user = AuthService.getCurrentUserToken()?.user;
+
   const [showPasswordErrorText, setPasswordErrorText] = useState(false);
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
   const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
 
-  const [name, setName] = useState<string>("");
+  const [firstName, setName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [oldPassword, setOldPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordChecker, setPasswordChecker] = useState<string>("");
   const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [changePassword, setChangePassword] = useState<boolean>(false);
+
   const [buttonValue, setButtonValue] = useState<string>("Edit");
+  const [changePasswordButtonValue, setChangePasswordButtonValue] = useState<string>("Change password");
 
   const [post, setPost] = React.useState(null);
+
+  const onPressChangePasswordButton = async () => {
+    if (!passwordChecker) {
+      setIsEditable(true);
+      setChangePassword(true);
+      setButtonValue("Save");
+      setChangePasswordButtonValue("Go back");
+    } else {
+      setChangePassword(false);
+      setChangePasswordButtonValue("Change password");
+      setIsEditable(false);
+      setButtonValue("Edit");
+    }
+  }
 
   const onPressButton = async () => {
     if (!isEditable) {
@@ -46,80 +64,81 @@ export const UserBasicInfoForm: FC<UserBasicInfoFormProps> = ({user}: UserBasicI
         setEmail(email)
       }
 
-      console.log("Now is no longer editable!")
       setIsEditable(true);
       setButtonValue("Save");
       return
     }
 
-    if (name == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
+    if (firstName == "" || lastName == "" || email == "" || password == ""){
       setMissingFieldsErrorText(true);
     }
     else if (password.length < 8) {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(true);
     }
+    /*
     else if (password != passwordChecker) {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(true);
-    }
+    }*/
     else {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
-      // Lógica de guardarse la info que ingrese (ya validada)
-      // let url = process.env.API_USERS_URL;
-      // axios.post((url + "/users")  || "", {
-      //   name: name,
-      //   lastName: lastName,
-      //   email: email,
-      //   password: password,
-      // })
-      // .then((response) => {
-      //   setPost(response.data);
-      // });
-      //-----------------------------------------------------
+      const _userId = user?.id
 
-      const passenger: Passenger = new Passenger(-1, email, name, lastName, "", new Wallet("", "address", "password"), password);
-      await StorageService.storeData("temp_user", JSON.stringify(passenger));
-      console.log("Now is editable!")
+
+      if (_userId) {
+        const passenger: Passenger = new Passenger(_userId, email, firstName, lastName, "address", password, "username", new Wallet("", "address", "password"));
+        await AuthService.updatePassenger(passenger);
+        setPassword("")
+        user = AuthService.getCurrentUserToken()?.user;
+      }
+
+    }
+
       setIsEditable(false);
       setButtonValue("Edit");
       // navigation.navigate('RoleSelectionScreen')
-    }
+
   }
 
   // TODO:
   // Validar email con una regex
+  // PErmitir cambiar contraseña
 
   return (
     <>
-      <TextInput label="First name" style={{marginBottom: 20}} editable={isEditable} value={isEditable ? name : user?.firstName} onChangeText={(text) => setName(text)}/>
+      <TextInput label="First first name" style={{marginBottom: 20}} editable={isEditable} value={isEditable ? firstName : user?.firstName} onChangeText={(text) => setName(text)}/>
       <TextInput label="Last name" style={{marginBottom: 20}} editable={isEditable} value={isEditable ? lastName : user?.lastName}  onChangeText={(text) => setLastName(text)}/>
       <TextInput label="Email or phone number" style={{marginBottom: 20}} editable={isEditable} value={isEditable ? email : user?.email}  onChangeText={(text) => setEmail(text)}/>
-      {!isEditable &&
-      <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} value={"default"} onChangeText={(text) => setPassword(text)}/>
+      {!changePassword &&
+      <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} value={isEditable ? password : ""} onChangeText={(text) => setPassword(text)}/>
       }
-     {isEditable &&
-      <TextInput label="Old Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setOldPassword(text)}/>
+
+     {(isEditable && changePassword) &&
+      <TextInput label="Old Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setPassword(text)}/>
      }
-           {isEditable &&
+
+    {(isEditable && changePassword) &&
       <TextInput label="New Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setPassword(text)}/>
      }
-     {isEditable &&
+     {(isEditable && changePassword) &&
       <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setPasswordChecker(text)}/>
      }
 
       {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
       {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
       {showPasswordErrorText ? <Text style={styles.error}>Passwords do not match. Retry!</Text> : null}
-      <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onPressButton}>{buttonValue}</Button>
+      <Button mode="contained" style={{backgroundColor: Pallete.primaryColor, margin: "2%"}} onPress={onPressButton}>{buttonValue}</Button>
+      <Button mode="contained" style={{backgroundColor: Pallete.primaryColor, margin: "2%"}} onPress={onPressChangePasswordButton}>{changePasswordButtonValue}</Button>
+
     </>
   )
 };
 
-export default UserBasicInfoForm;
+export default PassengerProfileForm;
 
 const styles = StyleSheet.create({
   container: {

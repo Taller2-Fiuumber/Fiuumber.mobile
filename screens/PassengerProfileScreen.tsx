@@ -53,7 +53,7 @@ export const PassengerProfileScreen= ({ navigation }: NavigationProps) => {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
-      const passenger: Passenger = new Passenger(-1, email, name, lastName, "", new Wallet("", "address", "password"), password);
+      const passenger: Passenger = new Passenger(-1, email, name, lastName, "address", password, "username", new Wallet("", "address", "password"));
       await StorageService.storeData("temp_user", JSON.stringify(passenger));
       navigation.navigate('RoleSelectionScreen')
     }

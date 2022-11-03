@@ -13,7 +13,7 @@ export const AuthService = {
             const response = await axios.get(url, HEADERS);
             const userToken: UserToken = response.data;
             return userToken;
-        } 
+        }
         catch (error: any) {
             console.log(error);
             if (error && error.response && error.response.status == 401) return null;
@@ -25,7 +25,28 @@ export const AuthService = {
             const url = `${URL_AUTH}/register-passenger`;
             await axios.post(url, {passenger}, HEADERS);
             return true;
-        } 
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },
+    updatePassenger: async (passenger: Passenger): Promise<boolean> => {
+        try {
+            if (_userToken != null) {
+                const url = `${URL_USERS}/passenger`;
+                const header = {
+                    headers: {
+                     "Accept": 'application/json',
+                     "auth-token": _userToken.token
+                    },
+                }
+                await axios.put(url, passenger, header);
+                _userToken.user = passenger;
+                return true;
+            }
+            return false;
+        }
         catch (error: any) {
             console.log(error);
             throw error;

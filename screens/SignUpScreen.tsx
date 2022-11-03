@@ -24,7 +24,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
   const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
 
-  const [name, setName] = useState<string>("");
+  const [firstName, setName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -34,7 +34,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
 
 
   const onSignUp = async () => {
-    if (name == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
+    if (firstName == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
       setMissingFieldsErrorText(true);
     }
     else if (password.length < 8) {
@@ -53,7 +53,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       // Lógica de guardarse la info que ingrese (ya validada)
       // let url = process.env.API_USERS_URL;
       // axios.post((url + "/users")  || "", {
-      //   name: name,
+      //   firstName: firstName,
       //   lastName: lastName,
       //   email: email,
       //   password: password,
@@ -63,7 +63,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       // });
       //-----------------------------------------------------
 
-      const passenger: Passenger = new Passenger(-1, email, name, lastName, "", new Wallet("", "address", "password"), password);
+      const passenger: Passenger = new Passenger(-1, email, firstName, lastName, "address", password, "username", new Wallet("", "address", "password"));
       await StorageService.storeData("temp_user", JSON.stringify(passenger));
       navigation.navigate('RoleSelectionScreen')
     }
@@ -89,7 +89,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       <View style={styles.container}>
         <Text style={styles.header}>Welcome!</Text>
         <Text style={styles.title}>Sign up for the Fiuumber app</Text>
-        <TextInput label="Enter your name" style={{marginBottom: 20}} onChangeText={(text) => setName(text)}/>
+        <TextInput label="Enter your first name" style={{marginBottom: 20}} onChangeText={(text) => setName(text)}/>
         <TextInput label="Last name" style={{marginBottom: 20}} onChangeText={(text) => setLastName(text)}/>
         <TextInput label="Email or phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
         <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>

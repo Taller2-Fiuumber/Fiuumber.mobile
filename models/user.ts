@@ -1,27 +1,36 @@
 export abstract class User {
   id: number;
+  userId: number;
   email: string;
   firstName: string;
   lastName: string;
-  location: string;
-  blocked: boolean;
+  address: string;
   password: string;
+  username: string
+  walletPrivateKey: string
+
   abstract profile: string;
 
   constructor(
-    id: number,
+    userId: number,
     email: string,
     firstName: string,
     lastName: string,
-    location: string,
-    password: string
+    address: string,
+    password: string,
+    username: string,
+    walletPrivateKey: string
+
   ) {
-    this.id = id;
+    this.userId = userId;
+    this.id = userId;
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.location = location;
-    this.blocked = false;
+    this.address = address;
     this.password = password;
+    this.username = username;
+    this.walletPrivateKey = walletPrivateKey;
+
   }
 }
