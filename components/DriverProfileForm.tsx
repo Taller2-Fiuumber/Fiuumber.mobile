@@ -9,31 +9,69 @@ import { User } from '../models/user';
 // import * as dotenv from "dotenv";
 import { Driver } from "../models/driver";
 import { Wallet } from "../models/wallet";
+import { DriverVehicle } from "../models/driver_vehicle";
+import { Vehicle } from "../models/vehicle";
+
 import { AuthService } from "../services/AuthService";
 
 interface DriverProfileFormProps {
 }
 
+
+
 export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement => {
+
+    /*------------------------States Initialization----------------------------*/
+    // Validations states
+    const [showPasswordErrorText, setPasswordErrorText] = useState(false);
+    const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
+    const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
+
+    // User values states
+    const [firstName, setName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+
+    const [password, setPassword] = useState<string>("");
+    const [oldPassword, setOldPassword] = useState<string>("");
+    const [passwordChecker, setPasswordChecker] = useState<string>("");
+
+    // Car values states
+    const [domain, setDomain] = useState<string>("");
+    const [modelYear, setModelYear] = useState<string>("");
+    const [colorName, setColorName] = useState<string>("");
+
+    const [brand, setBrand] = useState<string>("");
+    const [model, setModel] = useState<string>("");
+    const [image, setImage] = useState<string>("");
+
+    // Button behavior label states
+    const [isEditable, setIsEditable] = useState<boolean>(false);
+    const [changePassword, setChangePassword] = useState<boolean>(false);
+
+    // Button value label states
+    const [buttonValue, setButtonValue] = useState<string>("Edit");
+    const [changePasswordButtonValue, setChangePasswordButtonValue] = useState<string>("Change password");
+
+  /*--------------------------Getting driver data------------------------------*/
+
   let user = AuthService.getCurrentUserToken()?.user;
+  AuthService.getCurrentDriver().then((driver) => {
+    console.log("OUTPUT: ", driver);
+    if (driver != undefined) {
+      console.log("HOLA? :)")
+      setBrand(driver.vehicle.vehicle.brand)
+      setModel(driver.vehicle.vehicle.model)
+      setImage(driver.vehicle.vehicle.image)
+      setDomain(driver.vehicle.domain)
+      setModelYear(driver.vehicle.modelYear)
+      setColorName(driver.vehicle.colorName)
 
-  const [showPasswordErrorText, setPasswordErrorText] = useState(false);
-  const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
-  const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
-
-  const [firstName, setName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [oldPassword, setOldPassword] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [passwordChecker, setPasswordChecker] = useState<string>("");
-  const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [changePassword, setChangePassword] = useState<boolean>(false);
-
-  const [buttonValue, setButtonValue] = useState<string>("Edit");
-  const [changePasswordButtonValue, setChangePasswordButtonValue] = useState<string>("Change password");
-
-  const [post, setPost] = React.useState(null);
+    }
+  }).catch((err) => {
+    console.error('Error:', err);
+    console.log("HOLA? :(")
+  });;
 
   const onPressChangePasswordButton = async () => {
     if (!passwordChecker) {
@@ -90,7 +128,15 @@ export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement =>
 
 
       if (_userId) {
-        const driver: Driver = new Driver(_userId, email, firstName, lastName, "address", password, "username", new Wallet("", "address", "password"));
+        let vehicle = new Vehicle(-1, brand, model,image);
+
+        const driverVehicle = new DriverVehicle(
+          domain,
+          modelYear,
+          colorName,
+          vehicle
+        )
+        const driver: Driver = new Driver(_userId, email, firstName, lastName, "address", password, "username", new Wallet("", "address", "password"), driverVehicle);
         await AuthService.updateDriver(driver);
         setPassword("")
         user = AuthService.getCurrentUserToken()?.user;
@@ -132,7 +178,11 @@ export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement =>
 
 
     <Text style={styles.subtitle}>Car information</Text>
-
+    <TextInput label="Domain" style={{marginBottom: 20}} editable={isEditable} value={domain} onChangeText={(text) => setDomain(text)}/>
+    <TextInput label="Model year" style={{marginBottom: 20}} editable={isEditable} value={modelYear} onChangeText={(text) => setDomain(text)}/>
+    <TextInput label="Color" style={{marginBottom: 20}} editable={isEditable} value={colorName} onChangeText={(text) => setDomain(text)}/>
+    <TextInput label="Brand" style={{marginBottom: 20}} editable={isEditable} value={brand} onChangeText={(text) => setDomain(text)}/>
+    <TextInput label="Image url" style={{marginBottom: 20}} editable={isEditable} value={image} onChangeText={(text) => setDomain(text)}/>
 
 
       {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}

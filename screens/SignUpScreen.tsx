@@ -17,8 +17,6 @@ import { StorageService } from "../services/StorageService";
 
 // dotenv.config();
 
-
-
 export const SignUpScreen= ({ navigation }: NavigationProps) => {
   const [showPasswordErrorText, setPasswordErrorText] = useState(false);
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);

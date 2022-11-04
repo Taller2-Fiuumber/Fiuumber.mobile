@@ -15,7 +15,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       SignUpScreen: 'SignUp',
       RoleSelectionScreen: 'RoleSelection',
       VehicleDataScreen: 'VehicleData',
-      SignUpSuccesfullyScreen: 'SignUpSuccesfully',
+      SignUpSuccessfullyScreen: 'SignUpSuccesfully',
       TripScreen: 'Trip',
       MyProfileScreeen: 'MyProfile',
     //   Root: {

@@ -13,7 +13,7 @@ import { LogInScreen } from '../screens/LogInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
 import { VehicleDataScreen } from '../screens/VehicleDataScreen';
-import { SignUpSuccesfullyScreen } from '../screens/SignUpSuccesfullyScreen';
+import { SignUpSuccessfullyScreen } from '../screens/SignUpSuccessfullyScreen';
 import AuthContext from '../contexts/AuthContext';
 import { UserToken } from '../models/user-token';
 import { AuthAction } from '../models/auth-action';
@@ -140,7 +140,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="SignUpSuccesfullyScreen" component={SignUpSuccesfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
 
             </>
