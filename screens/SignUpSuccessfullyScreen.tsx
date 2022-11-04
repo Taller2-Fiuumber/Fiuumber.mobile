@@ -3,12 +3,12 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { NavigationProps } from "../types";
 
-export const SignUpSuccesfullyScreen = ({ navigation }: NavigationProps) => {
+export const SignUpSuccessfullyScreen = ({ navigation }: NavigationProps) => {
 
     return (
     <>
     <View style={styles.mainContainer}>
-  
+
       <View style={styles.container}>
         <View style={styles.imgContainer}>
         <Image source={require('../assets/images/tick.png')} style={styles.image} />
@@ -25,7 +25,7 @@ export const SignUpSuccesfullyScreen = ({ navigation }: NavigationProps) => {
     </>
     );
   }
-  
+
   const styles = StyleSheet.create({
     mainContainer: {
       flex: 1,
@@ -88,4 +88,3 @@ export const SignUpSuccesfullyScreen = ({ navigation }: NavigationProps) => {
     imgContainer: {width: '100%', textAlign: 'center', marginBottom: 50},
 
   });
-  

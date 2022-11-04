@@ -7,6 +7,11 @@ import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
 import { NavigationProps } from "../types";
 import { TextInput, Button } from 'react-native-paper';
+import { Driver } from "../models/driver";
+import { AuthService } from "../services/AuthService";
+import { StorageService } from "../services/StorageService";
+import { DriverVehicle } from "../models/driver_vehicle";
+import { Vehicle } from "../models/vehicle";
 
 const styles = StyleSheet.create({
     container: {
@@ -60,16 +65,29 @@ export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
   const [brandAndModel, setBrandAndModel] = useState<string>("");
   const [license, setLicense] = useState<string>("");
 
-  const vehicleDataValidation = () => {
+  const { vehicleData } = React.useContext(AuthContext);
+
+  const onPressNextButton = async () => {
     if (domain == "" || brandAndModel == "" || license == ""){
       setMissingFieldsErrorText(true);
     }
     else {
       setMissingFieldsErrorText(false);
-      navigation.navigate('SignUpSuccesfullyScreen')
+      const strDriver: string | null = await StorageService.getData("temp_user");
+      if (!strDriver) return;
+      const driver: Driver = JSON.parse(strDriver);
+      const vehicle = new Vehicle(-1, "Toyota", "Ethos", "link")
+      const driverVehicle = new DriverVehicle(
+        domain,
+        brandAndModel,
+        license,
+        vehicle
+      )
+      driver.vehicle = driverVehicle;
+      await AuthService.registerDriver(driver);
+      navigation.navigate('SignUpSuccessfullyScreen');
     }
   }
-  const { vehicleData } = React.useContext(AuthContext);
 
     return (
       <>
@@ -79,7 +97,7 @@ export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
         <TextInput label="Brand and Model" style={{marginBottom: 20}} onChangeText={(text) => setBrandAndModel(text)}/>
         <TextInput label="License (file)" style={{marginBottom: 20}} onChangeText={(text) => setLicense(text)}/>
         {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
-        <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => vehicleDataValidation()}>
+        <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => onPressNextButton()}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Next</Text>
         </Pressable>
       </View>

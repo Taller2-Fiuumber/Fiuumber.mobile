@@ -36,7 +36,9 @@ export const LogInScreen = () => {
 
   const handleLogin = async (email: string, password: string) => {
     const message = await logIn(email, password);
-    setMessage(message);
+    if (message) {
+      setMessage(message);
+    }
   }
 
     return (

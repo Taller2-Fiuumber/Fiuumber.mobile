@@ -15,12 +15,14 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: Pallete.whiteColor,
       paddingTop: StatusBar.currentHeight,
+
     },
     scrollView: {
-      marginHorizontal: "2%",
+      marginHorizontal: "3%",
     },
     contentContainer: {
       flex: 1,
+      margin: "5%",
       backgroundColor: Pallete.whiteColor,
     },
     description: {
@@ -53,7 +55,7 @@ export const MyProfileScreen = () => {
     return (
       <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.container}>
+        <View style={styles.contentContainer}>
           { user?.profile == "PASSENGER" ?
             <PassengerProfileForm></PassengerProfileForm> :
             <DriverProfileForm></DriverProfileForm>

@@ -13,7 +13,7 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
       if (!strPassenger) return;
       const passenger: Passenger = JSON.parse(strPassenger);
       await AuthService.registerPassenger(passenger);
-      navigation.navigate('SignUpSuccesfullyScreen');
+      navigation.navigate('SignUpSuccessfullyScreen');
     }
 
     return (
@@ -35,7 +35,7 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
     </>
     );
   }
-  
+
   const styles = StyleSheet.create({
     mainContainer: {
       flex: 1,
@@ -65,7 +65,7 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
       color: Pallete.darkColor,
       fontWeight: 'bold',
       marginBottom: 20,
-      textAlign: 'center', 
+      textAlign: 'center',
       fontSize: 30
     },
     description: {
