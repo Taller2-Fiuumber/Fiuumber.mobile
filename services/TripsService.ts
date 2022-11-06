@@ -21,9 +21,8 @@ export const TripsService = {
                 "status": trip.status,
                 "finalPrice": trip.finalPrice
             };
-            const response = await axios.post(url, {...tripReq}, );
-            console.log(url);
-            console.log(response.data);
+            
+            const response = await axios.post(url, {...tripReq}, AuthService.getHeaders());
             return response.data;
         } 
         catch (error: any) {
@@ -35,7 +34,7 @@ export const TripsService = {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}`;
             const tripReq = {"status": status};
-            const response = await axios.patch(url, tripReq, HEADERS);
+            const response = await axios.patch(url, tripReq, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
             return tripResponse;
         } 
@@ -48,7 +47,7 @@ export const TripsService = {
     get: async (tripId: string): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}`;
-            const response = await axios.get(url, HEADERS);
+            const response = await axios.get(url, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
             return tripResponse;
         } 
@@ -64,7 +63,7 @@ export const TripsService = {
 
         try {
             const url = `${URL_TRIPS}/trips?userId=${userId}`;
-            const response = await axios.get(url, HEADERS);
+            const response = await axios.get(url, AuthService.getHeaders());
             const tripResponse: Trip[] = response.data;
             return tripResponse;
         } 
@@ -77,7 +76,8 @@ export const TripsService = {
     getFare: async (fromLatitude: number, toLatitude: number, fromLongitude: number, toLongitude: number): Promise<number> => {
         const url = `${URL_TRIPS}/fare?from_latitude=${fromLatitude}&to_latitude=${toLatitude}&from_longitude=${fromLongitude}&to_longitude=${toLongitude}`;
         try {
-            const response = await axios.get(url, HEADERS);
+            console.log(AuthService.getHeaders())
+            const response = await axios.get(url, AuthService.getHeaders());
             const tripResponse: number = response.data;
             return tripResponse;
         } 

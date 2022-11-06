@@ -1,6 +1,6 @@
 import axios from 'axios';// For API consuming
 import { UserToken } from '../models/user-token';
-import { HEADERS, URL_AUTH, URL_USERS } from "./Constants";
+import { HEADERS, RAW_HEADERS, URL_AUTH, URL_USERS } from "./Constants";
 import { Passenger } from '../models/passenger';
 import { Driver } from '../models/driver';
 import { DriverVehicle } from '../models/driver_vehicle';
@@ -10,9 +10,11 @@ let _userToken: UserToken | null;
 export const AuthService = {
     getCurrentUserToken: (): UserToken | null => _userToken,
     setCurrentUserToken: (userToken: UserToken | null): void => {_userToken = userToken},
+    getHeaders: () => { return { headers: {...RAW_HEADERS, 'auth-token': _userToken?.token}}},
     login: async (email: string, password: string): Promise<UserToken | null> => {
         try {
             const url = `${URL_AUTH}/login?email=${email}&password=${password}`;
+            console.log(url)
             const response = await axios.get(url, HEADERS);
             const userToken: UserToken = response.data;
             return userToken;
