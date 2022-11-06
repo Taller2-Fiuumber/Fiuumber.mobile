@@ -51,13 +51,7 @@ export const AuthService = {
         try {
             if (_userToken != null) {
                 const url = `${URL_USERS}/passenger`;
-                const header = {
-                    headers: {
-                     "Accept": 'application/json',
-                     "auth-token": _userToken.token
-                    },
-                }
-                await axios.put(url, passenger, header);
+                await axios.put(url, passenger, AuthService.getHeaders(),);
                 _userToken.user = passenger;
                 return true;
             }
@@ -72,13 +66,7 @@ export const AuthService = {
         try {
             if (_userToken != null) {
                 const url = `${URL_USERS}/driver`;
-                const header = {
-                    headers: {
-                     "Accept": 'application/json',
-                     "auth-token": _userToken.token
-                    },
-                }
-                await axios.put(url, driver, header);
+                await axios.put(url, driver, AuthService.getHeaders(),);
                 _userToken.user = driver;
                 return true;
             }
@@ -89,43 +77,18 @@ export const AuthService = {
             throw error;
         }
     },
-    /*getCurrentDriver: async (): Promise<Driver | undefined> => {
-        try {
-            if (_userToken != null) {
-                const url = `${URL_USERS}/driver/${_userToken.user.id}`;
-                const header = {
-                    headers: {
-                     "Accept": 'application/json',
-                     "auth-token": _userToken.token
-                    },
-                }
-                return await axios.get(url, header);
-            }
-            return undefined;
-        }
-        catch (error: any) {
-            console.log(error);
-            throw error;
-        }
-    },*/
     getCurrentDriver: async (): Promise<Driver | undefined> => {
         try {
             if (_userToken != null) {
-                const header = {
-                    headers: {
-                     "Accept": 'application/json',
-                     "auth-token": _userToken.token
-                    },
-                }
 
                 const driver_url = `${URL_USERS}/driver/${_userToken.user.id}`;
-                const driver: Driver = await axios.get(driver_url, header);
+                const driver: Driver = await axios.get(driver_url, AuthService.getHeaders(),);
 
                 const driver_vehicle_url = `${URL_USERS}/driver-vehicle/${driver.vehicle.id}`;
-                const driverVehicle: DriverVehicle  = await axios.get(driver_vehicle_url, header);
+                const driverVehicle: DriverVehicle  = await axios.get(driver_vehicle_url, AuthService.getHeaders(),);
 
                 const vehicle_url = `${URL_USERS}/vehicle/${driverVehicle.id}`;
-                const vehicle: Vehicle  = await axios.get(vehicle_url, header);
+                const vehicle: Vehicle  = await axios.get(vehicle_url, AuthService.getHeaders(),);
 
                 driverVehicle.vehicle = vehicle
                 driver.vehicle = driverVehicle
