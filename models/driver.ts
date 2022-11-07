@@ -1,9 +1,32 @@
-import { User } from "./user";
+import { UserData } from "./user_data";
 import { Wallet } from "./wallet";
 import { DriverVehicle } from "./driver_vehicle";
 
-export class Driver extends User {
-  profile: string;
+export class Driver {
+  user: UserData;
+  wallet: Wallet;
+  driverVehicle: DriverVehicle;
+
+  constructor(
+    user: UserData,
+    wallet: Wallet,
+    driverVehicle: DriverVehicle,
+  ) {
+
+    this.wallet = wallet;
+    this.driverVehicle = driverVehicle;
+    this.user = user;
+  }
+}
+
+export class DriverData {
+  userId: number
+  email: string
+  firstName: string
+  lastName: string
+  address: string
+  password: string
+  username: string
   wallet: Wallet;
   vehicle: DriverVehicle;
 
@@ -19,9 +42,14 @@ export class Driver extends User {
     vehicle: DriverVehicle,
   ) {
 
-    super(userId, email, firstName, lastName, address, password, username, wallet.walletPrivateKey);
     this.wallet = wallet;
     this.vehicle = vehicle;
-    this.profile = "DRIVER";
+    this.userId = userId;
+    this.email = email;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.address = address;
+    this.password = password;
+    this.username = username;
   }
 }
