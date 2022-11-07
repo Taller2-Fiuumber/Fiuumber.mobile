@@ -34,19 +34,25 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({visible, onDism
     
     const [user, setUser] = React.useState<User | null>();
     const [trip, setTrip] = React.useState<Trip | null>();
-    // const [fare, setFare] = React.useState<number>();
+    const [fare, setFare] = React.useState<number>();
 
     const loadData = async () => {
         const trip: Trip | null = await TripsService.get(tripId);
 
         if (trip) {
-            // const tripFare: number = await TripsService.getFare(tripId);
-            // setFare(tripFare);
+            // |J| ojo, deberíamos guardar la cifra calculada que se le mostró al usuario tal vez
+            // para que no haya inconsistencias si cambian las reglas de calculo
+            const tripFare: number = await TripsService.getFare(trip.fromLatitude, trip.toLatitude, trip.fromLongitude, trip.toLongitude);
+            setFare(tripFare);
             setTrip(trip);
             const userId: number = Number.parseInt(trip.passengerId);
             const user: User | null = await UsersService.getUser(userId);
             setUser(user);
         }
+    };
+
+    const acceptTrip = async () => {
+
     };
 
     React.useEffect(() => {
@@ -57,8 +63,8 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({visible, onDism
         <>
             <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={{...defaultStyles, ...contentContainerStyle}}>
                 {user ? <Text variant="titleSmall" style={styles.title}>{user.firstName} {user.lastName} wants to travel</Text> : <></>}
-                {trip ?  <Text variant="titleMedium">15 min</Text> : <></>}
-                {/* {trip ?  <Text variant="displayLarge">$ {fare}</Text> : <></>} */}
+                {/* {trip ?  <Text variant="titleMedium">15 min</Text> : <></>} */}
+                {trip ?  <Text variant="displayMedium">$ {fare}</Text> : <></>}
                 <Button style={styles.cancelButton} textColor='red' mode='outlined' onPress={onDismiss}>
                     DECLINE
                 </Button>

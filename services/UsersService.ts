@@ -6,7 +6,7 @@ import { AuthService } from './AuthService';
 export const UsersService = {
     getUser: async (userId: number): Promise<User | null> => {
         try {
-            const url = `${URL_USERS}/users/${userId}`;
+            const url = `${URL_USERS}/user/${userId}`;
             const response = await axios.get(url, AuthService.getHeaders(),);
             const user: User = response.data;
             return user;
