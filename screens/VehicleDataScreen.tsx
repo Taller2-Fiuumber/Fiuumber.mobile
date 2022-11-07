@@ -78,6 +78,7 @@ export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
       const driver: Driver = JSON.parse(strDriver);
       const vehicle = new Vehicle(-1, "Toyota", "Ethos", "link")
       const driverVehicle = new DriverVehicle(
+        -1,
         domain,
         brandAndModel,
         license,

@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import { getDatabase, ref, remove } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,5 +22,9 @@ const _app = initializeApp(firebaseConfig);
 
 export const FirebaseService = {
   app: _app,
-  db: getDatabase(_app)
+  db: getDatabase(_app),
+  removeTripFromFirebase: async (tripId: string) => {
+    const reference = ref(FirebaseService.db, `trips/${tripId}`);
+    return remove(reference);
+  }
 };

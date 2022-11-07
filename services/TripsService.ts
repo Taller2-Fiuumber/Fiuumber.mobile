@@ -1,4 +1,5 @@
 import axios from 'axios';// For API consuming
+import { TripStatus } from '../enums/trip-status';
 import { Trip } from '../models/trip';
 import { AuthService } from './AuthService';
 import { HEADERS, URL_TRIPS } from "./Constants";
@@ -30,16 +31,16 @@ export const TripsService = {
             throw error;
         }
     },
-    updateStatus: async (tripId: string, status: string): Promise<Trip | null> => {
+    setAssignedDriver: async (tripId: string, driverId: number): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/trip/${tripId}`;
-            const tripReq = {"status": status};
-            const response = await axios.patch(url, tripReq, AuthService.getHeaders(),);
+            const url = `${URL_TRIPS}/trip/${tripId}/assign-driver`;
+            const tripReq = {"driverId": driverId.toString()};
+            const response = await axios.post(url, tripReq, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
             return tripResponse;
         } 
         catch (error: any) {
-            console.log(`TripsService updateStatus(): ${error}`);
+            console.log(`TripsService setAssignedDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
@@ -48,7 +49,8 @@ export const TripsService = {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}`;
             const response = await axios.get(url, AuthService.getHeaders(),);
-            const tripResponse: Trip = response.data;
+            const rawTrip = response.data;
+            const tripResponse: Trip = {...rawTrip, toLatitude: rawTrip.to_latitude, toLongitude: rawTrip.to_longitude, fromLatitude: rawTrip.from_latitude, fromLongitude: rawTrip.from_longitude};
             return tripResponse;
         } 
         catch (error: any) {
@@ -76,7 +78,6 @@ export const TripsService = {
     getFare: async (fromLatitude: number, toLatitude: number, fromLongitude: number, toLongitude: number): Promise<number> => {
         const url = `${URL_TRIPS}/fare?from_latitude=${fromLatitude}&to_latitude=${toLatitude}&from_longitude=${fromLongitude}&to_longitude=${toLongitude}`;
         try {
-            console.log(AuthService.getHeaders())
             const response = await axios.get(url, AuthService.getHeaders());
             const tripResponse: number = response.data;
             return tripResponse;

@@ -12,6 +12,8 @@ import { User } from "../models/user";
 import FindTripModal from "../modals/FindTripModal";
 import RequestedTripModal from "../modals/RequestedTripModal";
 import { TripsService } from "../services/TripsService";
+import { Trip } from "../models/trip";
+import * as Location from 'expo-location';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -79,6 +81,9 @@ export const DirectionsBoxNative = (): ReactElement => {
   const [requestedTripId, setRequestedTripId] = React.useState("");
   const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
 
+  const [pickupLocation, setPickupLocation] =  React.useState<any>(null);
+
+  const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
 
   const showFindTripModal = () => setFindTripVisible(true);
   const hideFindTripModal = () => setFindTripVisible(false);
@@ -89,6 +94,7 @@ export const DirectionsBoxNative = (): ReactElement => {
 
   const refreshFare = async () => {
     if (!origin || !destination) return;
+    
     try {
       setLoading(true);
       const calculatedFare = await TripsService.getFare(origin.latitude, destination.latitude, origin.longitude, destination.longitude);
@@ -126,6 +132,13 @@ export const DirectionsBoxNative = (): ReactElement => {
       });
   };
 
+  const onTripAccepted = (trip: Trip) => {
+    setRequestedTripVisible(false);
+    console.log(trip);
+    const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude};
+    setPickupLocation(position)
+  };
+
   React.useEffect(() => {
     if (user?.profile === "DRIVER") {
       watchForNewTrips();
@@ -139,12 +152,31 @@ export const DirectionsBoxNative = (): ReactElement => {
     // }
   }, [origin, destination]);
 
+  React.useEffect(() => {
+    (async () => {
+
+      const interval = setInterval(async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          // setErrorMsg('Permission to access location was denied');
+          return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        console.log({latitude: location.coords.latitude, longitude: location.coords.longitude});
+        setRealtimeLocation({latitude: location.coords.latitude, longitude: location.coords.longitude});
+      }, 2000);
+
+      return () => clearInterval(interval);
+    })();
+  }, []);
+
   return (
   <>
   <Provider>
     <Portal>
       {origin && destination && findTripvisible ? <FindTripModal visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination}></FindTripModal> : <></>}      
-      {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
+      {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} onAccepted={onTripAccepted} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
     </Portal>
     <View style={styles.mainContainer}>
       {
@@ -180,6 +212,8 @@ export const DirectionsBoxNative = (): ReactElement => {
             >
               {destination ? <Marker coordinate={destination} identifier={'mkDestination'} /> : <></>}
               {origin ? <Marker coordinate={origin} identifier={'mkOrigin'} /> : <></>}
+              {pickupLocation ? <Marker coordinate={pickupLocation} identifier={'mkPickup'} /> : <></>}
+              {realtimeLocation ? <Marker coordinate={realtimeLocation} identifier={'mkRealtimeLocation'} /> : <></>}
               {origin && destination ?
                 <MapViewDirections
                   origin={origin}
