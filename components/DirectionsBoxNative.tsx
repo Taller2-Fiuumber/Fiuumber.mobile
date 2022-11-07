@@ -12,6 +12,7 @@ import { User } from "../models/user";
 import FindTripModal from "../modals/FindTripModal";
 import RequestedTripModal from "../modals/RequestedTripModal";
 import { TripsService } from "../services/TripsService";
+import { Trip } from "../models/trip";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -79,6 +80,7 @@ export const DirectionsBoxNative = (): ReactElement => {
   const [requestedTripId, setRequestedTripId] = React.useState("");
   const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
 
+  const [pickupLocation, setPickupLocation] =  React.useState<any>(null);
 
   const showFindTripModal = () => setFindTripVisible(true);
   const hideFindTripModal = () => setFindTripVisible(false);
@@ -126,6 +128,13 @@ export const DirectionsBoxNative = (): ReactElement => {
       });
   };
 
+  const onTripAccepted = (trip: Trip) => {
+    setRequestedTripVisible(false);
+    console.log(trip);
+    const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude};
+    setPickupLocation(position)
+  };
+
   React.useEffect(() => {
     if (user?.profile === "DRIVER") {
       watchForNewTrips();
@@ -144,7 +153,7 @@ export const DirectionsBoxNative = (): ReactElement => {
   <Provider>
     <Portal>
       {origin && destination && findTripvisible ? <FindTripModal visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination}></FindTripModal> : <></>}      
-      {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
+      {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} onAccepted={onTripAccepted} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
     </Portal>
     <View style={styles.mainContainer}>
       {
@@ -180,6 +189,7 @@ export const DirectionsBoxNative = (): ReactElement => {
             >
               {destination ? <Marker coordinate={destination} identifier={'mkDestination'} /> : <></>}
               {origin ? <Marker coordinate={origin} identifier={'mkOrigin'} /> : <></>}
+              {pickupLocation ? <Marker coordinate={pickupLocation} identifier={'mkPickup'} /> : <></>}
               {origin && destination ?
                 <MapViewDirections
                   origin={origin}

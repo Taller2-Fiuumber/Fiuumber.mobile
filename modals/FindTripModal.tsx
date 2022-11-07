@@ -84,6 +84,7 @@ export const FindTripModal: FC<FindTripModalPros> = ({visible, onDismiss, conten
     }
 
     React.useEffect(() => {
+      console.log("ADDDDDD")
         requestTrip();
     }, []);
 

@@ -31,18 +31,16 @@ export const TripsService = {
             throw error;
         }
     },
-    updateStatus: async (tripId: string, newStatus: TripStatus): Promise<Trip | null> => {
+    setAssignedDriver: async (tripId: string, driverId: number): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/trip/${tripId}`;
-            const tripReq = {"status": newStatus.toString()};
-            console.log(tripReq);
-            const response = await axios.patch(url, tripReq, AuthService.getHeaders(),);
+            const url = `${URL_TRIPS}/trip/${tripId}/assign-driver`;
+            const tripReq = {"driverId": driverId.toString()};
+            const response = await axios.post(url, tripReq, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
-            console.log(tripResponse);
             return tripResponse;
         } 
         catch (error: any) {
-            console.log(`TripsService updateStatus(): ${error}`);
+            console.log(`TripsService setAssignedDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
