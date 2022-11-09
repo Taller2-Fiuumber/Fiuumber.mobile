@@ -24,7 +24,9 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
   const [firstName, setName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [oldPassword, setOldPassword] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+
+  const [oldPassword, setOldPassword] = useState<string>(""); // Verify
   const [password, setPassword] = useState<string>("");
   const [passwordChecker, setPasswordChecker] = useState<string>("");
   const [isEditable, setIsEditable] = useState<boolean>(false);
@@ -36,7 +38,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
   const [post, setPost] = React.useState(null);
 
   const onPressChangePasswordButton = async () => {
-    if (!passwordChecker) {
+    if (!changePassword) {
       setIsEditable(true);
       setChangePassword(true);
       setButtonValue("Save");
@@ -63,41 +65,45 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
       if (email != undefined) {
         setEmail(email)
       }
+      const address = user?.address
+      if (address != undefined) {
+        setAddress(address)
+      }
 
       setIsEditable(true);
       setButtonValue("Save");
+      setChangePassword(false);
       return
     }
 
-    if (firstName == "" || lastName == "" || email == "" || password == ""){
+    if (firstName == "" || lastName == "" || email == "" || password == "" || address == ""){
       setMissingFieldsErrorText(true);
     }
     else if (password.length < 8) {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(true);
     }
-    /*
-    else if (password != passwordChecker) {
+    else if (changePassword && (password != passwordChecker)) {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(true);
-    }*/
+    }
     else {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
       const _userId = user?.id
 
-
       if (_userId) {
-        const passenger: Passenger = new Passenger(_userId, email, firstName, lastName, "address", password, "username", new Wallet("", "address", "password"));
+        const passenger: Passenger = new Passenger(_userId, email, firstName, lastName, address, password, "username", new Wallet("", "address", "password"));
         await AuthService.updatePassenger(passenger);
         setPassword("")
         user = AuthService.getCurrentUserToken()?.user;
       }
 
     }
-
+      setChangePassword(false);
+      setChangePasswordButtonValue("Change password");
       setIsEditable(false);
       setButtonValue("Edit");
       // navigation.navigate('RoleSelectionScreen')
@@ -112,29 +118,47 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
     <>
       <Text style={styles.subtitle}>Personal information</Text>
 
-      <TextInput label="First first name" style={{marginBottom: 20}} editable={isEditable} value={isEditable ? firstName : user?.firstName} onChangeText={(text) => setName(text)}/>
-      <TextInput label="Last name" style={{marginBottom: 20}} editable={isEditable} value={isEditable ? lastName : user?.lastName}  onChangeText={(text) => setLastName(text)}/>
-      <TextInput label="Email or phone number" style={{marginBottom: 20}} editable={isEditable} value={isEditable ? email : user?.email}  onChangeText={(text) => setEmail(text)}/>
-      {!changePassword &&
+      <TextInput label="First first name" style={{marginBottom: 20}} editable={isEditable}
+        value={isEditable ? firstName : user?.firstName}
+        onChangeText={(text) => setName(text)}
+      />
+
+      <TextInput label="Last name" style={{marginBottom: 20}} editable={isEditable}
+        value={isEditable ? lastName : user?.lastName}
+        onChangeText={(text) => setLastName(text)}
+      />
+
+      <TextInput label="Email or phone number" style={{marginBottom: 20}} editable={isEditable}
+        value={isEditable ? email : user?.email}
+        onChangeText={(text) => setEmail(text)}
+      />
+
+      <TextInput label="Address" style={{marginBottom: 20}} editable={isEditable}
+        value={isEditable ? address : user?.address}
+        onChangeText={(text) => setAddress(text)}
+      />
+
+      { (!changePassword) &&
       <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} value={isEditable ? password : ""} onChangeText={(text) => setPassword(text)}/>
       }
 
-     {(isEditable && changePassword) &&
-      <TextInput label="Old Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setPassword(text)}/>
-     }
+      {(isEditable && changePassword) &&
+        <TextInput label="Old Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setOldPassword(text)}/>
+      }
 
-    {(isEditable && changePassword) &&
+     {(isEditable && changePassword) &&
       <TextInput label="New Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setPassword(text)}/>
      }
+
      {(isEditable && changePassword) &&
       <TextInput label="Confirm Password" style={{marginBottom: 20}} secureTextEntry={true} editable={isEditable} onChangeText={(text) => setPasswordChecker(text)}/>
      }
 
-      {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
-      {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
-      {showPasswordErrorText ? <Text style={styles.error}>Passwords do not match. Retry!</Text> : null}
-      <Button mode="contained" style={{backgroundColor: Pallete.primaryColor, margin: "2%"}} onPress={onPressButton}>{buttonValue}</Button>
-      <Button mode="contained" style={{backgroundColor: Pallete.primaryColor, margin: "2%"}} onPress={onPressChangePasswordButton}>{changePasswordButtonValue}</Button>
+    {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
+    {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
+    {showPasswordErrorText ? <Text style={styles.error}>Passwords do not match. Retry!</Text> : null}
+    <Button mode="contained" style={{backgroundColor: Pallete.primaryColor, margin: "2%"}} onPress={onPressButton}>{buttonValue}</Button>
+    <Button mode="contained" style={{backgroundColor: Pallete.primaryColor, margin: "2%"}} onPress={onPressChangePasswordButton}>{changePasswordButtonValue}</Button>
 
     </>
   )

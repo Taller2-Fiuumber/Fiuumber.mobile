@@ -2,7 +2,7 @@ import axios from 'axios';// For API consuming
 import { UserToken } from '../models/user-token';
 import { HEADERS, RAW_HEADERS, URL_AUTH, URL_USERS } from "./Constants";
 import { Passenger } from '../models/passenger';
-import { Driver } from '../models/driver';
+import { Driver, DriverData } from '../models/driver';
 import { DriverVehicle } from '../models/driver_vehicle';
 import { Vehicle } from '../models/vehicle';
 
@@ -65,8 +65,19 @@ export const AuthService = {
         try {
             if (_userToken != null) {
                 const url = `${URL_USERS}/driver`;
-                await axios.put(url, driver, AuthService.getHeaders(),);
-                _userToken.user = driver;
+                const driver_data = new DriverData(
+                    driver.user.userId,
+                    driver.user.email,
+                    driver.user.firstName,
+                    driver.user.lastName,
+                    driver.user.address,
+                    driver.user.password,
+                    driver.user.username,
+                    driver.wallet,
+                    driver.driverVehicle
+                )
+                console.log("driver_data", driver_data)
+                await axios.put(url, driver_data, AuthService.getHeaders(),);
                 return true;
             }
             return false;
@@ -79,21 +90,25 @@ export const AuthService = {
     getCurrentDriver: async (): Promise<Driver | undefined> => {
         try {
             if (_userToken != null) {
-
                 const driver_url = `${URL_USERS}/driver/${_userToken.user.id}`;
-                const driver: Driver = await axios.get(driver_url, AuthService.getHeaders(),);
 
-                const driver_vehicle_url = `${URL_USERS}/driver-vehicle/${driver.vehicle.id}`;
-                const driverVehicle: DriverVehicle  = await axios.get(driver_vehicle_url, AuthService.getHeaders(),);
+                let user =  await axios.get(driver_url, AuthService.getHeaders(),);
+                return user.data
+            }
+            return undefined;
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },
+    getCurrentPassenger: async (): Promise<Passenger | undefined> => {
+        try {
+            if (_userToken != null) {
+                const passenger_url = `${URL_USERS}/passenger/${_userToken.user.id}`;
 
-                const vehicle_url = `${URL_USERS}/vehicle/${driverVehicle.id}`;
-                const vehicle: Vehicle  = await axios.get(vehicle_url, AuthService.getHeaders(),);
-
-                driverVehicle.vehicle = vehicle
-                driver.vehicle = driverVehicle
-
-                console.log("Driver: ", driver)
-                return driver
+                let user =  await axios.get(passenger_url, AuthService.getHeaders(),);
+                return user.data
             }
             return undefined;
         }
