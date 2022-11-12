@@ -45,6 +45,19 @@ export const TripsService = {
             throw error;
         }
     },
+    setTripStatus: async (tripId: string, status: TripStatus): Promise<Trip | null> => {
+        try {
+            const url = `${URL_TRIPS}/trip/${tripId}`;
+            const response = await axios.patch(url, {status}, AuthService.getHeaders(),);
+            const tripResponse: Trip = response.data;
+            return tripResponse;
+        } 
+        catch (error: any) {
+            console.log(`TripsService setAssignedDriver(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
     get: async (tripId: string): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}`;

@@ -70,6 +70,7 @@ export const DirectionsBoxNative = (): ReactElement => {
 
   const user: User | undefined = AuthService.getCurrentUserToken()?.user;
   const [mapRef, setMapRef] = React.useState<MapView | null>(null);
+  const userLocationIcon = require("../assets/icons/map-pin.png");
 
   const [origin, setOrigin] =  React.useState<any>(null);
   const [destination, setDestination] =  React.useState<any>(null);
@@ -81,6 +82,8 @@ export const DirectionsBoxNative = (): ReactElement => {
   const [requestedTripId, setRequestedTripId] = React.useState("");
   const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
 
+  const [markers, setMarkers] = React.useState<Marker[]>([]);
+
   const [pickupLocation, setPickupLocation] =  React.useState<any>(null);
 
   const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
@@ -89,6 +92,10 @@ export const DirectionsBoxNative = (): ReactElement => {
   const hideFindTripModal = () => setFindTripVisible(false);
 
   const onClickGetFiuumber = () => {
+    showFindTripModal();
+  };
+
+  const onClickIArrived = () => {
     showFindTripModal();
   };
 
@@ -134,7 +141,6 @@ export const DirectionsBoxNative = (): ReactElement => {
 
   const onTripAccepted = (trip: Trip) => {
     setRequestedTripVisible(false);
-    console.log(trip);
     const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude};
     setPickupLocation(position)
   };
@@ -163,7 +169,6 @@ export const DirectionsBoxNative = (): ReactElement => {
         }
 
         let location = await Location.getCurrentPositionAsync({});
-        console.log({latitude: location.coords.latitude, longitude: location.coords.longitude});
         setRealtimeLocation({latitude: location.coords.latitude, longitude: location.coords.longitude});
       }, 2000);
 
@@ -213,7 +218,7 @@ export const DirectionsBoxNative = (): ReactElement => {
               {destination ? <Marker coordinate={destination} identifier={'mkDestination'} /> : <></>}
               {origin ? <Marker coordinate={origin} identifier={'mkOrigin'} /> : <></>}
               {pickupLocation ? <Marker coordinate={pickupLocation} identifier={'mkPickup'} /> : <></>}
-              {realtimeLocation ? <Marker coordinate={realtimeLocation} identifier={'mkRealtimeLocation'} /> : <></>}
+              {realtimeLocation ? <Marker coordinate={realtimeLocation} identifier={'mkRealtimeLocation'} pinColor={'turquoise'} /*image={userLocationIcon}*/ /> : <></>}
               {origin && destination ?
                 <MapViewDirections
                   origin={origin}
@@ -246,6 +251,9 @@ export const DirectionsBoxNative = (): ReactElement => {
         
         { user?.profile === "PASSENGER" ?
             <Button mode="contained" disabled={loading || !origin || !destination} style={styles.button} onPress={onClickGetFiuumber}>Get your Fiuumber!</Button> : <></>
+        }
+        { user?.profile === "DRIVER" ?
+            <Button mode="contained" style={styles.button} onPress={onClickGetFiuumber}>I Arrived!</Button> : <></>
         }
       </View>
     </View>
