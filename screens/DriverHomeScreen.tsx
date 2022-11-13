@@ -26,15 +26,12 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
 
-    const footerSize: number = 170;
     const { width, height } = Dimensions.get('window');
 
     const [requestedTripId, setRequestedTripId] = React.useState("");
     const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
     const [requestedTripvisible, setRequestedTripVisible] = React.useState(false);
     const [pickupLocation, setPickupLocation] = React.useState<any>(null);
-
-    const [markers, setMarkers] = React.useState<Marker[] | null>(null);
 
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
@@ -44,6 +41,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const onClickIArrived = () => {
 
     }
+
 
     const showRequestedTripModal = (tripId: string) => {
         setRequestedTripVisible(true);
@@ -61,8 +59,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setRequestedTripVisible(false);
         const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
         setPickupLocation(position);
-        const markerDestination: Marker = { coordinate: position, identifier: "mkDestination" };
-        setMarkers([markerDestination]);
         setOrigin(realtimeLocation);
         setDestination(pickupLocation);
         setCurrentTrip(trip);
@@ -91,6 +87,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
                 let location = await Location.getCurrentPositionAsync({});
                 const rtLocation: LatLng = { latitude: location.coords.latitude, longitude: location.coords.longitude };
+
                 if (currentTrip) {
                     try {
                         await FirebaseService.updateDriverLocation(currentTrip._id, realtimeLocation);
@@ -139,7 +136,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                             <View style={{ ...styles.directionContainer, width: (width - 20) }}>
                                 <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
                             </View>)}
-                        <FiuumberMap markers={markers} onMapRef={setMapRef} origin={origin} destination={destination}></FiuumberMap>
+                        <FiuumberMap position={realtimeLocation} onMapRef={setMapRef} origin={origin} destination={destination}></FiuumberMap>
                     </View>
                     <BottomSheet
                         ref={bottomSheetRef}

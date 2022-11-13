@@ -7,13 +7,13 @@ import MapViewDirections from "react-native-maps-directions";
 import { Marker } from "../models/marker";
 
 interface FiuumberMapProps {
-  markers: Marker[] | null;
   onMapRef: (ref: any) => void;
   origin: LatLng | null;
   destination: LatLng | null;
+  position: LatLng | null;
 }
 
-export const FiuumberMap: FC<FiuumberMapProps> = ({ markers, origin, destination, onMapRef }: FiuumberMapProps): ReactElement => {
+export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRef, position }: FiuumberMapProps): ReactElement => {
 
   const [_mapRef, _setMapRef] = useState<any | null>(null);
 
@@ -39,7 +39,8 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ markers, origin, destination
         }}
         onLayout={() => { }}
       >
-        {markers ? markers.map((marker, i) => <RNMarker key={i} coordinate={marker.coordinate} identifier={marker.identifier} />) : <></>}
+        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation" pinColor='turquoise' />)}
+        {destination && (<RNMarker key="destination" coordinate={destination} identifier="mkDestination" />)}
         {origin && destination ?
           <MapViewDirections
             origin={origin}

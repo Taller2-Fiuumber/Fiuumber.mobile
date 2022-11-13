@@ -76,7 +76,6 @@ export const AuthService = {
                     driver.wallet,
                     driver.driverVehicle
                 )
-                console.log("driver_data", driver_data)
                 await axios.put(url, driver_data, AuthService.getHeaders(),);
                 return true;
             }

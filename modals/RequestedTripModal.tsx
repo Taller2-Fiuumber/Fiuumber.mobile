@@ -65,7 +65,6 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDis
         if (!driverId) return;
         try {
             const updatedTrip: Trip | null = await TripsService.setAssignedDriver(tripId, driverId,);
-            console.log(updatedTrip);
             setTrip(updatedTrip);
             await FirebaseService.removeTripFromFirebase(tripId, TripStatus.Requested);
             dissmissDialog(TripDriverResponse.Accepted);
