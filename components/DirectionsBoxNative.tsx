@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { Pallete } from "../constants/Pallete";
 import { Button, Portal, Provider, Text } from 'react-native-paper';
 import { StyleSheet, View, } from "react-native";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { LatLng, Marker } from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
 import { FirebaseService } from "../services/FirebaseService";
@@ -119,12 +119,13 @@ export const DirectionsBoxNative = (): ReactElement => {
   const watchForTripChanges = (tripId: string) => {
     const reference = ref(FirebaseService.db, `/trips/${tripId}`);
     onChildAdded(query(reference), snapshot => {
-      const tripStatus: { tripId: string, status: string } | null = snapshot.val();
+      const tripStatus: { tripId: string, status: string, driver: { location: LatLng } } | null = snapshot.val();
       if (tripStatus) {
         console.log(tripStatus);
       }
     });
   };
+
 
   React.useEffect(() => {
     refreshFare();
@@ -142,6 +143,10 @@ export const DirectionsBoxNative = (): ReactElement => {
 
         let location = await Location.getCurrentPositionAsync({});
         setRealtimeLocation({ latitude: location.coords.latitude, longitude: location.coords.longitude });
+        if (currentTrip) {
+          FirebaseService.updatePassengerLocation(currentTrip._id, realtimeLocation);
+        }
+
       }, 2000);
 
       return () => clearInterval(interval);
@@ -152,7 +157,7 @@ export const DirectionsBoxNative = (): ReactElement => {
     <>
       <Provider>
         <Portal>
-          {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
+          {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
         </Portal>
         <View style={styles.mainContainer}>
           {
@@ -188,7 +193,6 @@ export const DirectionsBoxNative = (): ReactElement => {
               >
                 {destination ? <Marker coordinate={destination} identifier={'mkDestination'} /> : <></>}
                 {origin ? <Marker coordinate={origin} identifier={'mkOrigin'} /> : <></>}
-                {pickupLocation ? <Marker coordinate={pickupLocation} identifier={'mkPickup'} /> : <></>}
                 {realtimeLocation ? <Marker coordinate={realtimeLocation} identifier={'mkRealtimeLocation'} pinColor={'turquoise'} /*image={userLocationIcon}*/ /> : <></>}
                 {origin && destination ?
                   <MapViewDirections

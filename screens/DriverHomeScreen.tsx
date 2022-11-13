@@ -13,6 +13,9 @@ import PaymentInfoCard from "../components/PaymentInfoCard";
 import AddressInfoCard from "../components/AddressInfoCard";
 import InfoCard from "../components/InfoCard";
 import { TripStatus } from "../enums/trip-status";
+import { Marker } from "../models/marker";
+import * as Location from 'expo-location';
+import { LatLng } from "react-native-maps";
 
 interface DriverHomeScreenProps { }
 
@@ -30,6 +33,10 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
     const [requestedTripvisible, setRequestedTripVisible] = React.useState(false);
     const [pickupLocation, setPickupLocation] = React.useState<any>(null);
+
+    const [markers, setMarkers] = React.useState<Marker[] | null>(null);
+
+    const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
 
     const onClickIArrived = () => {
 
@@ -51,6 +58,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setRequestedTripVisible(false);
         const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
         setPickupLocation(position);
+        const marker: Marker = { coordinate: position, identifier: "mkPickupPoint" };
+        setMarkers([marker]);
         setCurrentTrip(trip);
     };
 
@@ -64,6 +73,29 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         });
     };
 
+    React.useEffect(() => {
+        (async () => {
+
+            const interval = setInterval(async () => {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    // setErrorMsg('Permission to access location was denied');
+                    return;
+                }
+
+                let location = await Location.getCurrentPositionAsync({});
+                const rtLocation: LatLng = { latitude: location.coords.latitude, longitude: location.coords.longitude };
+                if (currentTrip && rtLocation != realtimeLocation) {
+                    FirebaseService.updateDriverLocation(currentTrip._id, realtimeLocation);
+                }
+                setRealtimeLocation(rtLocation);
+
+            }, 2000);
+
+            return () => clearInterval(interval);
+        })();
+    }, []);
+
     useEffect(() => {
         watchForNewTrips();
     }, []);
@@ -76,16 +108,18 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                 </Portal>
                 <View>
                     <View style={{ height: mapHeight, width: width }}>
-                        <View style={{ ...styles.directionContainer, width: (width - 20) }}>
-                            <AddressInfoCard address="San Martin 933"></AddressInfoCard>
-                        </View>
-                        <FiuumberMap markers={null} onMapRef={setMapRef} origin={null} destination={null}></FiuumberMap>
+                        {currentTrip && (
+                            <View style={{ ...styles.directionContainer, width: (width - 20) }}>
+                                <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
+                            </View>)}
+                        <FiuumberMap markers={markers} onMapRef={setMapRef} origin={null} destination={null}></FiuumberMap>
                     </View>
                     <View style={{ width: '100%', height: footerSize, padding: 10, backgroundColor: Pallete.whiteColor }}>
                         {
                             currentTrip ?
                                 <>
-                                    <PaymentInfoCard ammount={500}></PaymentInfoCard>
+                                    <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
+                                    {/* <Button style={styles.cancelButton} textColor='red' mode='outlined'>CANCEL</Button> */}
                                     <Button mode="contained" style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>
                                 </> :
                                 <>
@@ -107,7 +141,11 @@ export default DriverHomeScreen;
 const styles = StyleSheet.create({
     container: {
     },
-    directionContainer: { margin: 10, position: 'absolute', zIndex: 1, backgroundColor: 'transparent' }
+    directionContainer: { margin: 10, position: 'absolute', zIndex: 1, backgroundColor: 'transparent' },
+    cancelButton: {
+        marginTop: 20,
+        borderColor: 'red'
+    },
 });
 
 

@@ -24,7 +24,6 @@ export const TripsService = {
                 "from_address": trip.fromAddress,
                 "to_address": trip.toAddress,
             };
-            console.log(tripReq)
             const response = await axios.post(url, {...tripReq}, AuthService.getHeaders());
             return response.data;
         } 
@@ -65,7 +64,7 @@ export const TripsService = {
             const url = `${URL_TRIPS}/trip/${tripId}`;
             const response = await axios.get(url, AuthService.getHeaders(),);
             const rawTrip = response.data;
-            const tripResponse: Trip = {...rawTrip, toLatitude: rawTrip.to_latitude, toLongitude: rawTrip.to_longitude, fromLatitude: rawTrip.from_latitude, fromLongitude: rawTrip.from_longitude};
+            const tripResponse: Trip = {...rawTrip, toLatitude: rawTrip.to_latitude, toLongitude: rawTrip.to_longitude, fromLatitude: rawTrip.from_latitude, fromLongitude: rawTrip.from_longitude, fromAddress: rawTrip.from_address, toAddress: rawTrip.to_address, finalPrice: rawTrip.finalPrice};
             return tripResponse;
         } 
         catch (error: any) {
