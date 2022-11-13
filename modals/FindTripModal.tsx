@@ -93,7 +93,7 @@ export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss,
     const createdTrip: Trip | null = await addTrip();
 
     if (createdTrip) {
-      await FirebaseService.appendTripNotification(createdTrip._id, TripStatus.Requested);
+      await FirebaseService.appendRequestedTrip(createdTrip._id,);
       setStatusText("Waiting approval...");
       watchForDriverAssigned(createdTrip?._id);
     }

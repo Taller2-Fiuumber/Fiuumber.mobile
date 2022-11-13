@@ -17,6 +17,7 @@ import { Marker } from "../models/marker";
 import * as Location from 'expo-location';
 import { LatLng } from "react-native-maps";
 import BottomSheet from '@gorhom/bottom-sheet';
+import { TripsService } from "../services/TripsService";
 
 interface DriverHomeScreenProps { }
 
@@ -38,7 +39,10 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
 
-    const onClickIArrived = () => {
+    const onClickIArrived = async () => {
+        if (!currentTrip) return;
+
+        await TripsService.setTripStatus(currentTrip._id, TripStatus.DriverArrived);
 
     }
 

@@ -3,6 +3,7 @@ import { TripStatus } from '../enums/trip-status';
 import { Trip } from '../models/trip';
 import { AuthService } from './AuthService';
 import { HEADERS, URL_TRIPS } from "./Constants";
+import { FirebaseService } from './FirebaseService';
 
 export const TripsService = {
     create: async (trip: Trip): Promise<Trip | null> => {
@@ -48,15 +49,17 @@ export const TripsService = {
     },
     setTripStatus: async (tripId: string, status: TripStatus): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/trip/${tripId}`;
+            const url = `${URL_TRIPS}/trip/${tripId}/status`;
             console.log(url);
-            console.log(status);
-            const response = await axios.patch(url, {status}, AuthService.getHeaders(),);
+            const response = await axios.put(url, {status}, AuthService.getHeaders(),);
+
+            await FirebaseService.updateTripStatus(tripId, TripStatus.DriverArrived); // Notification
+
             const tripResponse: Trip = response.data;
             return tripResponse;
         } 
         catch (error: any) {
-            console.log(`TripsService setAssignedDriver(): ${error}`);
+            console.log(`TripsService setTripStatus(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
