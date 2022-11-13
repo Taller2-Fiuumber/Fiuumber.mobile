@@ -39,7 +39,7 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ markers, origin, destination
         }}
         onLayout={() => { }}
       >
-        {markers ? markers.map((marker, i) => <RNMarker key={i} coordinate={marker.coordinate} identifier={marker.identifier || '' + i} />) : <></>}
+        {markers ? markers.map((marker, i) => <RNMarker key={i} coordinate={marker.coordinate} identifier={marker.identifier} />) : <></>}
         {origin && destination ?
           <MapViewDirections
             origin={origin}

@@ -216,7 +216,7 @@ export const DirectionsBoxNative = (): ReactElement => {
                     <Text variant="labelLarge" style={{ color: Pallete.darkColor }}>Fiuumber classic</Text>
                     <Text variant="labelSmall" style={{ color: Pallete.darkColor }}>15 min</Text>
                   </View>
-                  <Text variant="titleMedium" style={styles.farePrice}>$ {fare}</Text>
+                  <Text variant="titleMedium" style={styles.farePrice}>ETH {fare}</Text>
                 </View>
                 <View style={styles.fareContainer}>
                   <View>

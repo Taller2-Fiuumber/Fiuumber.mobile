@@ -61,9 +61,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setRequestedTripVisible(false);
         const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
         setPickupLocation(position);
-        const markerOrigin: Marker = { coordinate: position, identifier: "mkOrigin" };
-        const markerDestination: Marker = { coordinate: { latitude: trip.fromLatitude, longitude: trip.fromLongitude }, identifier: "mkDestination" };
-        setMarkers([markerOrigin, markerDestination]);
+        const markerDestination: Marker = { coordinate: position, identifier: "mkDestination" };
+        setMarkers([markerDestination]);
         setOrigin(realtimeLocation);
         setDestination(pickupLocation);
 

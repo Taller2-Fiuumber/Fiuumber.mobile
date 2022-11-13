@@ -1,6 +1,6 @@
 import React, { FC, ReactElement } from "react";
 
-import { StyleSheet, View } from "react-native";
+import { Linking, StyleSheet, View } from "react-native";
 import { IconButton, MD3Colors, Text } from "react-native-paper";
 import { Pallete } from "../constants/Pallete";
 
@@ -9,6 +9,17 @@ interface AddressInfoCardProps {
 }
 
 export const AddressInfoCard: FC<AddressInfoCardProps> = ({ address }: AddressInfoCardProps): ReactElement => {
+
+  const openInMaps = () => {
+    var url = `https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=${address}`;
+    Linking.canOpenURL(url).then(supported => {
+      if (!supported) {
+        console.log('Can\'t handle url: ' + url);
+      } else {
+        return Linking.openURL(url);
+      }
+    }).catch(err => console.error('An error occurred', err));
+  }
 
   return (
     <>
@@ -25,7 +36,7 @@ export const AddressInfoCard: FC<AddressInfoCardProps> = ({ address }: AddressIn
             iconColor={MD3Colors.primary100}
             style={{ backgroundColor: Pallete.blueGoogle, marginLeft: 'auto' }}
             size={25}
-            onPress={() => console.log('Pressed')}
+            onPress={openInMaps}
           />
         </View>
       </View>
