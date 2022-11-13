@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useEffect, useState } from "react";
+import React, { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Pallete } from "../constants/Pallete";
 import { Dimensions, StyleSheet } from "react-native";
@@ -16,6 +16,7 @@ import { TripStatus } from "../enums/trip-status";
 import { Marker } from "../models/marker";
 import * as Location from 'expo-location';
 import { LatLng } from "react-native-maps";
+import BottomSheet from '@gorhom/bottom-sheet';
 
 interface DriverHomeScreenProps { }
 
@@ -27,7 +28,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const footerSize: number = 170;
     const { width, height } = Dimensions.get('window');
-    const mapHeight: number = height - footerSize;
 
     const [requestedTripId, setRequestedTripId] = React.useState("");
     const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
@@ -65,7 +65,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setMarkers([markerDestination]);
         setOrigin(realtimeLocation);
         setDestination(pickupLocation);
-
         setCurrentTrip(trip);
         FirebaseService.updateDriverLocation(trip._id, realtimeLocation);
     };
@@ -112,6 +111,22 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         watchForNewTrips();
     }, []);
 
+    // ref
+    const bottomSheetRef = useRef<BottomSheet>(null);
+
+    const setMinHeightBottomSheet = () => {
+        if (!currentTrip) return '12%';
+        return '20%';
+    }
+
+    // variables
+    const snapPoints = useMemo(() => [setMinHeightBottomSheet(), '100%'], [currentTrip]);
+
+    // callbacks
+    const handleSheetChanges = useCallback((index: number) => {
+    }, []);
+
+
     return (
         <>
             <Provider>
@@ -119,29 +134,32 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                     {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} onAccepted={onTripAccepted} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
                 </Portal>
                 <View>
-                    <View style={{ height: mapHeight, width: width }}>
+                    <View>
                         {currentTrip && (
                             <View style={{ ...styles.directionContainer, width: (width - 20) }}>
                                 <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
                             </View>)}
                         <FiuumberMap markers={markers} onMapRef={setMapRef} origin={origin} destination={destination}></FiuumberMap>
                     </View>
-                    <View style={{ ...styles.footerContainer, height: footerSize }}>
-                        {
-                            currentTrip ?
-                                <>
-                                    <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
-                                    {/* <Button style={styles.cancelButton} textColor='red' mode='outlined'>CANCEL</Button> */}
-                                    <Button mode="contained" style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>
-                                </> :
-                                <>
-                                    <View style={{ marginTop: 25 }}>
+                    <BottomSheet
+                        ref={bottomSheetRef}
+                        index={1}
+                        snapPoints={snapPoints}
+                        onChange={handleSheetChanges}
+                    >
+                        <View style={styles.contentContainer}>
+                            {
+                                currentTrip ?
+                                    <>
+                                        <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
+                                        <Button mode="contained" style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>
+                                    </> :
+                                    <>
                                         <InfoCard title="Looking por passengers?" subtitle="Explore the area to increase your chances"></InfoCard>
-                                    </View>
-                                </>
-                        }
-
-                    </View>
+                                    </>
+                            }
+                        </View>
+                    </BottomSheet>
                 </View>
             </Provider>
         </>
@@ -158,7 +176,13 @@ const styles = StyleSheet.create({
         marginTop: 20,
         borderColor: 'red'
     },
-    footerContainer: { width: '100%', padding: 10, backgroundColor: Pallete.whiteColor }
+    footerContainer: { width: '100%', padding: 10, backgroundColor: Pallete.whiteColor },
+    contentContainer: {
+        flex: 1,
+        backgroundColor: Pallete.whiteColor,
+        padding: 10,
+        justifyContent: 'flex-start'
+    }
 });
 
 
