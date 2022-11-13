@@ -77,7 +77,7 @@ export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss,
     const reference = ref(FirebaseService.db, `/trips/${tripId}`);
     onChildAdded(query(reference), async snapshot => {
       const tripStatus: { tripId: string, status: string } | null = snapshot.val();
-      if (tripStatus && tripId) {
+      if (tripStatus) {
         const trip: Trip | null = await TripsService.get(tripStatus.tripId);
         if (trip && trip.status == TripStatus.DriverAssigned) {
           onAcceptedTrip(trip);

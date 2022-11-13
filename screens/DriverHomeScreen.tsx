@@ -85,7 +85,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
                 let location = await Location.getCurrentPositionAsync({});
                 const rtLocation: LatLng = { latitude: location.coords.latitude, longitude: location.coords.longitude };
-                if (currentTrip && rtLocation != realtimeLocation) {
+                if (currentTrip) {
                     FirebaseService.updateDriverLocation(currentTrip._id, realtimeLocation);
                 }
                 setRealtimeLocation(rtLocation);
