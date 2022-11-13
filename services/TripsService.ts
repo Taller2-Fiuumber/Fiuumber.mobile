@@ -20,9 +20,10 @@ export const TripsService = {
                 "finish": trip.finish,
                 "subscription": trip.subscription,
                 "status": trip.status,
-                "finalPrice": trip.finalPrice
+                "finalPrice": trip.finalPrice,
+                "from_address": trip.fromAddress,
+                "to_address": trip.toAddress,
             };
-            
             const response = await axios.post(url, {...tripReq}, AuthService.getHeaders());
             return response.data;
         } 
@@ -45,12 +46,25 @@ export const TripsService = {
             throw error;
         }
     },
+    setTripStatus: async (tripId: string, status: TripStatus): Promise<Trip | null> => {
+        try {
+            const url = `${URL_TRIPS}/trip/${tripId}`;
+            const response = await axios.patch(url, {status}, AuthService.getHeaders(),);
+            const tripResponse: Trip = response.data;
+            return tripResponse;
+        } 
+        catch (error: any) {
+            console.log(`TripsService setAssignedDriver(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
     get: async (tripId: string): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}`;
             const response = await axios.get(url, AuthService.getHeaders(),);
             const rawTrip = response.data;
-            const tripResponse: Trip = {...rawTrip, toLatitude: rawTrip.to_latitude, toLongitude: rawTrip.to_longitude, fromLatitude: rawTrip.from_latitude, fromLongitude: rawTrip.from_longitude};
+            const tripResponse: Trip = {...rawTrip, toLatitude: rawTrip.to_latitude, toLongitude: rawTrip.to_longitude, fromLatitude: rawTrip.from_latitude, fromLongitude: rawTrip.from_longitude, fromAddress: rawTrip.from_address, toAddress: rawTrip.to_address, finalPrice: rawTrip.finalPrice};
             return tripResponse;
         } 
         catch (error: any) {

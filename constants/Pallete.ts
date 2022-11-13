@@ -7,4 +7,5 @@ export const Pallete = {
     contentColor: "#8E8E8E",
     darkColor: "#2C2B34",
     coral: "#FF8360",
+    blueGoogle: "#689df6",
 };

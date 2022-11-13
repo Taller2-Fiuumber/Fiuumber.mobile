@@ -11,32 +11,33 @@ import { AuthService } from '../services/AuthService';
 import { ref, remove } from 'firebase/database';
 import { FirebaseService } from '../services/FirebaseService';
 import { TripDriverResponse } from '../enums/trip-driver-response';
+import { TripStatus } from '../enums/trip-status';
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Pallete.whiteColor, 
-    padding: 20, 
-   },
-   title: {
-    marginBottom: 10
-   },
-   cancelButton: {
-    marginTop: 20,
-    borderColor: 'red'
-   },
-   acceptButton: {
-    marginTop: 10,
-   },
+    container: {
+        backgroundColor: Pallete.whiteColor,
+        padding: 20,
+    },
+    title: {
+        marginBottom: 10
+    },
+    cancelButton: {
+        marginTop: 20,
+        borderColor: 'red'
+    },
+    acceptButton: {
+        marginTop: 10,
+    },
 });
 interface RequestedTripModalProps extends BasicModalProps {
     tripId: string,
     onAccepted: (trip: Trip) => void;
 }
 
-const defaultStyles = {backgroundColor: 'white', padding: 20, margin: 10};
-  
-export const RequestedTripModal: FC<RequestedTripModalProps> = ({visible, onDismiss, onAccepted, contentContainerStyle, tripId}: RequestedTripModalProps) => {
-    
+const defaultStyles = { backgroundColor: 'white', padding: 20, margin: 10 };
+
+export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDismiss, onAccepted, contentContainerStyle, tripId }: RequestedTripModalProps) => {
+
     const [user, setUser] = React.useState<User | null>();
     const [trip, setTrip] = React.useState<Trip | null>();
     const [fare, setFare] = React.useState<number>();
@@ -63,10 +64,10 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({visible, onDism
         if (!driverId) return;
         try {
             await TripsService.setAssignedDriver(tripId, driverId,);
-            await FirebaseService.removeTripFromFirebase(tripId);
+            await FirebaseService.removeTripFromFirebase(tripId, TripStatus.Requested);
             dissmissDialog(TripDriverResponse.Accepted);
         }
-        catch(error: any) {
+        catch (error: any) {
             console.error(error);
             dissmissDialog(TripDriverResponse.Dismissed);
             //throw error;
@@ -88,19 +89,19 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({visible, onDism
 
     return (
         <>
-            <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={{...defaultStyles, ...contentContainerStyle}}>
+            <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={{ ...defaultStyles, ...contentContainerStyle }}>
                 {user ? <Text variant="titleSmall" style={styles.title}>{user.firstName} {user.lastName} wants to travel</Text> : <></>}
                 {/* {trip ?  <Text variant="titleMedium">15 min</Text> : <></>} */}
-                {trip ?  <Text variant="displayMedium">$ {fare}</Text> : <></>}
+                {trip ? <Text variant="displayMedium">$ {fare}</Text> : <></>}
                 <Button style={styles.cancelButton} textColor='red' mode='outlined' onPress={() => dissmissDialog(TripDriverResponse.Rejected)}>
                     DECLINE
                 </Button>
-                <Button style={styles.acceptButton}  mode='contained' onPress={acceptTrip}>
+                <Button style={styles.acceptButton} mode='contained' onPress={acceptTrip}>
                     ACCEPT
                 </Button>
             </Modal>
         </>
     );
-  }
+}
 
-  export default RequestedTripModal;
+export default RequestedTripModal;

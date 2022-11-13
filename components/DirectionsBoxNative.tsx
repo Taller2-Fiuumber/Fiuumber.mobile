@@ -1,8 +1,8 @@
-import React, { ReactElement} from "react";
+import React, { ReactElement } from "react";
 import { Pallete } from "../constants/Pallete";
-import { Button, Portal , Provider, Text } from 'react-native-paper';
+import { Button, Portal, Provider, Text } from 'react-native-paper';
 import { StyleSheet, View, } from "react-native";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { LatLng, Marker } from 'react-native-maps';
 import { GooglePlacesInput } from "./GooglePlacesInput";
 import MapViewDirections from 'react-native-maps-directions';
 import { FirebaseService } from "../services/FirebaseService";
@@ -14,6 +14,7 @@ import RequestedTripModal from "../modals/RequestedTripModal";
 import { TripsService } from "../services/TripsService";
 import { Trip } from "../models/trip";
 import * as Location from 'expo-location';
+import { TripStatus } from "../enums/trip-status";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -70,86 +71,64 @@ export const DirectionsBoxNative = (): ReactElement => {
 
   const user: User | undefined = AuthService.getCurrentUserToken()?.user;
   const [mapRef, setMapRef] = React.useState<MapView | null>(null);
+  const userLocationIcon = require("../assets/icons/map-pin.png");
 
-  const [origin, setOrigin] =  React.useState<any>(null);
-  const [destination, setDestination] =  React.useState<any>(null);
-  const [fare, setFare] =  React.useState<number>(0);
-  const [loading, setLoading] =  React.useState<boolean>(false);
+  const [origin, setOrigin] = React.useState<any>(null);
+  const [destination, setDestination] = React.useState<any>(null);
+  const [originAddress, setOriginAddress] = React.useState<string | null>(null);
+  const [destinationAddress, setDestinationAddress] = React.useState<string | null>(null);
+  const [fare, setFare] = React.useState<number>(0);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [currentTrip, setCurrentTrip] = React.useState<Trip | null>(null);
 
   const [findTripvisible, setFindTripVisible] = React.useState(false);
-  const [requestedTripvisible, setRequestedTripVisible] = React.useState(false);
-  const [requestedTripId, setRequestedTripId] = React.useState("");
-  const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
 
-  const [pickupLocation, setPickupLocation] =  React.useState<any>(null);
+  const [pickupLocation, setPickupLocation] = React.useState<any>(null);
 
   const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
 
   const showFindTripModal = () => setFindTripVisible(true);
   const hideFindTripModal = () => setFindTripVisible(false);
 
-  const onClickGetFiuumber = () => {
-    showFindTripModal();
+  const onAcceptedTrip = (trip: Trip) => {
+    hideFindTripModal();
+    setCurrentTrip(trip);
+    watchForTripChanges(trip._id);
   };
+
+  const onClickGetFiuumber = () => showFindTripModal();
 
   const refreshFare = async () => {
     if (!origin || !destination) return;
-    
+
     try {
       setLoading(true);
       const calculatedFare = await TripsService.getFare(origin.latitude, destination.latitude, origin.longitude, destination.longitude);
       setFare(calculatedFare);
     }
-    catch(error) {
+    catch (error) {
       console.error(error);
       // TODO: informar al usuario que hubo un error al calcular la tarifa
     }
     finally {
       setLoading(false);
     }
-    
+
   };
 
-  const showRequestedTripModal = (tripId: string) => {
-    setRequestedTripVisible(true);
-    setRequestedTripId(tripId);
-  }
-
-  const hideRequestedTripModal = () => {
-    rejectedTrips.push(requestedTripId);
-    setRejectedTrips(rejectedTrips);
-    setRequestedTripId("");
-    setRequestedTripVisible(false);
-  }
-
-  const watchForNewTrips = () => {
-      const reference = ref(FirebaseService.db, `/trips`);
-      onChildAdded(query(reference), snapshot => {
-        const tripStatus: {tripId: string, status: string} | null = snapshot.val();
-        if (tripStatus && !requestedTripvisible && !rejectedTrips.find(t => t == tripStatus?.tripId)) {
-          showRequestedTripModal(tripStatus.tripId);
-        }
-      });
+  const watchForTripChanges = (tripId: string) => {
+    const reference = ref(FirebaseService.db, `/trips/${tripId}`);
+    onChildAdded(query(reference), snapshot => {
+      const tripStatus: { tripId: string, status: string, driver: { location: LatLng } } | null = snapshot.val();
+      if (tripStatus) {
+        console.log(tripStatus);
+      }
+    });
   };
 
-  const onTripAccepted = (trip: Trip) => {
-    setRequestedTripVisible(false);
-    console.log(trip);
-    const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude};
-    setPickupLocation(position)
-  };
-
-  React.useEffect(() => {
-    if (user?.profile === "DRIVER") {
-      watchForNewTrips();
-    }
-  }, []);
 
   React.useEffect(() => {
     refreshFare();
-    // if (mapRef && origin && destination) {
-    //   mapRef?.fitToCoordinates([origin, destination], { edgePadding: { top: 50, right: 10, bottom: 10, left: 10 }, animated: true })
-    // }
   }, [origin, destination]);
 
   React.useEffect(() => {
@@ -163,8 +142,11 @@ export const DirectionsBoxNative = (): ReactElement => {
         }
 
         let location = await Location.getCurrentPositionAsync({});
-        console.log({latitude: location.coords.latitude, longitude: location.coords.longitude});
-        setRealtimeLocation({latitude: location.coords.latitude, longitude: location.coords.longitude});
+        setRealtimeLocation({ latitude: location.coords.latitude, longitude: location.coords.longitude });
+        if (currentTrip) {
+          FirebaseService.updatePassengerLocation(currentTrip._id, realtimeLocation);
+        }
+
       }, 2000);
 
       return () => clearInterval(interval);
@@ -172,85 +154,81 @@ export const DirectionsBoxNative = (): ReactElement => {
   }, []);
 
   return (
-  <>
-  <Provider>
-    <Portal>
-      {origin && destination && findTripvisible ? <FindTripModal visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination}></FindTripModal> : <></>}      
-      {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} onAccepted={onTripAccepted} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
-    </Portal>
-    <View style={styles.mainContainer}>
-      {
-        user?.profile === "PASSENGER"  ? (<>
-         <View style={styles.containerAutocomplete}>
-          <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} listView={styles.listViewOrigin} onPress={(_data, details = null) => {
-            if (!details) setOrigin(null);
-            const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
-            setOrigin(position);
-          }}></GooglePlacesInput>
+    <>
+      <Provider>
+        <Portal>
+          {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
+        </Portal>
+        <View style={styles.mainContainer}>
+          {
+            <View style={styles.containerAutocomplete}>
+              <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} listView={styles.listViewOrigin} onPress={(_data, details = null) => {
+                if (!details) setOrigin(null);
+                const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0 };
+                setOriginAddress(_data.description);
+                setOrigin(position);
+              }}></GooglePlacesInput>
 
-          <GooglePlacesInput placeholder="Destination" containerStyles={styles.autocomplete} listView={styles.listViewDestination} onPress={(_data, details = null) => {
-            if (!details) setDestination(null);
-            const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0};
-            setDestination(position);
-          }}></GooglePlacesInput>
-        </View>
-        </>) : <></>
-      }
-      
-      <View style={styles.containerMap}>
-        <View style={styles.map}>
-          <MapView
-              ref={(ref) => { setMapRef(ref) }}
-              style={{width: '100%', height: "100%"}}
-              initialRegion={{
-                latitude: -34.6175841,
-                longitude: -58.3682286,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-              onLayout={() => {}}
-            >
-              {destination ? <Marker coordinate={destination} identifier={'mkDestination'} /> : <></>}
-              {origin ? <Marker coordinate={origin} identifier={'mkOrigin'} /> : <></>}
-              {pickupLocation ? <Marker coordinate={pickupLocation} identifier={'mkPickup'} /> : <></>}
-              {realtimeLocation ? <Marker coordinate={realtimeLocation} identifier={'mkRealtimeLocation'} /> : <></>}
-              {origin && destination ?
-                <MapViewDirections
-                  origin={origin}
-                  destination={destination}
-                  apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
-                  strokeWidth={5}
-                  strokeColor="hotpink"
-                />
-                : <></>
-              }
-          </MapView>
-        </View>
-        {fare > 0 && !loading ?
-          <>
-            <View style={{...styles.fareContainer, ...styles.fareSelected}}>
-              <View>
-                <Text variant="labelLarge">Fiuumber classic</Text>
-                <Text variant="labelSmall">15 min</Text>
-              </View>
-              <Text variant="titleMedium" style={styles.farePrice}>$ {fare}</Text>    
+              <GooglePlacesInput placeholder="Destination" containerStyles={styles.autocomplete} listView={styles.listViewDestination} onPress={(_data, details = null) => {
+                if (!details) setDestination(null);
+                const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0 };
+                setDestinationAddress(_data.description);
+                setDestination(position);
+              }}></GooglePlacesInput>
             </View>
-            <View style={styles.fareContainer}>
-              <View>
-                <Text variant="labelLarge">VIP Fiuumber</Text>
-              </View>
-              <Text variant="labelSmall" style={styles.farePrice}>Comming soon</Text>    
+          }
+
+          <View style={styles.containerMap}>
+            <View style={styles.map}>
+              <MapView
+                ref={(ref) => { setMapRef(ref) }}
+                style={{ width: '100%', height: "100%" }}
+                initialRegion={{
+                  latitude: -34.6175841,
+                  longitude: -58.3682286,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onLayout={() => { }}
+              >
+                {destination ? <Marker coordinate={destination} identifier={'mkDestination'} /> : <></>}
+                {origin ? <Marker coordinate={origin} identifier={'mkOrigin'} /> : <></>}
+                {realtimeLocation ? <Marker coordinate={realtimeLocation} identifier={'mkRealtimeLocation'} pinColor={'turquoise'} /*image={userLocationIcon}*/ /> : <></>}
+                {origin && destination ?
+                  <MapViewDirections
+                    origin={origin}
+                    destination={destination}
+                    apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
+                    strokeWidth={5}
+                    strokeColor="hotpink"
+                  />
+                  : <></>
+                }
+              </MapView>
             </View>
-          </>
-        : <></> }
-        
-        { user?.profile === "PASSENGER" ?
-            <Button mode="contained" disabled={loading || !origin || !destination} style={styles.button} onPress={onClickGetFiuumber}>Get your Fiuumber!</Button> : <></>
-        }
-      </View>
-    </View>
-  </Provider>
-    
-  </>
+            {fare > 0 && !loading ?
+              <>
+                <View style={{ ...styles.fareContainer, ...styles.fareSelected }}>
+                  <View>
+                    <Text variant="labelLarge">Fiuumber classic</Text>
+                    <Text variant="labelSmall">15 min</Text>
+                  </View>
+                  <Text variant="titleMedium" style={styles.farePrice}>$ {fare}</Text>
+                </View>
+                <View style={styles.fareContainer}>
+                  <View>
+                    <Text variant="labelLarge">VIP Fiuumber</Text>
+                  </View>
+                  <Text variant="labelSmall" style={styles.farePrice}>Comming soon</Text>
+                </View>
+              </>
+              : <></>}
+
+            <Button mode="contained" disabled={loading || !origin || !destination} style={styles.button} onPress={onClickGetFiuumber}>Get your Fiuumber!</Button>
+          </View>
+        </View>
+      </Provider>
+
+    </>
   );
 };

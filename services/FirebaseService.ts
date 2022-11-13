@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, remove } from "firebase/database";
+import { getDatabase, ref, remove, set } from "firebase/database";
+import { LatLng } from "react-native-maps";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,8 +24,27 @@ const _app = initializeApp(firebaseConfig);
 export const FirebaseService = {
   app: _app,
   db: getDatabase(_app),
-  removeTripFromFirebase: async (tripId: string) => {
-    const reference = ref(FirebaseService.db, `trips/${tripId}`);
+  removeTripFromFirebase: async (tripId: string, status: string) => {
+    const reference = ref(FirebaseService.db, `trips/${status}/${tripId}`);
     return remove(reference);
+  },
+  appendTripNotification: async (tripId: string, status: string) => {
+    const reference = ref(FirebaseService.db, `trips/${status}/${tripId}`);
+    return set(reference, {
+      tripId: tripId,
+      status: status,
+    });
+  },
+  updateDriverLocation: async (tripId: string, location: LatLng) => {
+    const reference = ref(FirebaseService.db, `trips/${tripId}/driver`);
+    return set(reference, {
+      location: location,
+    });
+  },
+  updatePassengerLocation: async (tripId: string, location: LatLng) => {
+    const reference = ref(FirebaseService.db, `trips/${tripId}/passenger`);
+    return set(reference, {
+      location: location,
+    });
   }
 };

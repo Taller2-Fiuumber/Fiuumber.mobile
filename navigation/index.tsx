@@ -5,7 +5,6 @@ import { ColorSchemeName } from 'react-native';
 import LinkingConfiguration from './LinkingConfiguration';
 import { OnBoardingScreen } from '../screens/OnBoardingScreen';
 import { RootStackParamList } from '../types';
-import { HomeScreen } from '../screens/HomeScreen';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { ProfileNavBarScreen } from '../screens/ProfileNavBarScreen';
 import { MyProfileScreen } from '../screens/MyProfileScreen';
@@ -19,7 +18,6 @@ import { UserToken } from '../models/user-token';
 import { AuthAction } from '../models/auth-action';
 import { AuthService } from '../services/AuthService';
 import { CONFIG } from '../config';
-import { User } from '../models/user';
 import { Passenger } from '../models/passenger';
 import { Wallet } from '../models/wallet';
 
