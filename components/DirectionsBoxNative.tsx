@@ -92,9 +92,7 @@ export const DirectionsBoxNative = (): ReactElement => {
   const hideFindTripModal = () => setFindTripVisible(false);
 
   const onAcceptedTrip = (trip: Trip) => {
-    console.log("PASAJERO: VIAJE aceptado")
     hideFindTripModal();
-    console.log(trip);
     setCurrentTrip(trip);
     watchForTripChanges(trip._id);
   };
