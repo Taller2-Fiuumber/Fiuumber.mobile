@@ -12,4 +12,6 @@ export interface Trip {
   subscription: any;
   status: string;
   finalPrice: number;
+  fromAddress: string;
+  toAddress: string;
 }

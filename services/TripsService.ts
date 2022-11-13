@@ -20,9 +20,11 @@ export const TripsService = {
                 "finish": trip.finish,
                 "subscription": trip.subscription,
                 "status": trip.status,
-                "finalPrice": trip.finalPrice
+                "finalPrice": trip.finalPrice,
+                "from_address": trip.fromAddress,
+                "to_address": trip.toAddress,
             };
-            
+            console.log(tripReq)
             const response = await axios.post(url, {...tripReq}, AuthService.getHeaders());
             return response.data;
         } 

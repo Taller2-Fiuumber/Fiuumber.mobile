@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, remove } from "firebase/database";
+import { getDatabase, ref, remove, set } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,8 +23,15 @@ const _app = initializeApp(firebaseConfig);
 export const FirebaseService = {
   app: _app,
   db: getDatabase(_app),
-  removeTripFromFirebase: async (tripId: string) => {
-    const reference = ref(FirebaseService.db, `trips/${tripId}`);
+  removeTripFromFirebase: async (tripId: string, status: string) => {
+    const reference = ref(FirebaseService.db, `trips/${status}/${tripId}`);
     return remove(reference);
+  },
+  appendTripNotification: async (tripId: string, status: string) => {
+    const reference = ref(FirebaseService.db, `trips/${status}/${tripId}`);
+    return set(reference, {
+      tripId: tripId,
+      status: status,
+    });
   }
 };

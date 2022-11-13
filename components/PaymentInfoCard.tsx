@@ -2,6 +2,7 @@ import React, { FC, ReactElement } from "react";
 
 import { StyleSheet, View } from "react-native";
 import { Avatar, Text } from "react-native-paper";
+import { Pallete } from "../constants/Pallete";
 
 interface PaymentInfoCardProps {
   ammount: number;
@@ -13,7 +14,7 @@ export const PaymentInfoCard: FC<PaymentInfoCardProps> = ({ ammount }: PaymentIn
     <>
       <View style={styles.container}>
         <View style={styles.infoContainer}>
-          <Avatar.Icon size={40} icon="bitcoin" style={{ marginRight: 10 }} />
+          <Avatar.Icon size={40} icon="ethereum" style={{ marginRight: 10, backgroundColor: Pallete.darkBackground }} />
           <View>
             <Text style={{ fontWeight: 'bold' }}>Prepaid trip</Text>
             <Text>You will not receive cash</Text>

@@ -10,6 +10,9 @@ import { FirebaseService } from "../services/FirebaseService";
 import RequestedTripModal from "../modals/RequestedTripModal";
 import { Trip } from "../models/trip";
 import PaymentInfoCard from "../components/PaymentInfoCard";
+import AddressInfoCard from "../components/AddressInfoCard";
+import InfoCard from "../components/InfoCard";
+import { TripStatus } from "../enums/trip-status";
 
 interface DriverHomeScreenProps { }
 
@@ -19,7 +22,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
 
-    const footerSize: number = 200;
+    const footerSize: number = 170;
     const { width, height } = Dimensions.get('window');
     const mapHeight: number = height - footerSize;
 
@@ -52,7 +55,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     };
 
     const watchForNewTrips = () => {
-        const reference = ref(FirebaseService.db, `/trips`);
+        const reference = ref(FirebaseService.db, `/trips/${TripStatus.Requested}`);
         onChildAdded(query(reference), snapshot => {
             const tripStatus: { tripId: string, status: string } | null = snapshot.val();
             if (tripStatus && !requestedTripvisible && !rejectedTrips.find(t => t == tripStatus?.tripId)) {
@@ -73,21 +76,24 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                 </Portal>
                 <View>
                     <View style={{ height: mapHeight, width: width }}>
+                        <View style={{ ...styles.directionContainer, width: (width - 20) }}>
+                            <AddressInfoCard address="San Martin 933"></AddressInfoCard>
+                        </View>
                         <FiuumberMap markers={null} onMapRef={setMapRef} origin={null} destination={null}></FiuumberMap>
                     </View>
-                    <View style={{ width: '100%', height: footerSize, padding: 10, backgroundColor: Pallete.lightColor }}>
-                        {/* {
+                    <View style={{ width: '100%', height: footerSize, padding: 10, backgroundColor: Pallete.whiteColor }}>
+                        {
                             currentTrip ?
                                 <>
-                                    <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
-                                    <Button mode="contained" onPress={onClickIArrived}>I Arrived!</Button>
+                                    <PaymentInfoCard ammount={500}></PaymentInfoCard>
+                                    <Button mode="contained" style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>
                                 </> :
-                                <View>
-                                    <Text>Explore the area to get passengers</Text>
-                                </View>
-                        } */}
-                        <PaymentInfoCard ammount={500}></PaymentInfoCard>
-                        <Button mode="contained" onPress={onClickIArrived}>I Arrived!</Button>
+                                <>
+                                    <View style={{ marginTop: 25 }}>
+                                        <InfoCard title="Looking por passengers?" subtitle="Explore the area to increase your chances"></InfoCard>
+                                    </View>
+                                </>
+                        }
 
                     </View>
                 </View>
@@ -101,6 +107,7 @@ export default DriverHomeScreen;
 const styles = StyleSheet.create({
     container: {
     },
+    directionContainer: { margin: 10, position: 'absolute', zIndex: 1, backgroundColor: 'transparent' }
 });
 
 
