@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 import { Pallete } from '../constants/Pallete';
 import { TripScreen } from '../screens/TripScreen';
 import { MyProfileScreen } from '../screens/MyProfileScreen';
+import { CalificationScreen } from '../screens/CalificationScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
@@ -39,6 +40,7 @@ export const ProfileNavBarScreen = () => {
           <Drawer.Screen name="Home" component={TripScreen} />
           <Drawer.Screen name="My Profile" component={MyProfileScreen} />
           <Drawer.Screen name="My trips" component={MyProfileScreen} />
+          <Drawer.Screen name="Calification" component={CalificationScreen} />
         </Drawer.Navigator>
 
     );

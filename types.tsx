@@ -25,6 +25,7 @@ export type RootStackParamList = {
   OnBoardingScreen: undefined;
   VehicleDataScreen: undefined,
   RoleSelectionScreen: undefined;
+  CalificationScreen: undefined;
   SignUpSuccessfullyScreen: undefined;
   TripScreen: undefined;
   ProfileNavBarScreen: undefined;
