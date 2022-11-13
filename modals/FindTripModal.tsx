@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    marginBottom: 10
+    marginBottom: 10,
+    color: Pallete.darkColor
   },
   cancelButton: {
     marginTop: 20,
@@ -76,9 +77,9 @@ export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss,
   const watchForDriverAssigned = (tripId: string) => {
     const reference = ref(FirebaseService.db, `/trips/${tripId}`);
     onChildAdded(query(reference), async snapshot => {
-      const tripStatus: { tripId: string, status: string } | null = snapshot.val();
+      const tripStatus: { driver: any } | null = snapshot.val();
       if (tripStatus) {
-        const trip: Trip | null = await TripsService.get(tripStatus.tripId);
+        const trip: Trip | null = await TripsService.get(tripId);
         if (trip && trip.status == TripStatus.DriverAssigned) {
           onAcceptedTrip(trip);
         }

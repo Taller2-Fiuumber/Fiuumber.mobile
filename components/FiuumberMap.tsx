@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useState } from "react";
+import React, { FC, ReactElement, useEffect, useState } from "react";
 
 import { Pallete } from "../constants/Pallete";
 import { Dimensions, StyleSheet } from "react-native";
@@ -24,6 +24,8 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ markers, origin, destination
     onMapRef(ref);
   }
 
+  useEffect(() => { }, [origin, destination])
+
   return (
     <>
       <MapView
@@ -37,7 +39,7 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ markers, origin, destination
         }}
         onLayout={() => { }}
       >
-        {markers ? markers.map(marker => <RNMarker coordinate={marker.coordinate} identifier={marker.identifier} />) : <></>}
+        {markers ? markers.map((marker, i) => <RNMarker key={i} coordinate={marker.coordinate} identifier={marker.identifier || '' + i} />) : <></>}
         {origin && destination ?
           <MapViewDirections
             origin={origin}

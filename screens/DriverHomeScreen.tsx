@@ -36,6 +36,9 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const [markers, setMarkers] = React.useState<Marker[] | null>(null);
 
+    const [origin, setOrigin] = React.useState<LatLng | null>(null);
+    const [destination, setDestination] = React.useState<LatLng | null>(null);
+
     const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
 
     const onClickIArrived = () => {
@@ -58,9 +61,14 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setRequestedTripVisible(false);
         const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
         setPickupLocation(position);
-        const marker: Marker = { coordinate: position, identifier: "mkPickupPoint" };
-        setMarkers([marker]);
+        const markerOrigin: Marker = { coordinate: position, identifier: "mkOrigin" };
+        const markerDestination: Marker = { coordinate: { latitude: trip.fromLatitude, longitude: trip.fromLongitude }, identifier: "mkDestination" };
+        setMarkers([markerOrigin, markerDestination]);
+        setOrigin(realtimeLocation);
+        setDestination(pickupLocation);
+
         setCurrentTrip(trip);
+        FirebaseService.updateDriverLocation(trip._id, realtimeLocation);
     };
 
     const watchForNewTrips = () => {
@@ -86,7 +94,12 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                 let location = await Location.getCurrentPositionAsync({});
                 const rtLocation: LatLng = { latitude: location.coords.latitude, longitude: location.coords.longitude };
                 if (currentTrip) {
-                    FirebaseService.updateDriverLocation(currentTrip._id, realtimeLocation);
+                    try {
+                        await FirebaseService.updateDriverLocation(currentTrip._id, realtimeLocation);
+                    }
+                    catch (e: any) {
+                        console.log("Cannot update location" + e);
+                    }
                 }
                 setRealtimeLocation(rtLocation);
 
@@ -112,9 +125,9 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                             <View style={{ ...styles.directionContainer, width: (width - 20) }}>
                                 <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
                             </View>)}
-                        <FiuumberMap markers={markers} onMapRef={setMapRef} origin={null} destination={null}></FiuumberMap>
+                        <FiuumberMap markers={markers} onMapRef={setMapRef} origin={origin} destination={destination}></FiuumberMap>
                     </View>
-                    <View style={{ width: '100%', height: footerSize, padding: 10, backgroundColor: Pallete.whiteColor }}>
+                    <View style={{ ...styles.footerContainer, height: footerSize }}>
                         {
                             currentTrip ?
                                 <>
@@ -146,6 +159,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         borderColor: 'red'
     },
+    footerContainer: { width: '100%', padding: 10, backgroundColor: Pallete.whiteColor }
 });
 
 

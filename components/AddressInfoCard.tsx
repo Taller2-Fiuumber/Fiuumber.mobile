@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
   },
   priceContainer: {
     flex: 1,
-    textAlign: 'right'
+    textAlign: 'right',
+    justifyContent: 'center'
   },
 });
 

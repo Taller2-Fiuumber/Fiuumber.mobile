@@ -35,6 +35,7 @@ export const TripsService = {
     setAssignedDriver: async (tripId: string, driverId: number): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}/assign-driver`;
+            console.log(url)
             const tripReq = {"driverId": driverId.toString()};
             const response = await axios.post(url, tripReq, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
@@ -49,6 +50,8 @@ export const TripsService = {
     setTripStatus: async (tripId: string, status: TripStatus): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}`;
+            console.log(url);
+            console.log(status);
             const response = await axios.patch(url, {status}, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
             return tripResponse;

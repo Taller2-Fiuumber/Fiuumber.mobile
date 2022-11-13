@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
   farePrice: {
     flex: 1,
     textAlign: 'right',
+    color: Pallete.darkColor
   },
   fareSelected: {
     borderWidth: 3,
@@ -91,7 +92,9 @@ export const DirectionsBoxNative = (): ReactElement => {
   const hideFindTripModal = () => setFindTripVisible(false);
 
   const onAcceptedTrip = (trip: Trip) => {
+    console.log("PASAJERO: VIAJE aceptado")
     hideFindTripModal();
+    console.log(trip);
     setCurrentTrip(trip);
     watchForTripChanges(trip._id);
   };
@@ -210,8 +213,8 @@ export const DirectionsBoxNative = (): ReactElement => {
               <>
                 <View style={{ ...styles.fareContainer, ...styles.fareSelected }}>
                   <View>
-                    <Text variant="labelLarge">Fiuumber classic</Text>
-                    <Text variant="labelSmall">15 min</Text>
+                    <Text variant="labelLarge" style={{ color: Pallete.darkColor }}>Fiuumber classic</Text>
+                    <Text variant="labelSmall" style={{ color: Pallete.darkColor }}>15 min</Text>
                   </View>
                   <Text variant="titleMedium" style={styles.farePrice}>$ {fare}</Text>
                 </View>
