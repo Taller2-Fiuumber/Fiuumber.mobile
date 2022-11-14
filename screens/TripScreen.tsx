@@ -6,6 +6,7 @@ import { DirectionsBoxNative } from '../components/DirectionsBoxNative';
 import { User } from '../models/user';
 import { AuthService } from '../services/AuthService';
 import DriverHomeScreen from './DriverHomeScreen';
+import PassengerHomeScreen from './PassengerHomeScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,11 +32,13 @@ export const TripScreen = () => {
     <>
       {user?.profile == "DRIVER" ?
         <DriverHomeScreen></DriverHomeScreen> :
-        <View style={styles.container}>
-          <View style={styles.contentContainer}>
-            <DirectionsBoxNative></DirectionsBoxNative>
-          </View>
-        </View>}
+        <PassengerHomeScreen></PassengerHomeScreen>
+        // <View style={styles.container}>
+        //   <View style={styles.contentContainer}>
+        //     <DirectionsBoxNative></DirectionsBoxNative>
+        //   </View>
+        // </View>
+      }
     </>
   );
 }
