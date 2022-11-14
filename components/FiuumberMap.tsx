@@ -1,28 +1,31 @@
-import React, { FC, ReactElement, useState } from "react";
+import React, { FC, ReactElement, useEffect, useState } from "react";
 
 import { Pallete } from "../constants/Pallete";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, Image, View, Text } from "react-native";
 import MapView, { LatLng, Marker as RNMarker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { Marker } from "../models/marker";
 
 interface FiuumberMapProps {
-  markers: Marker[] | null;
   onMapRef: (ref: any) => void;
   origin: LatLng | null;
   destination: LatLng | null;
+  position: LatLng | null;
 }
 
-export const FiuumberMap: FC<FiuumberMapProps> = ({ markers, origin, destination, onMapRef }: FiuumberMapProps): ReactElement => {
+export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRef, position }: FiuumberMapProps): ReactElement => {
 
   const [_mapRef, _setMapRef] = useState<any | null>(null);
 
   const { width, height } = Dimensions.get('window');
 
+  const carImage = require("../assets/icons/car.png");
+
   const setRef = (ref: any) => {
     _setMapRef(ref);
     onMapRef(ref);
   }
+
+  useEffect(() => { console.log(origin); console.log(destination) }, [origin, destination])
 
   return (
     <>
@@ -37,7 +40,14 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ markers, origin, destination
         }}
         onLayout={() => { }}
       >
-        {markers ? markers.map(marker => <RNMarker coordinate={marker.coordinate} identifier={marker.identifier} />) : <></>}
+        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation" pinColor="turquoise">
+          {/* <Image
+            source={carImage}
+            style={{ width: 26, height: 28, rotation: -90 }}
+            resizeMode="contain"
+          /> */}
+        </RNMarker>)}
+        {destination && (<RNMarker key="destination" coordinate={destination} identifier="mkDestination" />)}
         {origin && destination ?
           <MapViewDirections
             origin={origin}

@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, remove, set } from "firebase/database";
 import { LatLng } from "react-native-maps";
+import { TripStatus } from "../enums/trip-status";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,15 +25,15 @@ const _app = initializeApp(firebaseConfig);
 export const FirebaseService = {
   app: _app,
   db: getDatabase(_app),
-  removeTripFromFirebase: async (tripId: string, status: string) => {
-    const reference = ref(FirebaseService.db, `trips/${status}/${tripId}`);
+  removeRequestedTrip: async (tripId: string) => {
+    const reference = ref(FirebaseService.db, `trips/${TripStatus.Requested}/${tripId}`);
     return remove(reference);
   },
-  appendTripNotification: async (tripId: string, status: string) => {
-    const reference = ref(FirebaseService.db, `trips/${status}/${tripId}`);
+  appendRequestedTrip: async (tripId: string) => {
+    const reference = ref(FirebaseService.db, `trips/${TripStatus.Requested}/${tripId}`);
     return set(reference, {
       tripId: tripId,
-      status: status,
+      status: TripStatus.Requested,
     });
   },
   updateDriverLocation: async (tripId: string, location: LatLng) => {
@@ -46,5 +47,11 @@ export const FirebaseService = {
     return set(reference, {
       location: location,
     });
-  }
+  },
+  updateTripStatus: async (tripId: string, status: string) => {
+    const reference = ref(FirebaseService.db, `trips/${tripId}`);
+    return set(reference, {
+      status,
+    });
+  },
 };

@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     title: {
-        marginBottom: 10
+        marginBottom: 10,
+        color: Pallete.darkColor
     },
     cancelButton: {
         marginTop: 20,
@@ -63,8 +64,9 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDis
         const driverId: number | undefined = AuthService.getCurrentUserToken()?.user.id
         if (!driverId) return;
         try {
-            await TripsService.setAssignedDriver(tripId, driverId,);
-            await FirebaseService.removeTripFromFirebase(tripId, TripStatus.Requested);
+            const updatedTrip: Trip | null = await TripsService.setAssignedDriver(tripId, driverId,);
+            setTrip(updatedTrip);
+            await FirebaseService.removeRequestedTrip(tripId);
             dissmissDialog(TripDriverResponse.Accepted);
         }
         catch (error: any) {
@@ -92,7 +94,7 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDis
             <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={{ ...defaultStyles, ...contentContainerStyle }}>
                 {user ? <Text variant="titleSmall" style={styles.title}>{user.firstName} {user.lastName} wants to travel</Text> : <></>}
                 {/* {trip ?  <Text variant="titleMedium">15 min</Text> : <></>} */}
-                {trip ? <Text variant="displayMedium">$ {fare}</Text> : <></>}
+                {trip ? <Text variant="displayMedium" style={{ color: Pallete.darkColor }}>ETH {fare}</Text> : <></>}
                 <Button style={styles.cancelButton} textColor='red' mode='outlined' onPress={() => dissmissDialog(TripDriverResponse.Rejected)}>
                     DECLINE
                 </Button>
