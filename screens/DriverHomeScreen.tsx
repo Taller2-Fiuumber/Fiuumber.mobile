@@ -32,7 +32,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [requestedTripId, setRequestedTripId] = React.useState("");
     const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
     const [requestedTripvisible, setRequestedTripVisible] = React.useState(false);
-    const [pickupLocation, setPickupLocation] = React.useState<any>(null);
 
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
@@ -41,9 +40,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const onClickIArrived = async () => {
         if (!currentTrip) return;
-
         await TripsService.setTripStatus(currentTrip._id, TripStatus.DriverArrived);
-
     }
 
 
@@ -61,10 +58,10 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const onTripAccepted = (trip: Trip) => {
         setRequestedTripVisible(false);
+        console.log(trip)
         const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
-        setPickupLocation(position);
         setOrigin(realtimeLocation);
-        setDestination(pickupLocation);
+        setDestination(position);
         setCurrentTrip(trip);
         FirebaseService.updateDriverLocation(trip._id, realtimeLocation);
     };

@@ -1,10 +1,9 @@
 import React, { FC, ReactElement, useEffect, useState } from "react";
 
 import { Pallete } from "../constants/Pallete";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, Image, View, Text } from "react-native";
 import MapView, { LatLng, Marker as RNMarker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { Marker } from "../models/marker";
 
 interface FiuumberMapProps {
   onMapRef: (ref: any) => void;
@@ -19,12 +18,14 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
 
   const { width, height } = Dimensions.get('window');
 
+  const carImage = require("../assets/icons/car.png");
+
   const setRef = (ref: any) => {
     _setMapRef(ref);
     onMapRef(ref);
   }
 
-  useEffect(() => { }, [origin, destination])
+  useEffect(() => { console.log(origin); console.log(destination) }, [origin, destination])
 
   return (
     <>
@@ -39,7 +40,13 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
         }}
         onLayout={() => { }}
       >
-        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation" pinColor='turquoise' />)}
+        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation">
+          {/* <Image
+            source={carImage}
+            style={{ width: 26, height: 28, rotation: -90 }}
+            resizeMode="contain"
+          /> */}
+        </RNMarker>)}
         {destination && (<RNMarker key="destination" coordinate={destination} identifier="mkDestination" />)}
         {origin && destination ?
           <MapViewDirections
