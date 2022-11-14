@@ -5,12 +5,12 @@ import { Pallete } from '../constants/Pallete';
 import { User } from '../models/user';
 import { Image, Pressable } from "react-native";
 import { AuthService } from '../services/AuthService';
-import PassengerRatingForm from "../components/PassengerRatingForm";
-import DriverRatingForm from "../components/DriverRatingForm";
 import { useState } from "react";
 import AuthContext from "../contexts/AuthContext";
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { TextInput, Button } from 'react-native-paper';
+import axios from "axios";
+// import { HEADERS, RAW_HEADERS, URL_AUTH, URL_USERS } from "../Constants";
 
 
 
@@ -49,34 +49,72 @@ const styles = StyleSheet.create({
     },
 });
 
-export const CalificationScreen = () => {
+export const CalificationScreen = (tripId: string) => {
 
   const ratingCompleted = (rating: number)=> {
-    console.log("Rating is: " + rating)
+    // console.log("Rating is: " + rating)
+    setRating(rating);
   }
-    const user = AuthService.getCurrentUserToken()?.user;
-    return (
-      
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.contentContainer}>
-        <Text style={styles.subtitle}>Califíca a tu { user?.profile == "PASSENGER" ?
-            "Chofer":
-            "Pasajero"
-          }</Text>
-        <Rating
-          showRating
-          onFinishRating={ratingCompleted}
-          style={{ paddingVertical: 10 }}
-        />
-         { user?.profile == "PASSENGER" ?
-            <PassengerRatingForm></PassengerRatingForm> :
-            <DriverRatingForm></DriverRatingForm>
-          }
-          <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={console.log("envio")}> Calificar </Button>
-        </View>
-        </ScrollView>
-    </SafeAreaView>
+
+  const createReview = (review: string)=> {
+    // console.log(review);
+    setReview(review);
+  }
+
+  const getTrip = async () => {
+    
+  }
+  const createCalification = async () => {
+    try {
+      const url = `https://fiuumber-api-trips.herokuapp.com/api/trips/trip/${tripId}`;
+      let trip =  await axios.get(url, AuthService.getHeaders());
+      try {
+        const url = `https://fiuumber-api-trips.herokuapp.com/api/trips/calification`;
+        await axios.post(url, {
+          "passengerId": trip.passengerId,
+          "driverId": trip.driverId,
+          "tripId": trip.id,
+          "createdAt": "2022-11-14T20:19:18.051817",
+          "updatedAt": "2022-11-14T20:19:18.051820",
+          "stars": {rating},
+          "comments": {review},
+          "reviewer": user?.profile,
+        }, AuthService.getHeaders());
+        return true;
+      }
+      catch (error: any) {
+          console.log(error);
+          throw error;
+      }
+    }
+    catch (error: any) {
+        console.log(error);
+        throw error;
+    }
+  }
+  const user = AuthService.getCurrentUserToken()?.user;
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+  return (
+    
+  <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.contentContainer}>
+      <Text style={styles.subtitle}>Rate your { user?.profile == "PASSENGER" ?
+          "driver":
+          "passenger"
+        }</Text>
+      <Rating
+        showRating
+        onFinishRating={ratingCompleted}
+        style={{ paddingVertical: 10 }}
+      />
+        <Text style={styles.subtitle}>How was your trip? Give a compliment! </Text>
+        <TextInput label="Write a note" style={{marginBottom: 20}} onChangeText={text=> createReview(text)} />
+        <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={createCalification}> Submit </Button>
+      </View>
+      </ScrollView>
+  </SafeAreaView>
 
     );
   }
