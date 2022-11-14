@@ -40,7 +40,7 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
         }}
         onLayout={() => { }}
       >
-        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation">
+        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation" pinColor="turquoise">
           {/* <Image
             source={carImage}
             style={{ width: 26, height: 28, rotation: -90 }}
