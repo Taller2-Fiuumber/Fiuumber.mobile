@@ -141,7 +141,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                     </View>
                     <BottomSheet
                         ref={bottomSheetRef}
-                        index={1}
+                        index={0}
                         snapPoints={snapPoints}
                         onChange={handleSheetChanges}
                     >

@@ -10,15 +10,18 @@ interface GooglePlacesInputProps {
   placeholder: string;
   containerStyles?: any;
   listView?: any;
+  focus: (() => void) | undefined;
 }
 
-const defaultProps: GooglePlacesInputProps = {placeholder: 'Search', containerStyles: {}, listView: {}, onPress: undefined};
+const defaultProps: GooglePlacesInputProps = { placeholder: 'Search', containerStyles: {}, listView: {}, onPress: undefined, focus: undefined };
 
-export const GooglePlacesInput: FC<GooglePlacesInputProps> = ({placeholder, containerStyles, listView, onPress}: GooglePlacesInputProps): ReactElement => {
+export const GooglePlacesInput: FC<GooglePlacesInputProps> = ({ placeholder, containerStyles, listView, onPress, focus }: GooglePlacesInputProps): ReactElement => {
+
   return (
     <GooglePlacesAutocomplete
+      textInputProps={{ onPressOut: focus }}
       placeholder={placeholder}
-      styles={{listView: listView, container: containerStyles, color: Pallete.darkColor, fontWeight: "bold",}}
+      styles={{ listView: listView, container: containerStyles, color: Pallete.darkColor, fontWeight: "bold", }}
       onPress={onPress}
       query={{
         key: 'AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I',
@@ -26,7 +29,7 @@ export const GooglePlacesInput: FC<GooglePlacesInputProps> = ({placeholder, cont
         components: 'country:ar',
       }}
       GooglePlacesDetailsQuery={{ fields: "geometry" }}
-        fetchDetails={true} // you need this to fetch the details object onPress
+      fetchDetails={true} // you need this to fetch the details object onPress
     />
   );
 };
