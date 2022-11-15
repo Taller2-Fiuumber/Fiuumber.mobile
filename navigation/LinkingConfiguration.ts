@@ -18,6 +18,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       SignUpSuccessfullyScreen: 'SignUpSuccesfully',
       TripScreen: 'Trip',
       MyProfileScreeen: 'MyProfile',
+      CalificationScreen: 'Calification',
     //   Root: {
     //     screens: {
     //       TabOne: {

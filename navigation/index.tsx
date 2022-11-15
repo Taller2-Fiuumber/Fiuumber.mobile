@@ -13,6 +13,7 @@ import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
 import { VehicleDataScreen } from '../screens/VehicleDataScreen';
 import { SignUpSuccessfullyScreen } from '../screens/SignUpSuccessfullyScreen';
+import { CalificationScreen } from '../screens/CalificationScreen';
 import AuthContext from '../contexts/AuthContext';
 import { UserToken } from '../models/user-token';
 import { AuthAction } from '../models/auth-action';
@@ -144,6 +145,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="CalificationScreen" component={CalificationScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
 
             </>
           )
