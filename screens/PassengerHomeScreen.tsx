@@ -25,6 +25,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const myLocation: LatLng | null = useRealtimeLocation(3000);
 
+    useStreamLocation(currentTrip, myLocation);
+
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
     const [originAddress, setOriginAddress] = React.useState<string | null>(null);
@@ -119,8 +121,6 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         }
 
     };
-
-    useStreamLocation(currentTrip, myLocation);
 
     return (
         <>
