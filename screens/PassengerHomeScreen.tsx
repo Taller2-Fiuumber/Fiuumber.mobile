@@ -10,7 +10,7 @@ import { GooglePlacesInput } from "../components/GooglePlacesInput";
 import { Pallete } from "../constants/Pallete";
 import { TripsService } from "../services/TripsService";
 import FindTripModal from "../modals/FindTripModal";
-import { ref, onChildAdded, query } from "firebase/database";
+import { ref, onChildAdded, query, onChildChanged } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import { Driver } from "../models/driver";
 import { AuthService } from "../services/AuthService";
@@ -28,6 +28,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const [mapRef, setMapRef] = useState<any | null>(null);
     const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
+    const [driverRealtimeLocation, setDriverRealtimeLocation] = React.useState<any>(null);
     const [fare, setFare] = React.useState<number>(0);
     const [loading, setLoading] = React.useState<boolean>(false);
     const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED">("DIRECTIONS");
@@ -50,20 +51,24 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const onAcceptedTrip = async (trip: Trip) => {
         hideFindTripModal();
         setCurrentTrip(trip);
-        watchForTripChanges(trip._id);
+        watchForDriverLocationChanges(trip._id);
         setViewState("DRIVER_ASSIGNED");
 
         const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
         setCurrentDriver(driver);
     };
 
-    const watchForTripChanges = (tripId: string) => {
-        const reference = ref(FirebaseService.db, `/trips/${tripId}`);
+    const watchForDriverLocationChanges = (tripId: string) => {
+        const reference = ref(FirebaseService.db, `/trips/${tripId}/driver`);
         onChildAdded(query(reference), snapshot => {
-            const tripStatus: { tripId: string, status: string, driver: { location: LatLng } } | null = snapshot.val();
-            if (tripStatus) {
-                console.log(tripStatus);
-            }
+            console.log("STATUS", snapshot.val());
+            const driverLocation: LatLng = snapshot.val();
+            setDriverRealtimeLocation(driverLocation);
+            // const tripStatus: { tripId: string, status: string, driver: { location: LatLng } } | null = snapshot.val();
+
+            // if (tripStatus) {
+            //     console.log(tripStatus);
+            // }
         });
     };
 
@@ -78,7 +83,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     }
 
     // variables
-    const snapPoints = useMemo(() => [setMinHeightBottomSheet(), '100%'], [currentTrip, origin, destination]);
+    const snapPoints = useMemo(() => [setMinHeightBottomSheet(), '100%'], [currentTrip, origin, destination, viewState]);
 
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
@@ -118,7 +123,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                 <Portal>
                     {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
                 </Portal>
-                <FiuumberMap position={realtimeLocation} onMapRef={setMapRef} origin={origin} destination={destination}></FiuumberMap>
+                <FiuumberMap position={realtimeLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={0}

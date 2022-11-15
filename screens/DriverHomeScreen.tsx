@@ -56,14 +56,13 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setRequestedTripVisible(false);
     }
 
-    const onTripAccepted = (trip: Trip) => {
+    const onTripAccepted = async (trip: Trip) => {
         setRequestedTripVisible(false);
-        console.log(trip)
         const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
         setOrigin(realtimeLocation);
         setDestination(position);
         setCurrentTrip(trip);
-        FirebaseService.updateDriverLocation(trip._id, realtimeLocation);
+        await FirebaseService.updateDriverLocation(trip._id, realtimeLocation);
     };
 
     const watchForNewTrips = () => {
@@ -99,11 +98,11 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                 }
                 setRealtimeLocation(rtLocation);
 
-            }, 2000);
+            }, 5000);
 
             return () => clearInterval(interval);
         })();
-    }, []);
+    }, [currentTrip]);
 
     useEffect(() => {
         watchForNewTrips();
@@ -137,7 +136,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                             <View style={{ ...styles.directionContainer, width: (width - 20) }}>
                                 <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
                             </View>)}
-                        <FiuumberMap position={realtimeLocation} onMapRef={setMapRef} origin={origin} destination={destination}></FiuumberMap>
+                        <FiuumberMap position={null} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={realtimeLocation}></FiuumberMap>
                     </View>
                     <BottomSheet
                         ref={bottomSheetRef}

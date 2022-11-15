@@ -40,12 +40,14 @@ export const FirebaseService = {
     const reference = ref(FirebaseService.db, `trips/${tripId}/driver`);
     return set(reference, {
       location: location,
+      ts: new Date()
     });
   },
   updatePassengerLocation: async (tripId: string, location: LatLng) => {
     const reference = ref(FirebaseService.db, `trips/${tripId}/passenger`);
     return set(reference, {
       location: location,
+      ts: new Date()
     });
   },
   updateTripStatus: async (tripId: string, status: string) => {
