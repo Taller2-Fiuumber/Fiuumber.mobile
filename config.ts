@@ -5,5 +5,5 @@ export const CONFIG = {
     usersBasePath: "/api/users-service",
     tripsBasePath: "/api/trips",
     authBasePath: "/api/auth",
-    bypassLogin: true, // Setear en true para testear
+    bypassLogin: false, // Setear en true para testear
 };

@@ -1,17 +1,18 @@
-import * as React from 'react';
+import React, { FC, ReactElement, useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, ScrollView, StatusBar} from "react-native";
 import { Text, View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
 import { User } from '../models/user';
 import { Image, Pressable } from "react-native";
 import { AuthService } from '../services/AuthService';
-import { useState } from "react";
+
 import AuthContext from "../contexts/AuthContext";
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { TextInput, Button } from 'react-native-paper';
 import axios from "axios";
 // import { HEADERS, RAW_HEADERS, URL_AUTH, URL_USERS } from "../Constants";
-
+import { Trip, Calification } from '../models/trip';
+import { TripsService } from '../services/TripsService';
 
 
 const styles = StyleSheet.create({
@@ -49,54 +50,43 @@ const styles = StyleSheet.create({
     },
 });
 
+
 export const CalificationScreen = (tripId: string) => {
+  const [rating, setRating] = useState<number>(0);
+  const [review, setReview] = useState<string>("");
 
-  const ratingCompleted = (rating: number)=> {
+  const ratingCompleted = (_rating: number)=> {
     // console.log("Rating is: " + rating)
-    setRating(rating);
+    setRating(_rating);
   }
 
-  const createReview = (review: string)=> {
+  const createReview = (_review: string)=> {
     // console.log(review);
-    setReview(review);
+    setReview(_review);
   }
 
-  const getTrip = async () => {
-    
-  }
-  const createCalification = async () => {
-    try {
-      const url = `https://fiuumber-api-trips.herokuapp.com/api/trips/trip/${tripId}`;
-      let trip =  await axios.get(url, AuthService.getHeaders());
-      try {
-        const url = `https://fiuumber-api-trips.herokuapp.com/api/trips/calification`;
-        await axios.post(url, {
-          "passengerId": trip.passengerId,
-          "driverId": trip.driverId,
-          "tripId": trip.id,
-          "createdAt": "2022-11-14T20:19:18.051817",
-          "updatedAt": "2022-11-14T20:19:18.051820",
-          "stars": {rating},
-          "comments": {review},
-          "reviewer": user?.profile,
-        }, AuthService.getHeaders());
-        return true;
-      }
-      catch (error: any) {
-          console.log(error);
-          throw error;
-      }
-    }
-    catch (error: any) {
-        console.log(error);
-        throw error;
-    }
-  }
   const user = AuthService.getCurrentUserToken()?.user;
-  const [rating, setRating] = useState(0);
-  const [review, setReview] = useState("");
+
+  const createCalification = async () => {
+
+      const tripStatus = "066de609-b04a-4b30-b46c-32537c7f1f6e"
+
+      const trip: Trip | null = await TripsService.get(tripStatus);
+
+      if (trip != null) {
+          const _calification: Calification | null = await TripsService.createCalification(
+            trip.passengerId,
+            trip.driverId,
+            trip._id,
+            rating,
+            review,
+            user?.profile);
+          return true;
+      }
+    }
+
   return (
-    
+
   <SafeAreaView style={styles.container}>
     <ScrollView style={styles.scrollView}>
       <View style={styles.contentContainer}>

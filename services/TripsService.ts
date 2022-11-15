@@ -1,6 +1,6 @@
 import axios from 'axios';// For API consuming
 import { TripStatus } from '../enums/trip-status';
-import { Trip } from '../models/trip';
+import { Trip, Calification } from '../models/trip';
 import { AuthService } from './AuthService';
 import { HEADERS, URL_TRIPS } from "./Constants";
 
@@ -26,7 +26,7 @@ export const TripsService = {
             };
             const response = await axios.post(url, {...tripReq}, AuthService.getHeaders());
             return response.data;
-        } 
+        }
         catch (error: any) {
             console.log(`TripsService create(): ${error}`);
             throw error;
@@ -39,7 +39,7 @@ export const TripsService = {
             const response = await axios.post(url, tripReq, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
             return tripResponse;
-        } 
+        }
         catch (error: any) {
             console.log(`TripsService setAssignedDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
@@ -52,7 +52,7 @@ export const TripsService = {
             const response = await axios.patch(url, {status}, AuthService.getHeaders(),);
             const tripResponse: Trip = response.data;
             return tripResponse;
-        } 
+        }
         catch (error: any) {
             console.log(`TripsService setAssignedDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
@@ -66,7 +66,7 @@ export const TripsService = {
             const rawTrip = response.data;
             const tripResponse: Trip = {...rawTrip, toLatitude: rawTrip.to_latitude, toLongitude: rawTrip.to_longitude, fromLatitude: rawTrip.from_latitude, fromLongitude: rawTrip.from_longitude, fromAddress: rawTrip.from_address, toAddress: rawTrip.to_address, finalPrice: rawTrip.finalPrice};
             return tripResponse;
-        } 
+        }
         catch (error: any) {
             console.log(`TripsService get(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
@@ -82,7 +82,7 @@ export const TripsService = {
             const response = await axios.get(url, AuthService.getHeaders());
             const tripResponse: Trip[] = response.data;
             return tripResponse;
-        } 
+        }
         catch (error: any) {
             console.log(`TripsService getMyTrips(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
@@ -95,11 +95,35 @@ export const TripsService = {
             const response = await axios.get(url, AuthService.getHeaders());
             const tripResponse: number = response.data;
             return tripResponse;
-        } 
+        }
         catch (error: any) {
             console.log(`TripsService getFare(): ${url} ${error}`);
             if (error && error.response && error.response.status == 401) return 0;
             throw error;
+        }
+    },
+    createCalification: async (passengerId: string, driverId: string | undefined, tripId: string, stars: number, comments: string, reviewer: string | undefined): Promise<Calification | null> => {
+        const url = `${URL_TRIPS}/calification`;
+
+        try {
+
+            const calificationReq = {
+                "passengerId": passengerId,
+                "driverId": driverId,
+                "tripId": tripId,
+                "createdAt": "2022-11-14T22:35:53.448856",
+                "updatedAt": "2022-11-14T22:35:53.448859",
+                "stars": stars,
+                "comments": comments,
+                "reviewer": reviewer
+            };
+            return await axios.post(url, calificationReq, AuthService.getHeaders(),);
+        }
+        catch (error: any) {
+            console.log(`TripsService createCalification(): ${url} ${error}`);
+            if (error && error.response && error.response.status == 401)
+            throw error;
+            return null
         }
     },
 };
