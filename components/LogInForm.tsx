@@ -13,6 +13,7 @@ export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): Re
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
+
   const onLogin = () => {
     if (email == "" || password == ""){
       setMissingFieldsErrorText(true);
@@ -44,5 +45,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     justifyContent: 'center',
     fontSize: 15,
+  },
+  blocked: {
+    color: '#FF0000',
+    marginBottom: 15,
+    textAlign: 'center',
+    justifyContent: 'center',
+    fontSize: 25,
   },
 });

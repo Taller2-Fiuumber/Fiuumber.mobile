@@ -100,6 +100,10 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
           return "Usuario o contraseña incorrectos";
         }
 
+        if(userToken.user.blocked){
+          return "Usuario Bloqueado";
+        }
+
         const authAction: AuthAction = {userToken: userToken, type: 'SIGN_IN'};
 
         dispatch(authAction);
