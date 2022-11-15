@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { LatLng } from "react-native-maps";
-import { FirebaseService } from "../services/FirebaseService";
 import * as Location from 'expo-location';
 
 export const useRealtimeLocation = (refreshTime: number) => {
@@ -11,7 +10,6 @@ export const useRealtimeLocation = (refreshTime: number) => {
     useEffect(() => {
         Location.requestForegroundPermissionsAsync().then((value) => {
             let { status } = value;
-            console.log("status seteado");
             setStatus(status);
         });
     }, []);

@@ -17,6 +17,7 @@ import { LatLng } from "react-native-maps";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { TripsService } from "../services/TripsService";
 import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
+import { useStreamLocation } from "../hooks/useStreamLocation";
 
 interface DriverHomeScreenProps { }
 
@@ -78,6 +79,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         watchForNewTrips();
     }, []);
 
+
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -93,12 +95,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const handleSheetChanges = useCallback((index: number) => {
     }, []);
 
-    useEffect(() => {
-        if (!myLocation || !currentTrip) return;
-
-        console.log("MY LOCATION", myLocation);
-
-    }, [myLocation, currentTrip])
+    useStreamLocation(currentTrip, myLocation);
 
 
     return (

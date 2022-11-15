@@ -15,6 +15,7 @@ import { FirebaseService } from "../services/FirebaseService";
 import { Driver } from "../models/driver";
 import { AuthService } from "../services/AuthService";
 import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
+import { useStreamLocation } from "../hooks/useStreamLocation";
 
 interface PassengerHomeScreenProps { }
 
@@ -119,12 +120,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     };
 
-    useEffect(() => {
-        if (!myLocation || !currentTrip) return;
-
-        console.log("MY LOCATION", myLocation);
-
-    }, [myLocation, currentTrip])
+    useStreamLocation(currentTrip, myLocation);
 
     return (
         <>
