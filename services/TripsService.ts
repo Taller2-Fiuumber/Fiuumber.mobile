@@ -1,8 +1,10 @@
 import axios from 'axios';// For API consuming
 import { TripStatus } from '../enums/trip-status';
 import { Trip } from '../models/trip';
+import { mapTrip } from '../utils/mappings';
 import { AuthService } from './AuthService';
 import { HEADERS, URL_TRIPS } from "./Constants";
+import { FirebaseService } from './FirebaseService';
 
 export const TripsService = {
     create: async (trip: Trip): Promise<Trip | null> => {
@@ -37,7 +39,7 @@ export const TripsService = {
             const url = `${URL_TRIPS}/trip/${tripId}/assign-driver`;
             const tripReq = {"driverId": driverId.toString()};
             const response = await axios.post(url, tripReq, AuthService.getHeaders(),);
-            const tripResponse: Trip = response.data;
+            const tripResponse: Trip = mapTrip(response.data);
             return tripResponse;
         } 
         catch (error: any) {
@@ -48,13 +50,17 @@ export const TripsService = {
     },
     setTripStatus: async (tripId: string, status: TripStatus): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/trip/${tripId}`;
-            const response = await axios.patch(url, {status}, AuthService.getHeaders(),);
-            const tripResponse: Trip = response.data;
+            const url = `${URL_TRIPS}/trip/${tripId}/status`;
+            console.log(url);
+            const response = await axios.put(url, {status}, AuthService.getHeaders(),);
+
+            await FirebaseService.updateTripStatus(tripId, TripStatus.DriverArrived); // Notification
+
+            const tripResponse: Trip = mapTrip(response.data);
             return tripResponse;
         } 
         catch (error: any) {
-            console.log(`TripsService setAssignedDriver(): ${error}`);
+            console.log(`TripsService setTripStatus(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
@@ -63,8 +69,7 @@ export const TripsService = {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}`;
             const response = await axios.get(url, AuthService.getHeaders(),);
-            const rawTrip = response.data;
-            const tripResponse: Trip = {...rawTrip, toLatitude: rawTrip.to_latitude, toLongitude: rawTrip.to_longitude, fromLatitude: rawTrip.from_latitude, fromLongitude: rawTrip.from_longitude, fromAddress: rawTrip.from_address, toAddress: rawTrip.to_address, finalPrice: rawTrip.finalPrice};
+            const tripResponse: Trip = mapTrip(response.data);
             return tripResponse;
         } 
         catch (error: any) {
@@ -80,7 +85,7 @@ export const TripsService = {
         try {
             const url = `${URL_TRIPS}/trips?userId=${userId}`;
             const response = await axios.get(url, AuthService.getHeaders());
-            const tripResponse: Trip[] = response.data;
+            const tripResponse: Trip[] = response.data.map(rawTrip => mapTrip(rawTrip));
             return tripResponse;
         } 
         catch (error: any) {

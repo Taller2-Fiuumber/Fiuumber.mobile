@@ -17,8 +17,8 @@ export const InfoCard: FC<InfoCardProps> = ({ title, subtitle }: InfoCardProps):
         <View style={styles.infoContainer}>
           <Avatar.Icon size={40} icon="account-search-outline" style={{ marginRight: 10, backgroundColor: Pallete.darkBackground }} />
           <View>
-            <Text style={{ fontWeight: 'bold' }}>{title}</Text>
-            <Text>{subtitle}</Text>
+            <Text style={{ fontWeight: 'bold', color: Pallete.darkColor }}>{title}</Text>
+            <Text style={{ color: Pallete.darkColor }}>{subtitle}</Text>
           </View>
         </View>
       </View>
@@ -31,6 +31,7 @@ export default InfoCard;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    backgroundColor: Pallete.whiteColor,
   },
   infoContainer: {
     flex: 2,
