@@ -2,3 +2,10 @@ REACT_APP_API_GATEWAY_URL=http://localhost:8080
 
 # Microservices paths
 REACT_APP_API_USERS_BASE_PATH=/api/users-service
+
+# Microservices
+API_USERS_URL="http://fiuumberapiusers_web_1:8081/"
+API_USERS_BASE_PATH="/api/users-service"
+
+API_TRIPS_URL="http://fiuumberapitrips_web_1:8080/"
+API_TRIPS_BASE_PATH="/api/trips"
