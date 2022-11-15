@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useCallback, useMemo, useRef, useState } from "react";
+import React, { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton } from 'react-native-paper';
@@ -14,6 +14,7 @@ import { ref, onChildAdded, query, onChildChanged } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import { Driver } from "../models/driver";
 import { AuthService } from "../services/AuthService";
+import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 
 interface PassengerHomeScreenProps { }
 
@@ -21,13 +22,14 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
 
+    const myLocation: LatLng | null = useRealtimeLocation(3000);
+
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
     const [originAddress, setOriginAddress] = React.useState<string | null>(null);
     const [destinationAddress, setDestinationAddress] = React.useState<string | null>(null);
 
     const [mapRef, setMapRef] = useState<any | null>(null);
-    const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
     const [driverRealtimeLocation, setDriverRealtimeLocation] = React.useState<any>(null);
     const [fare, setFare] = React.useState<number>(0);
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -117,13 +119,20 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     };
 
+    useEffect(() => {
+        if (!myLocation || !currentTrip) return;
+
+        console.log("MY LOCATION", myLocation);
+
+    }, [myLocation, currentTrip])
+
     return (
         <>
             <Provider>
                 <Portal>
                     {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
                 </Portal>
-                <FiuumberMap position={realtimeLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
+                <FiuumberMap passengerPosition={myLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={0}

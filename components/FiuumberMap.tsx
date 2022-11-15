@@ -9,11 +9,11 @@ interface FiuumberMapProps {
   onMapRef: (ref: any) => void;
   origin: LatLng | null;
   destination: LatLng | null;
-  position: LatLng | null;
+  passengerPosition: LatLng | null;
   driverLocation: LatLng | null;
 }
 
-export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRef, position, driverLocation }: FiuumberMapProps): ReactElement => {
+export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRef, passengerPosition, driverLocation }: FiuumberMapProps): ReactElement => {
 
   const [_mapRef, _setMapRef] = useState<any | null>(null);
 
@@ -25,8 +25,6 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
     _setMapRef(ref);
     onMapRef(ref);
   }
-
-  useEffect(() => { console.log(origin); console.log(destination) }, [origin, destination])
 
   return (
     <>
@@ -41,8 +39,8 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
         }}
         onLayout={() => { }}
       >
-        {driverLocation && (<RNMarker key="realTimeLocationDriverKey" coordinate={driverLocation} identifier="mkRealtimeLocation" pinColor="pink"></RNMarker>)}
-        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation" pinColor="turquoise"></RNMarker>)}
+        {driverLocation && (<RNMarker key="realTimeLocationDriverKey" coordinate={driverLocation} identifier="mkRealtimeLocation" pinColor="turquoise"></RNMarker>)}
+        {passengerPosition && (<RNMarker key="realTimeLocationKey" coordinate={passengerPosition} identifier="mkRealtimeLocation" pinColor="turquoise"></RNMarker>)}
         {destination && (<RNMarker key="destination" coordinate={destination} identifier="mkDestination" />)}
         {origin && destination ?
           <MapViewDirections

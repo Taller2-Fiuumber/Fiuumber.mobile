@@ -4,7 +4,7 @@ import { Pallete } from "../constants/Pallete";
 import { Dimensions, StyleSheet } from "react-native";
 import { View } from "../components/Themed";
 import FiuumberMap from "../components/FiuumberMap";
-import { Button, Portal, Provider, Text } from "react-native-paper";
+import { Button, Portal, Provider } from "react-native-paper";
 import { ref, onChildAdded, query } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import RequestedTripModal from "../modals/RequestedTripModal";
@@ -13,11 +13,10 @@ import PaymentInfoCard from "../components/PaymentInfoCard";
 import AddressInfoCard from "../components/AddressInfoCard";
 import InfoCard from "../components/InfoCard";
 import { TripStatus } from "../enums/trip-status";
-import { Marker } from "../models/marker";
-import * as Location from 'expo-location';
 import { LatLng } from "react-native-maps";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { TripsService } from "../services/TripsService";
+import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 
 interface DriverHomeScreenProps { }
 
@@ -36,7 +35,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
 
-    const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
+    const myLocation = useRealtimeLocation(5000);
 
     const onClickIArrived = async () => {
         if (!currentTrip) return;
@@ -59,10 +58,10 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const onTripAccepted = async (trip: Trip) => {
         setRequestedTripVisible(false);
         const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
-        setOrigin(realtimeLocation);
+        setOrigin(myLocation);
         setDestination(position);
         setCurrentTrip(trip);
-        await FirebaseService.updateDriverLocation(trip._id, realtimeLocation);
+        if (myLocation) await FirebaseService.updateDriverLocation(trip._id, myLocation);
     };
 
     const watchForNewTrips = () => {
@@ -74,35 +73,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
             }
         });
     };
-
-    React.useEffect(() => {
-        (async () => {
-
-            const interval = setInterval(async () => {
-                let { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
-                    // setErrorMsg('Permission to access location was denied');
-                    return;
-                }
-
-                let location = await Location.getCurrentPositionAsync({});
-                const rtLocation: LatLng = { latitude: location.coords.latitude, longitude: location.coords.longitude };
-
-                if (currentTrip) {
-                    try {
-                        await FirebaseService.updateDriverLocation(currentTrip._id, realtimeLocation);
-                    }
-                    catch (e: any) {
-                        console.log("Cannot update location" + e);
-                    }
-                }
-                setRealtimeLocation(rtLocation);
-
-            }, 5000);
-
-            return () => clearInterval(interval);
-        })();
-    }, [currentTrip]);
 
     useEffect(() => {
         watchForNewTrips();
@@ -123,6 +93,13 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const handleSheetChanges = useCallback((index: number) => {
     }, []);
 
+    useEffect(() => {
+        if (!myLocation || !currentTrip) return;
+
+        console.log("MY LOCATION", myLocation);
+
+    }, [myLocation, currentTrip])
+
 
     return (
         <>
@@ -136,7 +113,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                             <View style={{ ...styles.directionContainer, width: (width - 20) }}>
                                 <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
                             </View>)}
-                        <FiuumberMap position={null} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={realtimeLocation}></FiuumberMap>
+                        <FiuumberMap passengerPosition={null} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={myLocation}></FiuumberMap>
                     </View>
                     <BottomSheet
                         ref={bottomSheetRef}
