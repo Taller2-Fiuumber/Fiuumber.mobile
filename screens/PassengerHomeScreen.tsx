@@ -1,19 +1,19 @@
 import React, { FC, ReactElement, useCallback, useMemo, useRef, useState } from "react";
 import BottomSheet from '@gorhom/bottom-sheet';
-import { StyleSheet, View } from "react-native";
-import { Button, Portal, Provider, Text } from 'react-native-paper';
+import { StyleSheet, View, Image } from "react-native";
+import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton } from 'react-native-paper';
 import InfoCard from "../components/InfoCard";
-import PaymentInfoCard from "../components/PaymentInfoCard";
 import { Trip } from "../models/trip";
 import FiuumberMap from "../components/FiuumberMap";
 import { LatLng } from "react-native-maps";
-import { TextInput } from "react-native-paper";
 import { GooglePlacesInput } from "../components/GooglePlacesInput";
 import { Pallete } from "../constants/Pallete";
 import { TripsService } from "../services/TripsService";
 import FindTripModal from "../modals/FindTripModal";
 import { ref, onChildAdded, query } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
+import { Driver } from "../models/driver";
+import { AuthService } from "../services/AuthService";
 
 interface PassengerHomeScreenProps { }
 
@@ -32,6 +32,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const [loading, setLoading] = React.useState<boolean>(false);
     const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED">("DIRECTIONS");
 
+    const [currentDriver, setCurrentDriver] = React.useState<Driver | null>(null);
+
     const [findTripvisible, setFindTripVisible] = React.useState(false);
 
     const showFindTripModal = () => setFindTripVisible(true);
@@ -45,10 +47,14 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const onClickGetFiuumber = () => showFindTripModal();
 
-    const onAcceptedTrip = (trip: Trip) => {
+    const onAcceptedTrip = async (trip: Trip) => {
         hideFindTripModal();
         setCurrentTrip(trip);
         watchForTripChanges(trip._id);
+        setViewState("DRIVER_ASSIGNED");
+
+        const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
+        setCurrentDriver(driver);
     };
 
     const watchForTripChanges = (tripId: string) => {
@@ -65,6 +71,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const bottomSheetRef = useRef<BottomSheet>(null);
 
     const setMinHeightBottomSheet = () => {
+        if (viewState == "DRIVER_ASSIGNED") return '40%';
         if (origin && destination) return '30%';
         if (!currentTrip) return '20%';
         return '20%';
@@ -117,60 +124,111 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     index={0}
                     snapPoints={snapPoints}
                     onChange={handleSheetChanges}
+                    backgroundStyle={{ backgroundColor: (viewState == "DRIVER_ASSIGNED") ? Pallete.lightColor : Pallete.whiteColor }}
                 >
                     {
-                        viewState == "DIRECTIONS" ?
+                        viewState == "DIRECTIONS" &&
+                        (<>
+                            <View style={styles.contentContainer}>
+                                <InfoCard icon="account-search-outline" title="Welcome back to Fiuumber" subtitle="Tell us where we are going"></InfoCard>
+                                <View style={styles.containerAutocomplete}>
+                                    <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} listView={styles.listViewOrigin} focus={focusTextField} onPress={(_data, details = null) => {
+                                        if (!details) setOrigin(null);
+                                        const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0 };
+                                        setOriginAddress(_data.description);
+                                        setOrigin(position);
+                                    }}></GooglePlacesInput>
+
+                                    <GooglePlacesInput placeholder="Destination" containerStyles={styles.autocomplete} listView={styles.listViewDestination} focus={focusTextField} onPress={(_data, details = null) => {
+                                        if (!details) setDestination(null);
+                                        const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0 };
+                                        setDestinationAddress(_data.description);
+                                        setDestination(position);
+                                    }}></GooglePlacesInput>
+                                </View>
+                                <View>
+                                    <Text>No favorites added</Text>
+                                </View>
+                            </View>
+                            <View style={styles.buttonContainer}>
+                                <Button mode="contained" disabled={!origin || !destination} onPress={onClickContinue}>Continue</Button>
+                            </View>
+                        </>)
+                    }
+                    {
+                        viewState == "FARE" && (<>
+                            {loading && (<Text>Loading fare...</Text>)}
+                            {fare > 0 && !loading ?
+                                <>
+                                    <View style={styles.contentContainer}>
+                                        <View style={{ ...styles.fareContainer, ...styles.fareSelected }}>
+                                            <View>
+                                                <Text variant="labelLarge" style={{ color: Pallete.darkColor }}>Fiuumber classic</Text>
+                                                <Text variant="labelSmall" style={{ color: Pallete.darkColor }}>15 min</Text>
+                                            </View>
+                                            <Text variant="titleMedium" style={styles.farePrice}>ETH {fare}</Text>
+                                        </View>
+                                        <View style={styles.fareContainer}>
+                                            <View>
+                                                <Text variant="labelLarge">VIP Fiuumber</Text>
+                                            </View>
+                                            <Text variant="labelSmall" style={styles.farePrice}>Coming soon</Text>
+                                        </View>
+                                        <Button mode="contained" style={{ marginTop: 15 }} onPress={onClickGetFiuumber}>Get your Fiuumber!</Button>
+                                        <Button mode="outlined" style={{ marginTop: 15 }} onPress={onClickChangeDirections}>Change directions</Button>
+                                    </View>
+                                </>
+                                : <></>}
+                        </>)
+                    }
+                    {
+                        viewState == "DRIVER_ASSIGNED" && currentDriver && (
                             <>
                                 <View style={styles.contentContainer}>
-                                    <InfoCard title="Welcome back to Fiuumber" subtitle="Tell us where we are going"></InfoCard>
-                                    <View style={styles.containerAutocomplete}>
-                                        <GooglePlacesInput placeholder="Origin" containerStyles={styles.autocomplete} listView={styles.listViewOrigin} focus={focusTextField} onPress={(_data, details = null) => {
-                                            if (!details) setOrigin(null);
-                                            const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0 };
-                                            setOriginAddress(_data.description);
-                                            setOrigin(position);
-                                        }}></GooglePlacesInput>
-
-                                        <GooglePlacesInput placeholder="Destination" containerStyles={styles.autocomplete} listView={styles.listViewDestination} focus={focusTextField} onPress={(_data, details = null) => {
-                                            if (!details) setDestination(null);
-                                            const position = { latitude: details?.geometry.location.lat || 0, longitude: details?.geometry.location.lng || 0 };
-                                            setDestinationAddress(_data.description);
-                                            setDestination(position);
-                                        }}></GooglePlacesInput>
-                                    </View>
-                                    <View>
-                                        <Text>No favorites added</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.buttonContainer}>
-                                    <Button mode="contained" disabled={!origin || !destination} onPress={onClickContinue}>Continue</Button>
-                                </View>
-                            </>
-                            :
-                            <>
-                                {loading && (<Text>Loading fare...</Text>)}
-                                {fare > 0 && !loading ?
-                                    <>
-                                        <View style={styles.contentContainer}>
-                                            <View style={{ ...styles.fareContainer, ...styles.fareSelected }}>
-                                                <View>
-                                                    <Text variant="labelLarge" style={{ color: Pallete.darkColor }}>Fiuumber classic</Text>
-                                                    <Text variant="labelSmall" style={{ color: Pallete.darkColor }}>15 min</Text>
+                                    <Card style={styles.cardVehicleInfo}>
+                                        <Card.Content>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <View style={{ flex: 1 }}>
+                                                    <Title style={styles.cardTitle}>{currentDriver.driverVehicle.domain}</Title>
+                                                    <Paragraph style={{ color: Pallete.contentColor }}>{currentDriver.driverVehicle.vehicle.brand} {currentDriver.driverVehicle.vehicle.model}</Paragraph>
                                                 </View>
-                                                <Text variant="titleMedium" style={styles.farePrice}>ETH {fare}</Text>
-                                            </View>
-                                            <View style={styles.fareContainer}>
                                                 <View>
-                                                    <Text variant="labelLarge">VIP Fiuumber</Text>
+                                                    <Image
+                                                        style={styles.tinyLogo}
+                                                        source={{
+                                                            uri: 'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_537/v1568070443/assets/82/6bf372-6016-492d-b20d-d81878a14752/original/Black.png',
+                                                        }}
+                                                    />
                                                 </View>
-                                                <Text variant="labelSmall" style={styles.farePrice}>Coming soon</Text>
                                             </View>
-                                            <Button mode="contained" style={{ marginTop: 15 }} onPress={onClickGetFiuumber}>Get your Fiuumber!</Button>
-                                            <Button mode="outlined" style={{ marginTop: 15 }} onPress={onClickChangeDirections}>Change directions</Button>
+                                            <Divider style={styles.divider} />
+                                            <View style={{ flexDirection: 'row', }}>
+                                                <View style={{ flex: 1 }}>
+                                                    <InfoCard icon="account" title={currentDriver.user.firstName} subtitle={"★ 4.5 +420 trips"}></InfoCard>
+                                                </View>
+                                                <View>
+                                                    <IconButton
+                                                        icon="chat"
+                                                        style={{ backgroundColor: Pallete.lightColor }}
+                                                        iconColor={Pallete.darkColor}
+                                                        size={20}
+                                                        mode='contained'
+                                                        onPress={() => console.log('Pressed')}
+                                                    />
+                                                </View>
+                                            </View>
+                                        </Card.Content>
+                                    </Card>
+                                    <View style={{ marginTop: 15 }}>
+                                        <Text style={{ color: Pallete.darkColor, textAlign: 'center' }}>{currentTrip?.fromAddress}</Text>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <View style={{ width: 1, backgroundColor: 'black', height: 15 }}></View>
                                         </View>
-                                    </>
-                                    : <></>}
+                                        <Text style={{ color: Pallete.darkColor, width: '100%', overflow: 'hidden', textAlign: 'center' }}>{currentTrip?.toAddress}</Text>
+                                    </View>
+                                </View>
                             </>
+                        )
                     }
                 </BottomSheet>
             </Provider>
@@ -184,7 +242,7 @@ const styles = StyleSheet.create({
     container: {
     },
     contentContainer: {
-        padding: 10
+        padding: 10,
     },
     buttonContainer: {
         position: 'absolute',
@@ -237,5 +295,15 @@ const styles = StyleSheet.create({
     fareSelected: {
         borderWidth: 3,
         borderColor: Pallete.coral
-    }
+    },
+    cardVehicleInfo: {
+        backgroundColor: Pallete.whiteColor,
+        borderRadius: 5
+    },
+    divider: { marginVertical: 15, backgroundColor: Pallete.lightColor },
+    cardTitle: { color: Pallete.darkColor, fontWeight: 'bold' },
+    tinyLogo: {
+        width: 85,
+        height: 50,
+    },
 });

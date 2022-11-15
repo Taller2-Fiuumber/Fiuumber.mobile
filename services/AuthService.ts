@@ -116,4 +116,17 @@ export const AuthService = {
             throw error;
         }
     },
+    getDriver: async (driverId: number): Promise<Driver | null> => {
+        try {
+            const url = `${URL_USERS}/driver/${driverId}`;
+
+            let user =  await axios.get(url, AuthService.getHeaders(),);
+            
+            return user.data
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },    
 };
