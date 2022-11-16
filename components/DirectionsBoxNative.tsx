@@ -199,7 +199,8 @@ export const DirectionsBoxNative = (): ReactElement => {
                   <MapViewDirections
                     origin={origin}
                     destination={destination}
-                    apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
+                    // apikey="AIzaSyANbv3JEv2HV3r4Sj9j7Y5yrX3KYQcSmew"
+                    apikey="AIzaSyANbv3JEv2HV3r4Sj9j7Y5yrX3KYQcSmew"
                     strokeWidth={5}
                     strokeColor="hotpink"
                   />
