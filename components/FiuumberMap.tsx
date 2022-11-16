@@ -39,8 +39,9 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
         }}
         onLayout={() => { }}
       >
-        {driverLocation && (<RNMarker key="realTimeLocationDriverKey" coordinate={driverLocation} identifier="mkRealtimeLocation" pinColor="turquoise"></RNMarker>)}
+        {driverLocation && (<RNMarker key="realTimeLocationDriverKey" coordinate={driverLocation} identifier="mkRealtimeLocation" pinColor="green"></RNMarker>)}
         {passengerPosition && (<RNMarker key="realTimeLocationKey" coordinate={passengerPosition} identifier="mkRealtimeLocation" pinColor="turquoise"></RNMarker>)}
+        {origin && (<RNMarker key="origin" coordinate={origin} identifier="mkOrigin" />)}
         {destination && (<RNMarker key="destination" coordinate={destination} identifier="mkDestination" />)}
         {origin && destination ?
           <MapViewDirections

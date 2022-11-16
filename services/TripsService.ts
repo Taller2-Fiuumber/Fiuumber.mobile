@@ -39,6 +39,7 @@ export const TripsService = {
             const url = `${URL_TRIPS}/trip/${tripId}/assign-driver`;
             const tripReq = {"driverId": driverId.toString()};
             const response = await axios.post(url, tripReq, AuthService.getHeaders(),);
+            await FirebaseService.updateTripStatus(tripId, TripStatus.DriverAssigned); // Notification
             const tripResponse: Trip = mapTrip(response.data);
             return tripResponse;
         } 
@@ -51,10 +52,9 @@ export const TripsService = {
     setTripStatus: async (tripId: string, status: TripStatus): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/trip/${tripId}/status`;
-            console.log(url);
             const response = await axios.put(url, {status}, AuthService.getHeaders(),);
 
-            await FirebaseService.updateTripStatus(tripId, TripStatus.DriverArrived); // Notification
+            await FirebaseService.updateTripStatus(tripId, status); // Notification
 
             const tripResponse: Trip = mapTrip(response.data);
             return tripResponse;

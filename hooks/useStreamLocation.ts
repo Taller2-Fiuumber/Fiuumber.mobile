@@ -3,7 +3,7 @@ import { LatLng } from "react-native-maps";
 import { Trip } from "../models/trip";
 import { FirebaseService } from "../services/FirebaseService";
 
-export const useStreamLocation = (trip: Trip | null, location: LatLng | null) => {
+export const useStreamLocation = (trip: Trip | null, location: LatLng | null, profile: "DRIVER" | "PASSENGER") => {
 
   const [lastLocation, setLastLocation] = useState<LatLng | null>(null);
 
@@ -12,11 +12,9 @@ export const useStreamLocation = (trip: Trip | null, location: LatLng | null) =>
 
     if (lastLocation?.latitude != location.latitude || lastLocation.longitude != location.longitude) {
         // Solo updateo firebase si cambia la ubicación
-        console.log("UPDATE FIREBASE", location);
-        FirebaseService.updatePassengerLocation(trip._id, location).then((_data) => setLastLocation(location));
+        if (profile === "DRIVER") FirebaseService.updateDriverLocation(trip._id, location).then((_data) => setLastLocation(location));
+        else FirebaseService.updatePassengerLocation(trip._id, location).then((_data) => setLastLocation(location));
     }
-
-    console.log("MY LOCATION", location);
 
   }, [location, trip]);
 

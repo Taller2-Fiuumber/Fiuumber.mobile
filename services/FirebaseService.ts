@@ -37,17 +37,15 @@ export const FirebaseService = {
     });
   },
   updateDriverLocation: async (tripId: string, location: LatLng) => {
-    const reference = ref(FirebaseService.db, `trips/${tripId}/driver`);
+    const reference = ref(FirebaseService.db, `trips/${tripId}`);
     return set(reference, {
-      location: location,
-      ts: new Date()
+      locationDriver: location
     });
   },
   updatePassengerLocation: async (tripId: string, location: LatLng) => {
-    const reference = ref(FirebaseService.db, `trips/${tripId}/passenger`);
+    const reference = ref(FirebaseService.db, `trips/${tripId}`);
     return set(reference, {
-      location: location,
-      ts: new Date()
+      locationPassenger: location
     });
   },
   updateTripStatus: async (tripId: string, status: string) => {

@@ -37,7 +37,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [destination, setDestination] = React.useState<LatLng | null>(null);
 
     const myLocation = useRealtimeLocation(5000);
-    useStreamLocation(currentTrip, myLocation);
+    useStreamLocation(currentTrip, myLocation, "DRIVER");
 
     const onClickIArrived = async () => {
         if (!currentTrip) return;

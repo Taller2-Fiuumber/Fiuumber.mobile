@@ -10,12 +10,13 @@ import { GooglePlacesInput } from "../components/GooglePlacesInput";
 import { Pallete } from "../constants/Pallete";
 import { TripsService } from "../services/TripsService";
 import FindTripModal from "../modals/FindTripModal";
-import { ref, onChildAdded, query, onChildChanged } from "firebase/database";
+import { ref, onChildAdded, query, onValue } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import { Driver } from "../models/driver";
 import { AuthService } from "../services/AuthService";
 import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
+import { TripStatus } from "../enums/trip-status";
 
 interface PassengerHomeScreenProps { }
 
@@ -25,7 +26,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const myLocation: LatLng | null = useRealtimeLocation(3000);
 
-    useStreamLocation(currentTrip, myLocation);
+    useStreamLocation(currentTrip, myLocation, "PASSENGER");
 
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
@@ -56,24 +57,49 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const onAcceptedTrip = async (trip: Trip) => {
         hideFindTripModal();
         setCurrentTrip(trip);
-        watchForDriverLocationChanges(trip._id);
+        watchTripStatus(trip._id);
+        // watchDriverLocation(trip._id);
         setViewState("DRIVER_ASSIGNED");
 
         const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
         setCurrentDriver(driver);
     };
 
-    const watchForDriverLocationChanges = (tripId: string) => {
-        const reference = ref(FirebaseService.db, `/trips/${tripId}/driver`);
+    const watchDriverLocation = (tripId: string) => {
+        const reference = ref(FirebaseService.db, `/trips/${tripId}/driver_location`);
         onChildAdded(query(reference), snapshot => {
-            console.log("STATUS", snapshot.val());
-            const driverLocation: LatLng = snapshot.val();
-            setDriverRealtimeLocation(driverLocation);
-            // const tripStatus: { tripId: string, status: string, driver: { location: LatLng } } | null = snapshot.val();
+            const tripNotification: LatLng = snapshot.val();
+            console.log("NOTIFICATION DRIVER", tripNotification);
+            if (tripNotification) {
+                console.log("DRIVER UPDATE");
+                setDriverRealtimeLocation(tripNotification);
+            }
+        });
+    };
 
-            // if (tripStatus) {
-            //     console.log(tripStatus);
-            // }
+    const watchTripStatus = (tripId: string) => {
+        const reference = ref(FirebaseService.db, `/trips/${tripId}`);
+        onValue(query(reference), snapshot => {
+            const tripNotification: any = snapshot.val();
+
+            console.log("KEY", snapshot.key)
+
+            const { locationDriver, locationPassenger, status } = tripNotification;
+            console.log(tripNotification);
+            if (locationDriver) {
+                console.log("llego location driver", locationDriver);
+                setDriverRealtimeLocation(locationDriver);
+            }
+
+            if (locationPassenger) {
+                console.log("llego location passenger", locationPassenger);
+            }
+
+            if (status) {
+                if (status == TripStatus.DriverArrived) {
+                    console.log("CORRE WACHIIIIIN")
+                }
+            }
         });
     };
 
