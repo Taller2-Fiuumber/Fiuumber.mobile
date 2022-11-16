@@ -10,13 +10,14 @@ import { GooglePlacesInput } from "../components/GooglePlacesInput";
 import { Pallete } from "../constants/Pallete";
 import { TripsService } from "../services/TripsService";
 import FindTripModal from "../modals/FindTripModal";
-import { ref, onChildAdded, query, onValue } from "firebase/database";
+import { ref, onChildAdded, query, onValue, Unsubscribe } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import { Driver } from "../models/driver";
 import { AuthService } from "../services/AuthService";
 import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
 import { TripStatus } from "../enums/trip-status";
+import InfoModal, { ActionButton } from "../modals/InfoModal";
 
 interface PassengerHomeScreenProps { }
 
@@ -37,14 +38,18 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const [driverRealtimeLocation, setDriverRealtimeLocation] = React.useState<any>(null);
     const [fare, setFare] = React.useState<number>(0);
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED">("DIRECTIONS");
+    const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED" | "DRIVER_ARRIVED">("DIRECTIONS");
 
     const [currentDriver, setCurrentDriver] = React.useState<Driver | null>(null);
 
     const [findTripvisible, setFindTripVisible] = React.useState(false);
+    const [driverArrivedVisible, setDriverArrivedVisible] = React.useState(false);
 
     const showFindTripModal = () => setFindTripVisible(true);
     const hideFindTripModal = () => setFindTripVisible(false);
+
+    const hideDriverArrivedVisible = () => setDriverArrivedVisible(false);
+    const showDriverArrivedVisible = () => setDriverArrivedVisible(true);
 
     const onClickContinue = () => {
         bottomSheetRef.current?.snapToIndex(0);
@@ -77,17 +82,14 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         });
     };
 
-    const watchTripStatus = (tripId: string) => {
+    const watchTripStatus = (tripId: string): Unsubscribe => {
         const reference = ref(FirebaseService.db, `/trips/${tripId}`);
-        onValue(query(reference), snapshot => {
+        return onValue(query(reference), snapshot => {
             const tripNotification: any = snapshot.val();
 
-            console.log("KEY", snapshot.key)
-
             const { locationDriver, locationPassenger, status } = tripNotification;
-            console.log(tripNotification);
+
             if (locationDriver) {
-                console.log("llego location driver", locationDriver);
                 setDriverRealtimeLocation(locationDriver);
             }
 
@@ -97,7 +99,11 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
             if (status) {
                 if (status == TripStatus.DriverArrived) {
-                    console.log("CORRE WACHIIIIIN")
+                    showDriverArrivedVisible();
+                    setViewState("DRIVER_ARRIVED");
+                }
+                if (status == TripStatus.InProgress) {
+                    hideDriverArrivedVisible();
                 }
             }
         });
@@ -148,11 +154,19 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     };
 
+    const actionButtonDialogArrived: ActionButton = {
+        text: "Dismiss",
+        onPress: hideDriverArrivedVisible,
+        buttonColor: Pallete.lightColor,
+        textColor: Pallete.primaryColor,
+    };
+
     return (
         <>
             <Provider>
                 <Portal>
                     {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
+                    {driverArrivedVisible && (<InfoModal title={"Your Fiuumber has arrived ;)"} description={`Hurry up, ${currentDriver?.user.firstName} is waiting for you`} visible={driverArrivedVisible} onDismiss={hideDriverArrivedVisible} button={actionButtonDialogArrived}></InfoModal>)}
                 </Portal>
                 <FiuumberMap passengerPosition={myLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
                 <BottomSheet
@@ -162,6 +176,10 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     onChange={handleSheetChanges}
                     backgroundStyle={{ backgroundColor: (viewState == "DRIVER_ASSIGNED") ? Pallete.lightColor : Pallete.whiteColor }}
                 >
+                    {
+                        viewState == "DRIVER_ARRIVED" && (<Text style={{ textAlign: 'center', fontWeight: 'bold', color: 'orange' }}>Your driver is waiting for you</Text>)
+                    }
+
                     {
                         viewState == "DIRECTIONS" &&
                         (<>
@@ -218,7 +236,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                         </>)
                     }
                     {
-                        viewState == "DRIVER_ASSIGNED" && currentDriver && (
+                        (viewState == "DRIVER_ASSIGNED" || viewState == "DRIVER_ARRIVED") && currentDriver && (
                             <>
                                 <View style={styles.contentContainer}>
                                     <Card style={styles.cardVehicleInfo}>

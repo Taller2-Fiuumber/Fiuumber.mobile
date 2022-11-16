@@ -4,7 +4,7 @@ import { Pallete } from "../constants/Pallete";
 import { Dimensions, StyleSheet } from "react-native";
 import { View } from "../components/Themed";
 import FiuumberMap from "../components/FiuumberMap";
-import { Button, Portal, Provider } from "react-native-paper";
+import { Button, Divider, Portal, Provider } from "react-native-paper";
 import { ref, onChildAdded, query } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import RequestedTripModal from "../modals/RequestedTripModal";
@@ -18,10 +18,13 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { TripsService } from "../services/TripsService";
 import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
+import { Unsubscribe } from "@firebase/util";
 
 interface DriverHomeScreenProps { }
 
 export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
+
+    let unsubscribeWatchForNewTrips: Unsubscribe | null = null;
 
     const [mapRef, setMapRef] = useState<any | null>(null);
 
@@ -36,14 +39,43 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
 
+    const [loading, setLoading] = React.useState<boolean>(false);
+
     const myLocation = useRealtimeLocation(5000);
     useStreamLocation(currentTrip, myLocation, "DRIVER");
 
-    const onClickIArrived = async () => {
-        if (!currentTrip) return;
-        await TripsService.setTripStatus(currentTrip._id, TripStatus.DriverArrived);
+    const onClickIArrived = async () => changeTripStatus(TripStatus.DriverArrived);
+    const onClickStartTrip = async () => {
+        changeTripStatus(TripStatus.InProgress);
+        if (currentTrip) {
+            setDestination({ latitude: currentTrip?.toLatitude, longitude: currentTrip?.toLongitude });
+            setOrigin(myLocation);
+        }
+    }
+    const onClickFinishTrip = async () => {
+        changeTripStatus(TripStatus.Terminated);
+        cleanupTrip();
     }
 
+    const onClickCancelTrip = async () => {
+        changeTripStatus(TripStatus.Canceled);
+        cleanupTrip();
+    }
+
+    const cleanupTrip = () => {
+        setCurrentTrip(null);
+        setOrigin(null);
+        setDestination(null);
+        unsubscribeWatchForNewTrips = watchForNewTrips();
+    }
+
+    const changeTripStatus = async (status: TripStatus) => {
+        if (!currentTrip) return;
+        setLoading(true);
+        const tripUpdated: Trip | null = await TripsService.setTripStatus(currentTrip._id, status);
+        setCurrentTrip(tripUpdated);
+        setLoading(false);
+    }
 
     const showRequestedTripModal = (tripId: string) => {
         setRequestedTripVisible(true);
@@ -63,12 +95,13 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setOrigin(myLocation);
         setDestination(position);
         setCurrentTrip(trip);
+        if (unsubscribeWatchForNewTrips) unsubscribeWatchForNewTrips(); // Dejo de escuchar por posibles nuevos viajes
         if (myLocation) await FirebaseService.updateDriverLocation(trip._id, myLocation);
     };
 
     const watchForNewTrips = () => {
         const reference = ref(FirebaseService.db, `/trips/${TripStatus.Requested}`);
-        onChildAdded(query(reference), snapshot => {
+        return onChildAdded(query(reference), snapshot => {
             const tripStatus: { tripId: string, status: string } | null = snapshot.val();
             if (tripStatus && !requestedTripvisible && !rejectedTrips.find(t => t == tripStatus?.tripId)) {
                 showRequestedTripModal(tripStatus.tripId);
@@ -77,7 +110,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     };
 
     useEffect(() => {
-        watchForNewTrips();
+        unsubscribeWatchForNewTrips = watchForNewTrips();
     }, []);
 
 
@@ -121,7 +154,11 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                                 currentTrip ?
                                     <>
                                         <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
-                                        <Button mode="contained" style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>
+                                        {currentTrip.status == TripStatus.Requested && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
+                                        {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} style={{ marginTop: 10 }} onPress={onClickStartTrip}>Start trip</Button>)}
+                                        {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} style={{ marginTop: 10 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
+                                        <Divider style={{ marginTop: 10, marginBottom: 10, backgroundColor: Pallete.primaryColor }}></Divider>
+                                        <Button loading={loading} disabled={loading} mode="outlined" buttonColor='red' textColor="white" style={{ marginTop: 10 }} onPress={onClickCancelTrip}>Cancel trip</Button>
                                     </> :
                                     <>
                                         <InfoCard icon="account-search-outline" title="Looking por passengers?" subtitle="Explore the area to increase your chances"></InfoCard>
