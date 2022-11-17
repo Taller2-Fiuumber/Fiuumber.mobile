@@ -27,6 +27,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const myLocation: LatLng | null = useRealtimeLocation(3000);
 
+    let unsubscribeWatchTripStatus: Unsubscribe | null = null;
+
     useStreamLocation(currentTrip, myLocation, "PASSENGER");
 
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
@@ -38,7 +40,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const [driverRealtimeLocation, setDriverRealtimeLocation] = React.useState<any>(null);
     const [fare, setFare] = React.useState<number>(0);
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED" | "DRIVER_ARRIVED">("DIRECTIONS");
+    const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED" | "DRIVER_ARRIVED" | "IN_PROGRESS">("DIRECTIONS");
 
     const [currentDriver, setCurrentDriver] = React.useState<Driver | null>(null);
 
@@ -62,7 +64,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const onAcceptedTrip = async (trip: Trip) => {
         hideFindTripModal();
         setCurrentTrip(trip);
-        watchTripStatus(trip._id);
+        unsubscribeWatchTripStatus = watchTripStatus(trip._id);
         // watchDriverLocation(trip._id);
         setViewState("DRIVER_ASSIGNED");
 
@@ -70,31 +72,15 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         setCurrentDriver(driver);
     };
 
-    const watchDriverLocation = (tripId: string) => {
-        const reference = ref(FirebaseService.db, `/trips/${tripId}/driver_location`);
-        onChildAdded(query(reference), snapshot => {
-            const tripNotification: LatLng = snapshot.val();
-            console.log("NOTIFICATION DRIVER", tripNotification);
-            if (tripNotification) {
-                console.log("DRIVER UPDATE");
-                setDriverRealtimeLocation(tripNotification);
-            }
-        });
-    };
-
     const watchTripStatus = (tripId: string): Unsubscribe => {
         const reference = ref(FirebaseService.db, `/trips/${tripId}`);
         return onValue(query(reference), snapshot => {
             const tripNotification: any = snapshot.val();
 
-            const { locationDriver, locationPassenger, status } = tripNotification;
+            const { locationDriver, status } = tripNotification;
 
             if (locationDriver) {
                 setDriverRealtimeLocation(locationDriver);
-            }
-
-            if (locationPassenger) {
-                console.log("llego location passenger", locationPassenger);
             }
 
             if (status) {
@@ -104,10 +90,22 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                 }
                 if (status == TripStatus.InProgress) {
                     hideDriverArrivedVisible();
+                    setViewState("IN_PROGRESS");
+                }
+                if (status == TripStatus.Terminated) {
+                    cleanupTrip();
                 }
             }
         });
     };
+
+    const cleanupTrip = () => {
+        setViewState("DIRECTIONS");
+        setCurrentTrip(null);
+        setOrigin(null);
+        setDestination(null);
+        if (unsubscribeWatchTripStatus) unsubscribeWatchTripStatus();
+    }
 
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
@@ -181,6 +179,10 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     }
 
                     {
+                        viewState == "IN_PROGRESS" && (<Text style={{ textAlign: 'center', fontWeight: 'bold', color: Pallete.primaryColor }}>Fasten your seatbelt :)</Text>)
+                    }
+
+                    {
                         viewState == "DIRECTIONS" &&
                         (<>
                             <View style={styles.contentContainer}>
@@ -236,7 +238,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                         </>)
                     }
                     {
-                        (viewState == "DRIVER_ASSIGNED" || viewState == "DRIVER_ARRIVED") && currentDriver && (
+                        (viewState == "DRIVER_ASSIGNED" || viewState == "DRIVER_ARRIVED" || viewState == "IN_PROGRESS") && currentDriver && (
                             <>
                                 <View style={styles.contentContainer}>
                                     <Card style={styles.cardVehicleInfo}>
@@ -267,7 +269,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                                         iconColor={Pallete.darkColor}
                                                         size={20}
                                                         mode='contained'
-                                                        onPress={() => console.log('Pressed')}
+                                                        onPress={() => console.log('Chat coming soon')}
                                                     />
                                                 </View>
                                             </View>

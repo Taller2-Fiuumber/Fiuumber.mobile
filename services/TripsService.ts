@@ -85,7 +85,7 @@ export const TripsService = {
         try {
             const url = `${URL_TRIPS}/trips?userId=${userId}`;
             const response = await axios.get(url, AuthService.getHeaders());
-            const tripResponse: Trip[] = response.data.map(rawTrip => mapTrip(rawTrip));
+            const tripResponse: Trip[] = response.data.map(mapTrip);
             return tripResponse;
         } 
         catch (error: any) {

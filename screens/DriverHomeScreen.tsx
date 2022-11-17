@@ -26,7 +26,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     let unsubscribeWatchForNewTrips: Unsubscribe | null = null;
 
-    const [mapRef, setMapRef] = useState<any | null>(null);
+    const [_mapRef, setMapRef] = useState<any | null>(null);
 
     const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
 
@@ -35,6 +35,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [requestedTripId, setRequestedTripId] = React.useState("");
     const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
     const [requestedTripvisible, setRequestedTripVisible] = React.useState(false);
+
+    const [nextAddress, setNextAddress] = React.useState<string | null>(null);
 
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
@@ -46,19 +48,21 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const onClickIArrived = async () => changeTripStatus(TripStatus.DriverArrived);
     const onClickStartTrip = async () => {
-        changeTripStatus(TripStatus.InProgress);
+        await changeTripStatus(TripStatus.InProgress);
         if (currentTrip) {
             setDestination({ latitude: currentTrip?.toLatitude, longitude: currentTrip?.toLongitude });
-            setOrigin(myLocation);
+            setNextAddress(currentTrip.toAddress);
+            const positionDestination = { latitude: currentTrip.fromLatitude, longitude: currentTrip.fromLongitude };
+            setOrigin(positionDestination); // TODO: cambiar por myLocation para que las indicaciones funcionen ok en la vida real
         }
     }
     const onClickFinishTrip = async () => {
-        changeTripStatus(TripStatus.Terminated);
+        await changeTripStatus(TripStatus.Terminated);
         cleanupTrip();
     }
 
     const onClickCancelTrip = async () => {
-        changeTripStatus(TripStatus.Canceled);
+        await changeTripStatus(TripStatus.Canceled);
         cleanupTrip();
     }
 
@@ -66,6 +70,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setCurrentTrip(null);
         setOrigin(null);
         setDestination(null);
+        setNextAddress(null);
         unsubscribeWatchForNewTrips = watchForNewTrips();
     }
 
@@ -91,10 +96,11 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const onTripAccepted = async (trip: Trip) => {
         setRequestedTripVisible(false);
-        const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
+        const positionOrigin = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
         setOrigin(myLocation);
-        setDestination(position);
+        setDestination(positionOrigin);
         setCurrentTrip(trip);
+        setNextAddress(trip.fromAddress);
         if (unsubscribeWatchForNewTrips) unsubscribeWatchForNewTrips(); // Dejo de escuchar por posibles nuevos viajes
         if (myLocation) await FirebaseService.updateDriverLocation(trip._id, myLocation);
     };
@@ -137,9 +143,9 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                 </Portal>
                 <View>
                     <View>
-                        {currentTrip && (
+                        {nextAddress && (
                             <View style={{ ...styles.directionContainer, width: (width - 20) }}>
-                                <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
+                                <AddressInfoCard address={nextAddress}></AddressInfoCard>
                             </View>)}
                         <FiuumberMap passengerPosition={null} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={myLocation}></FiuumberMap>
                     </View>
@@ -155,8 +161,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                                     <>
                                         <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
                                         {currentTrip.status == TripStatus.Requested && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
-                                        {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} style={{ marginTop: 10 }} onPress={onClickStartTrip}>Start trip</Button>)}
-                                        {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} style={{ marginTop: 10 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
+                                        {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickStartTrip}>Start trip</Button>)}
+                                        {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
                                         <Divider style={{ marginTop: 10, marginBottom: 10, backgroundColor: Pallete.primaryColor }}></Divider>
                                         <Button loading={loading} disabled={loading} mode="outlined" buttonColor='red' textColor="white" style={{ marginTop: 10 }} onPress={onClickCancelTrip}>Cancel trip</Button>
                                     </> :
