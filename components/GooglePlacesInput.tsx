@@ -24,7 +24,8 @@ export const GooglePlacesInput: FC<GooglePlacesInputProps> = ({ placeholder, con
       styles={{ listView: listView, container: containerStyles, color: Pallete.darkColor, fontWeight: "bold", }}
       onPress={onPress}
       query={{
-        key: 'AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I',
+        // key: 'AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I',
+        key: 'AIzaSyANbv3JEv2HV3r4Sj9j7Y5yrX3KYQcSmew',
         language: 'es',
         components: 'country:ar',
       }}

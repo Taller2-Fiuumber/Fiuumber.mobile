@@ -9,10 +9,11 @@ interface FiuumberMapProps {
   onMapRef: (ref: any) => void;
   origin: LatLng | null;
   destination: LatLng | null;
-  position: LatLng | null;
+  passengerPosition: LatLng | null;
+  driverLocation: LatLng | null;
 }
 
-export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRef, position }: FiuumberMapProps): ReactElement => {
+export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRef, passengerPosition, driverLocation }: FiuumberMapProps): ReactElement => {
 
   const [_mapRef, _setMapRef] = useState<any | null>(null);
 
@@ -24,8 +25,6 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
     _setMapRef(ref);
     onMapRef(ref);
   }
-
-  useEffect(() => { console.log(origin); console.log(destination) }, [origin, destination])
 
   return (
     <>
@@ -40,19 +39,16 @@ export const FiuumberMap: FC<FiuumberMapProps> = ({ origin, destination, onMapRe
         }}
         onLayout={() => { }}
       >
-        {position && (<RNMarker key="realTimeLocationKey" coordinate={position} identifier="mkRealtimeLocation" pinColor="turquoise">
-          {/* <Image
-            source={carImage}
-            style={{ width: 26, height: 28, rotation: -90 }}
-            resizeMode="contain"
-          /> */}
-        </RNMarker>)}
+        {driverLocation && (<RNMarker key="realTimeLocationDriverKey" coordinate={driverLocation} identifier="mkRealtimeLocation" pinColor="green"></RNMarker>)}
+        {passengerPosition && (<RNMarker key="realTimeLocationKey" coordinate={passengerPosition} identifier="mkRealtimeLocation" pinColor="turquoise"></RNMarker>)}
+        {origin && (<RNMarker key="origin" coordinate={origin} identifier="mkOrigin" />)}
         {destination && (<RNMarker key="destination" coordinate={destination} identifier="mkDestination" />)}
         {origin && destination ?
           <MapViewDirections
             origin={origin}
             destination={destination}
-            apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
+            // apikey="AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I"
+            apikey="AIzaSyANbv3JEv2HV3r4Sj9j7Y5yrX3KYQcSmew"
             strokeWidth={5}
             strokeColor="hotpink"
             onReady={result => {

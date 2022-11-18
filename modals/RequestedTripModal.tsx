@@ -42,6 +42,7 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDis
     const [user, setUser] = React.useState<User | null>();
     const [trip, setTrip] = React.useState<Trip | null>();
     const [fare, setFare] = React.useState<number>();
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     const loadData = async () => {
         const trip: Trip | null = await TripsService.get(tripId);
@@ -64,6 +65,7 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDis
         const driverId: number | undefined = AuthService.getCurrentUserToken()?.user.id
         if (!driverId) return;
         try {
+            setLoading(true);
             const updatedTrip: Trip | null = await TripsService.setAssignedDriver(tripId, driverId,);
             setTrip(updatedTrip);
             await FirebaseService.removeRequestedTrip(tripId);
@@ -73,6 +75,9 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDis
             console.error(error);
             dissmissDialog(TripDriverResponse.Dismissed);
             //throw error;
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -95,10 +100,10 @@ export const RequestedTripModal: FC<RequestedTripModalProps> = ({ visible, onDis
                 {user ? <Text variant="titleSmall" style={styles.title}>{user.firstName} {user.lastName} wants to travel</Text> : <></>}
                 {/* {trip ?  <Text variant="titleMedium">15 min</Text> : <></>} */}
                 {trip ? <Text variant="displayMedium" style={{ color: Pallete.darkColor }}>ETH {fare}</Text> : <></>}
-                <Button style={styles.cancelButton} textColor='red' mode='outlined' onPress={() => dissmissDialog(TripDriverResponse.Rejected)}>
+                <Button style={styles.cancelButton} disabled={loading} textColor='red' mode='outlined' onPress={() => dissmissDialog(TripDriverResponse.Rejected)}>
                     DECLINE
                 </Button>
-                <Button style={styles.acceptButton} mode='contained' onPress={acceptTrip}>
+                <Button style={styles.acceptButton} loading={loading} disabled={loading} mode='contained' onPress={acceptTrip}>
                     ACCEPT
                 </Button>
             </Modal>
