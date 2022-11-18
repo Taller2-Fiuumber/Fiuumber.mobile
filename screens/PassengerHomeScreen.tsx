@@ -65,7 +65,6 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         hideFindTripModal();
         setCurrentTrip(trip);
         unsubscribeWatchTripStatus = watchTripStatus(trip._id);
-        // watchDriverLocation(trip._id);
         setViewState("DRIVER_ASSIGNED");
 
         const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
@@ -76,6 +75,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         const reference = ref(FirebaseService.db, `/trips/${tripId}`);
         return onValue(query(reference), snapshot => {
             const tripNotification: any = snapshot.val();
+
+            if (!tripNotification) return;
 
             const { locationDriver, status } = tripNotification;
 
@@ -101,10 +102,11 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const cleanupTrip = () => {
         setViewState("DIRECTIONS");
-        setCurrentTrip(null);
         setOrigin(null);
         setDestination(null);
+        if (currentTrip) FirebaseService.removeTrip(currentTrip?._id);
         if (unsubscribeWatchTripStatus) unsubscribeWatchTripStatus();
+        setCurrentTrip(null);
     }
 
     // ref

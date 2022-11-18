@@ -54,4 +54,8 @@ export const FirebaseService = {
       status,
     });
   },
+  removeTrip: async (tripId: string) => {
+    const reference = ref(FirebaseService.db, `trips/${tripId}`);
+    return remove(reference);
+  },
 };

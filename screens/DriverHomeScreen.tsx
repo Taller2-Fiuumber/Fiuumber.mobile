@@ -67,11 +67,12 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     }
 
     const cleanupTrip = () => {
-        setCurrentTrip(null);
         setOrigin(null);
         setDestination(null);
         setNextAddress(null);
         unsubscribeWatchForNewTrips = watchForNewTrips();
+        if (currentTrip) FirebaseService.removeTrip(currentTrip?._id);
+        setCurrentTrip(null);
     }
 
     const changeTripStatus = async (status: TripStatus) => {
