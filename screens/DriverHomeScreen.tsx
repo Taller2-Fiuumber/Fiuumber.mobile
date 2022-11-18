@@ -4,7 +4,7 @@ import { Pallete } from "../constants/Pallete";
 import { Dimensions, StyleSheet } from "react-native";
 import { View } from "../components/Themed";
 import FiuumberMap from "../components/FiuumberMap";
-import { Button, Portal, Provider, Text } from "react-native-paper";
+import { Button, Divider, Portal, Provider } from "react-native-paper";
 import { ref, onChildAdded, query } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import RequestedTripModal from "../modals/RequestedTripModal";
@@ -13,17 +13,20 @@ import PaymentInfoCard from "../components/PaymentInfoCard";
 import AddressInfoCard from "../components/AddressInfoCard";
 import InfoCard from "../components/InfoCard";
 import { TripStatus } from "../enums/trip-status";
-import { Marker } from "../models/marker";
-import * as Location from 'expo-location';
 import { LatLng } from "react-native-maps";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { TripsService } from "../services/TripsService";
+import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
+import { useStreamLocation } from "../hooks/useStreamLocation";
+import { Unsubscribe } from "@firebase/util";
 
 interface DriverHomeScreenProps { }
 
 export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
-    const [mapRef, setMapRef] = useState<any | null>(null);
+    let unsubscribeWatchForNewTrips: Unsubscribe | null = null;
+
+    const [_mapRef, setMapRef] = useState<any | null>(null);
 
     const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
 
@@ -33,16 +36,52 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [rejectedTrips, setRejectedTrips] = React.useState<string[]>([]);
     const [requestedTripvisible, setRequestedTripVisible] = React.useState(false);
 
+    const [nextAddress, setNextAddress] = React.useState<string | null>(null);
+
     const [origin, setOrigin] = React.useState<LatLng | null>(null);
     const [destination, setDestination] = React.useState<LatLng | null>(null);
 
-    const [realtimeLocation, setRealtimeLocation] = React.useState<any>(null);
+    const [loading, setLoading] = React.useState<boolean>(false);
 
-    const onClickIArrived = async () => {
-        if (!currentTrip) return;
-        await TripsService.setTripStatus(currentTrip._id, TripStatus.DriverArrived);
+    const myLocation = useRealtimeLocation(5000);
+    useStreamLocation(currentTrip, myLocation, "DRIVER");
+
+    const onClickIArrived = async () => changeTripStatus(TripStatus.DriverArrived);
+    const onClickStartTrip = async () => {
+        await changeTripStatus(TripStatus.InProgress);
+        if (currentTrip) {
+            setDestination({ latitude: currentTrip?.toLatitude, longitude: currentTrip?.toLongitude });
+            setNextAddress(currentTrip.toAddress);
+            const positionDestination = { latitude: currentTrip.fromLatitude, longitude: currentTrip.fromLongitude };
+            setOrigin(positionDestination); // TODO: cambiar por myLocation para que las indicaciones funcionen ok en la vida real
+        }
+    }
+    const onClickFinishTrip = async () => {
+        await changeTripStatus(TripStatus.Terminated);
+        cleanupTrip();
     }
 
+    const onClickCancelTrip = async () => {
+        await changeTripStatus(TripStatus.Canceled);
+        cleanupTrip();
+    }
+
+    const cleanupTrip = () => {
+        setOrigin(null);
+        setDestination(null);
+        setNextAddress(null);
+        unsubscribeWatchForNewTrips = watchForNewTrips();
+        if (currentTrip) FirebaseService.removeTrip(currentTrip?._id);
+        setCurrentTrip(null);
+    }
+
+    const changeTripStatus = async (status: TripStatus) => {
+        if (!currentTrip) return;
+        setLoading(true);
+        const tripUpdated: Trip | null = await TripsService.setTripStatus(currentTrip._id, status);
+        setCurrentTrip(tripUpdated);
+        setLoading(false);
+    }
 
     const showRequestedTripModal = (tripId: string) => {
         setRequestedTripVisible(true);
@@ -56,19 +95,20 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         setRequestedTripVisible(false);
     }
 
-    const onTripAccepted = (trip: Trip) => {
+    const onTripAccepted = async (trip: Trip) => {
         setRequestedTripVisible(false);
-        console.log(trip)
-        const position = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
-        setOrigin(realtimeLocation);
-        setDestination(position);
+        const positionOrigin = { latitude: trip.fromLatitude, longitude: trip.fromLongitude };
+        setOrigin(myLocation);
+        setDestination(positionOrigin);
         setCurrentTrip(trip);
-        FirebaseService.updateDriverLocation(trip._id, realtimeLocation);
+        setNextAddress(trip.fromAddress);
+        if (unsubscribeWatchForNewTrips) unsubscribeWatchForNewTrips(); // Dejo de escuchar por posibles nuevos viajes
+        if (myLocation) await FirebaseService.updateDriverLocation(trip._id, myLocation);
     };
 
     const watchForNewTrips = () => {
         const reference = ref(FirebaseService.db, `/trips/${TripStatus.Requested}`);
-        onChildAdded(query(reference), snapshot => {
+        return onChildAdded(query(reference), snapshot => {
             const tripStatus: { tripId: string, status: string } | null = snapshot.val();
             if (tripStatus && !requestedTripvisible && !rejectedTrips.find(t => t == tripStatus?.tripId)) {
                 showRequestedTripModal(tripStatus.tripId);
@@ -76,38 +116,10 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         });
     };
 
-    React.useEffect(() => {
-        (async () => {
-
-            const interval = setInterval(async () => {
-                let { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
-                    // setErrorMsg('Permission to access location was denied');
-                    return;
-                }
-
-                let location = await Location.getCurrentPositionAsync({});
-                const rtLocation: LatLng = { latitude: location.coords.latitude, longitude: location.coords.longitude };
-
-                if (currentTrip) {
-                    try {
-                        await FirebaseService.updateDriverLocation(currentTrip._id, realtimeLocation);
-                    }
-                    catch (e: any) {
-                        console.log("Cannot update location" + e);
-                    }
-                }
-                setRealtimeLocation(rtLocation);
-
-            }, 2000);
-
-            return () => clearInterval(interval);
-        })();
-    }, []);
-
     useEffect(() => {
-        watchForNewTrips();
+        unsubscribeWatchForNewTrips = watchForNewTrips();
     }, []);
+
 
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
@@ -124,7 +136,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const handleSheetChanges = useCallback((index: number) => {
     }, []);
 
-
     return (
         <>
             <Provider>
@@ -133,11 +144,11 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                 </Portal>
                 <View>
                     <View>
-                        {currentTrip && (
+                        {nextAddress && (
                             <View style={{ ...styles.directionContainer, width: (width - 20) }}>
-                                <AddressInfoCard address={currentTrip.fromAddress}></AddressInfoCard>
+                                <AddressInfoCard address={nextAddress}></AddressInfoCard>
                             </View>)}
-                        <FiuumberMap position={realtimeLocation} onMapRef={setMapRef} origin={origin} destination={destination}></FiuumberMap>
+                        <FiuumberMap passengerPosition={null} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={myLocation}></FiuumberMap>
                     </View>
                     <BottomSheet
                         ref={bottomSheetRef}
@@ -150,10 +161,14 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                                 currentTrip ?
                                     <>
                                         <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
-                                        <Button mode="contained" style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>
+                                        {currentTrip.status == TripStatus.Requested && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
+                                        {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickStartTrip}>Start trip</Button>)}
+                                        {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
+                                        <Divider style={{ marginTop: 10, marginBottom: 10, backgroundColor: Pallete.primaryColor }}></Divider>
+                                        <Button loading={loading} disabled={loading} mode="outlined" buttonColor='red' textColor="white" style={{ marginTop: 10 }} onPress={onClickCancelTrip}>Cancel trip</Button>
                                     </> :
                                     <>
-                                        <InfoCard title="Looking por passengers?" subtitle="Explore the area to increase your chances"></InfoCard>
+                                        <InfoCard icon="account-search-outline" title="Looking por passengers?" subtitle="Explore the area to increase your chances"></InfoCard>
                                     </>
                             }
                         </View>

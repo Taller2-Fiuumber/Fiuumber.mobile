@@ -2,24 +2,29 @@ import React, { FC, ReactElement } from "react";
 import { TextInput, Button } from 'react-native-paper';
 import { useState } from "react";
 import { Pallete } from "../constants/Pallete";
-import {  StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
 interface LogInFormProps {
-  handleLogin: (email: string, password: string) => void;
+  handleLogin: (email: string, password: string) => Promise<any>;
 }
 
-export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): ReactElement => {
+export const LogInForm: FC<LogInFormProps> = ({ handleLogin }: LogInFormProps): ReactElement => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const onLogin = () => {
-    if (email == "" || password == ""){
+  const onLogin = async () => {
+    if (loading) return;
+
+    if (email == "" || password == "") {
       setMissingFieldsErrorText(true);
     }
     else {
-      handleLogin(email, password);
+      setLoading(true);
+      await handleLogin(email, password);
+      setLoading(false);
     }
   };
 
@@ -28,10 +33,10 @@ export const LogInForm: FC<LogInFormProps> = ({handleLogin}: LogInFormProps): Re
 
   return (
     <>
-    <TextInput label="Email" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
-    <TextInput label="Password" style={{marginBottom: 20}} secureTextEntry={true} onChangeText={(text) => setPassword(text)}/>
-    {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
-    <Button mode="contained" style={{backgroundColor: Pallete.primaryColor}} onPress={onLogin}>Log In</Button>
+      <TextInput label="Email" style={{ marginBottom: 20 }} onChangeText={(text) => setEmail(text)} />
+      <TextInput label="Password" style={{ marginBottom: 20 }} secureTextEntry={true} onChangeText={(text) => setPassword(text)} />
+      {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
+      <Button mode="contained" style={{ backgroundColor: Pallete.primaryColor }} loading={loading} onPress={onLogin}>Log In</Button>
     </>
   );
 };
