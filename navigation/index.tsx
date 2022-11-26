@@ -8,6 +8,7 @@ import { RootStackParamList } from '../types';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { ProfileNavBarScreen } from '../screens/ProfileNavBarScreen';
 import { MyProfileScreen } from '../screens/MyProfileScreen';
+import { OthersProfileScreen } from '../screens/OthersProfileScreen';
 import { LogInScreen } from '../screens/LogInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import { RoleSelectionScreen } from '../screens/RoleSelectionScreen';
@@ -145,6 +146,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
               <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              <Stack.Screen name="OthersProfileScreen" component={OthersProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
               <Stack.Screen name="CalificationScreen" component={CalificationScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
 
             </>

@@ -30,6 +30,7 @@ export type RootStackParamList = {
   TripScreen: undefined;
   ProfileNavBarScreen: undefined;
   MyProfileScreen: undefined;
+  OthersProfileScreen: undefined;
   HomeScreen: undefined;
 };
 

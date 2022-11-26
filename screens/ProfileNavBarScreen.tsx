@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 import { Pallete } from '../constants/Pallete';
 import { TripScreen } from '../screens/TripScreen';
 import { MyProfileScreen } from '../screens/MyProfileScreen';
+import { OthersProfileScreen } from '../screens/OthersProfileScreen';
 import { CalificationScreen } from '../screens/CalificationScreen';
 
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
@@ -38,6 +39,7 @@ export const ProfileNavBarScreen = () => {
     <Drawer.Navigator useLegacyImplementation initialRouteName="Home" drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={TripScreen} />
       <Drawer.Screen name="My Profile" component={MyProfileScreen} />
+      <Drawer.Screen name="Others Profile" component={OthersProfileScreen} />
       <Drawer.Screen name="My trips" component={MyProfileScreen} />
       {/* <Drawer.Screen name="Calification" component={CalificationScreen} /> */}
     </Drawer.Navigator>

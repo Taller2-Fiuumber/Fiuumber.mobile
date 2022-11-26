@@ -5,8 +5,5 @@ export const CONFIG = {
     tripsBasePath: "/api/trips",
     authBasePath: "/api/auth",
     bypassLogin: false, // Setear en true para testear
-
-
-    
     
 };

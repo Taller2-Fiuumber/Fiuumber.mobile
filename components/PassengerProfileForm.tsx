@@ -118,7 +118,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
     <>
       <Text style={styles.subtitle}>Personal information</Text>
 
-      <TextInput label="First first name" style={{marginBottom: 20}} editable={isEditable}
+      <TextInput label="First name" style={{marginBottom: 20}} editable={isEditable}
         value={isEditable ? firstName : user?.firstName}
         onChangeText={(text) => setName(text)}
       />
@@ -128,7 +128,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
         onChangeText={(text) => setLastName(text)}
       />
 
-      <TextInput label="Email or phone number" style={{marginBottom: 20}} editable={isEditable}
+      <TextInput label="Email" style={{marginBottom: 20}} editable={isEditable}
         value={isEditable ? email : user?.email}
         onChangeText={(text) => setEmail(text)}
       />
