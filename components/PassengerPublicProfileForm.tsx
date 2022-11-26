@@ -25,8 +25,8 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
 
 
 
-  useEffect(() => {
-    AuthService.getCurrentDriver().then((passenger: Passenger | undefined) => {
+
+    AuthService.getCurrentPassenger().then((passenger: Passenger | undefined) => {
       if (passenger != undefined) {
         // passenger values states
         const _userId = user?.id
@@ -41,7 +41,7 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
       console.log(error);
     });
 
-  }, [ ]);
+
 
 
   return (

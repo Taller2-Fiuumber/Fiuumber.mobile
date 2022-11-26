@@ -46,7 +46,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
 
   /*--------------------------Getting driver data------------------------------*/
 
-  useEffect(() => {
     AuthService.getCurrentDriver().then((driver: Driver | undefined) => {
       if (driver != undefined) {
         // User values states
@@ -71,8 +70,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     }).catch((error) => {
       console.log(error);
     });
-
-  }, [ ]);
 
   return (
     <>
