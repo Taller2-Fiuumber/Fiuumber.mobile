@@ -17,4 +17,22 @@ export const UsersService = {
             throw error;
         }
     },
+    setNotificationsToken: async (userId: number, token: string): Promise<User | null> => {
+        try {
+            const url = `${URL_USERS}/user/${userId}/notifications-token`;
+            const response = await axios.post(url, { token }, AuthService.getHeaders(),);
+            const user: User = response.data;
+            return user;
+        } 
+        catch (error: any) {
+            if (error && error.response && error.response.status == 400) {
+                console.log(`Bad request, cannot set token for notifications: ${error}`);
+                return null;
+            }
+
+            console.log(`UsersService setNotificationsToken: ${error}`);
+
+            throw error;
+        }
+    }
 };
