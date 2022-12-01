@@ -5,6 +5,11 @@ import LogInForm from "../components/LogInForm";
 import { Text, View } from "../components/Themed";
 import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
+import { Button } from 'react-native-paper';
+
+import { ResponseType } from 'expo-auth-session';
+import * as Google from 'expo-auth-session/providers/google';
+import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 
 const styles = StyleSheet.create({
     container: {
@@ -41,6 +46,18 @@ export const LogInScreen = () => {
     }
   }
 
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: '268160515802-k4rqi1559edp7d9fbovpe9mhdlmvhpe0.apps.googleusercontent.com',
+    expoClientId: '275328991698-4jdkntpb9s4v887v02upijk087a7i3i2.apps.googleusercontent.com',
+  });
+
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+    }
+  }, [response]);
+
+
     return (
       <>
       <View style={styles.container}>
@@ -49,6 +66,14 @@ export const LogInScreen = () => {
         {
           message !== null ? (<Text style={styles.error}>{message}</Text>) : <></>
         }
+
+      <Button mode="contained"
+            style={{ backgroundColor: Pallete.primaryColor, marginTop: "3%"}}
+            disabled={!request}
+            onPress={() => { promptAsync();}}>
+            Log In with Google
+      </Button>
+
       </View>
       </>
     );

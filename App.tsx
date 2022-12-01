@@ -6,9 +6,14 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
+import * as WebBrowser from 'expo-web-browser';
+
+WebBrowser.maybeCompleteAuthSession();
+
 export default function App() {
+
   const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();  
+  const colorScheme = useColorScheme();
 
   if (!isLoadingComplete) {
     return null;
