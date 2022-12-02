@@ -11,7 +11,7 @@ import { Driver } from "../models/driver";
 import { Wallet } from "../models/wallet";
 import { DriverVehicle } from "../models/driver_vehicle";
 import { Vehicle } from "../models/vehicle";
-
+// import {Table, TableWrapper, Row, Rows, Col} from 'react-native-table-component';
 import { AuthService } from "../services/AuthService";
 
 interface DriverPublicProfileFormProps {
@@ -20,6 +20,9 @@ interface DriverPublicProfileFormProps {
 
 
 export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): ReactElement => {
+
+    const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about driver");
+    const [numberOfComments, setNumberOfComments] = useState<number>(5);
 
     /*------------------------States Initialization----------------------------*/
 
@@ -70,6 +73,32 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     }).catch((error) => {
       console.log(error);
     });
+  const commentsButtonPressed = () => {
+    if(labelCommentsAboutDriver=="Show comments about driver"){
+      setShowComments("Hide comments");
+      return;
+    }
+    setShowComments("Show comments about driver");
+    setNumberOfComments(5);
+  }
+
+  const moreCommentsButtonPressed = () => {
+    setNumberOfComments(numberOfComments+5);
+  }
+
+  const comments = [
+    {comm: "Muy buen viaje! Excelente experiencia"},
+    {comm: "La verdad un desastre, casi chocamos, se peleo con un taxista y me echo del auto"},
+    {comm: "Me pidio mi whatsapp..."},
+    {comm: "mmmmuuuuy buen viaje!! hablamos de cosas interesantes"},
+    {comm: "me dejo a dos cuadras del destino y encima me cobro de mas"},
+    {comm: "un capooo"},
+    {comm: "Me borrare fiuumber por esta experiencia tan desagradable"},
+    {comm: "como siempre fiuumber no defrauda, llego rapidisimo y me cobro re barato, me tomaria un fiuumber todos los dias"},
+    {comm: "El mejor driver que vi en mi vida."},
+    {comm: "pesimo."},
+    {comm: "increible."},
+  ] // desmockearlo
 
   return (
     <>
@@ -113,8 +142,30 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
       <TextInput label="Brand" style={{marginBottom: 20}} editable={false}
         value={ brand}
       />
+      {(labelCommentsAboutDriver=="Hide comments") && 
+        <>
+        <Text style={styles.subtitle}>Comments on driver</Text>
+        <View style={styles.containerCom}>
+        {comments.slice(0,numberOfComments).map((comment) => {
+        return (
+          <View>
+            <Text style={styles.item}>{comment.comm}</Text>
+          </View>
+        );
+      })}
+      <Button mode="contained" style={{backgroundColor: Pallete.lightColor, margin: "10%"}}
+        onPress={moreCommentsButtonPressed}>
+        <Text style={styles.but}>{"Load more"}</Text>
+      </Button>
+    </View>
 
+        </>
+      }
+      <Button mode="contained" style={{backgroundColor: Pallete.greenBackground, margin: "0%"}}
+        onPress={commentsButtonPressed}>{labelCommentsAboutDriver}
+      </Button>
 
+      
     </>
   )
 };
@@ -125,8 +176,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: Pallete.greenBackground,
+    backgroundColor: Pallete.whiteColor,
     padding: 20,
+  },
+  containerCom: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: Pallete.whiteColor,
+    padding: 15,
+    marginBottom: 10
   },
   header: {
     color: '#000',
@@ -171,6 +229,21 @@ const styles = StyleSheet.create({
   bgSignIn: {
     backgroundColor: Pallete.lightColor,
   },
+  item: {
+    padding: 10,
+    fontSize: 20,
+    marginTop: 5,
+    textAlign: 'center',
+    backgroundColor: Pallete.lightColor
+  },
+  but: {
+    padding: 10,
+    fontSize: 20,
+    marginTop: 5,
+    textAlign: 'center',
+    color: 'black',
+    backgroundColor: Pallete.lightColor
+  }
 });
 
 
