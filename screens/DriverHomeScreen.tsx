@@ -19,6 +19,7 @@ import { TripsService } from "../services/TripsService";
 import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
 import { Unsubscribe } from "@firebase/util";
+import CalificationModal from "../modals/CalificationModal";
 
 interface DriverHomeScreenProps { }
 
@@ -43,6 +44,9 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const [loading, setLoading] = React.useState<boolean>(false);
 
+    const [calificationsModalVisible, setCalificationsModalVisible] = React.useState(false);
+    const [lastTripId, setLastTripId] = React.useState<string | null>(null);
+
     const myLocation = useRealtimeLocation(5000);
     useStreamLocation(currentTrip, myLocation, "DRIVER");
 
@@ -58,6 +62,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     }
     const onClickFinishTrip = async () => {
         await changeTripStatus(TripStatus.Terminated);
+        if (currentTrip) setLastTripId(currentTrip._id);
+        setCalificationsModalVisible(true);
         cleanupTrip();
     }
 
@@ -136,11 +142,17 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const handleSheetChanges = useCallback((index: number) => {
     }, []);
 
+    const dismissCalificationModal = () => {
+        setLastTripId(null);
+        setCalificationsModalVisible(false);
+    }
+
     return (
         <>
             <Provider>
                 <Portal>
                     {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} onAccepted={onTripAccepted} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
+                    {lastTripId && calificationsModalVisible ? <CalificationModal onDismiss={dismissCalificationModal} tripId={lastTripId} visible={true}></CalificationModal> : <></>}
                 </Portal>
                 <View>
                     <View>
@@ -161,7 +173,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                                 currentTrip ?
                                     <>
                                         <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
-                                        {currentTrip.status == TripStatus.Requested && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
+                                        {(currentTrip.status == TripStatus.Requested || currentTrip.status == TripStatus.DriverAssigned) && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
                                         {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickStartTrip}>Start trip</Button>)}
                                         {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
                                         <Divider style={{ marginTop: 10, marginBottom: 10, backgroundColor: Pallete.primaryColor }}></Divider>

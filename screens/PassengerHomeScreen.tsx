@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, ReactElement, useCallback, useMemo, useRef, useState } from "react";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton } from 'react-native-paper';
@@ -10,7 +10,7 @@ import { GooglePlacesInput } from "../components/GooglePlacesInput";
 import { Pallete } from "../constants/Pallete";
 import { TripsService } from "../services/TripsService";
 import FindTripModal from "../modals/FindTripModal";
-import { ref, onChildAdded, query, onValue, Unsubscribe } from "firebase/database";
+import { ref, query, onValue, Unsubscribe } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import { Driver } from "../models/driver";
 import { AuthService } from "../services/AuthService";
@@ -18,6 +18,7 @@ import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
 import { TripStatus } from "../enums/trip-status";
 import InfoModal, { ActionButton } from "../modals/InfoModal";
+import CalificationModal from "../modals/CalificationModal";
 
 interface PassengerHomeScreenProps { }
 
@@ -40,12 +41,14 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const [driverRealtimeLocation, setDriverRealtimeLocation] = React.useState<any>(null);
     const [fare, setFare] = React.useState<number>(0);
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED" | "DRIVER_ARRIVED" | "IN_PROGRESS">("DIRECTIONS");
+    const [viewState, setViewState] = React.useState<"DIRECTIONS" | "FARE" | "DRIVER_ASSIGNED" | "DRIVER_ARRIVED" | "IN_PROGRESS" | "TERMINATED">("DIRECTIONS");
 
     const [currentDriver, setCurrentDriver] = React.useState<Driver | null>(null);
 
     const [findTripvisible, setFindTripVisible] = React.useState(false);
     const [driverArrivedVisible, setDriverArrivedVisible] = React.useState(false);
+    const [calificationsModalVisible, setCalificationsModalVisible] = React.useState(false);
+    const [lastTripId, setLastTripId] = React.useState<string | null>(null);
 
     const showFindTripModal = () => setFindTripVisible(true);
     const hideFindTripModal = () => setFindTripVisible(false);
@@ -94,6 +97,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     setViewState("IN_PROGRESS");
                 }
                 if (status == TripStatus.Terminated) {
+                    setLastTripId(tripId);
+                    setCalificationsModalVisible(true);
                     cleanupTrip();
                 }
             }
@@ -101,7 +106,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     };
 
     const cleanupTrip = () => {
-        setViewState("DIRECTIONS");
+        setViewState("TERMINATED");
         setOrigin(null);
         setDestination(null);
         if (currentTrip) FirebaseService.removeTrip(currentTrip?._id);
@@ -154,6 +159,11 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     };
 
+    const dismissCalificationModal = () => {
+        setCalificationsModalVisible(false);
+        setLastTripId(null);
+    }
+
     const actionButtonDialogArrived: ActionButton = {
         text: "Dismiss",
         onPress: hideDriverArrivedVisible,
@@ -167,6 +177,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                 <Portal>
                     {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
                     {driverArrivedVisible && (<InfoModal title={"Your Fiuumber has arrived ;)"} description={`Hurry up, ${currentDriver?.user.firstName} is waiting for you`} visible={driverArrivedVisible} onDismiss={hideDriverArrivedVisible} button={actionButtonDialogArrived}></InfoModal>)}
+                    {calificationsModalVisible && lastTripId ? <CalificationModal onDismiss={dismissCalificationModal} tripId={lastTripId} visible={true}></CalificationModal> : <></>}
                 </Portal>
                 <FiuumberMap passengerPosition={myLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
                 <BottomSheet
@@ -185,7 +196,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     }
 
                     {
-                        viewState == "DIRECTIONS" &&
+                        (viewState == "DIRECTIONS" || viewState == "TERMINATED") &&
                         (<>
                             <View style={styles.contentContainer}>
                                 <InfoCard icon="account-search-outline" title="Welcome back to Fiuumber" subtitle="Tell us where we are going"></InfoCard>
