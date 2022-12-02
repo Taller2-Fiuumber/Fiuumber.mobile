@@ -1,7 +1,7 @@
 import axios from 'axios';// For API consuming
 import { TripStatus } from '../enums/trip-status';
 import { Trip, Calification } from '../models/trip';
-import { mapTrip } from '../utils/mappings';
+import { mapCalification, mapTrip } from '../utils/mappings';
 import { AuthService } from './AuthService';
 import { HEADERS, URL_TRIPS } from "./Constants";
 import { FirebaseService } from './FirebaseService';
@@ -131,4 +131,30 @@ export const TripsService = {
             return null
         }
     },
+    getCalificationsDriver: async (driverId: number, skip: number, take: number): Promise<Calification[] | null> => {
+        try {
+            const url = `http://fiuumber-api-trips.herokuapp.com/api/trips/calification/driver/${driverId}?skip=${skip}&limit=${take}`; // desmockear 68
+
+            let califications =  await axios.get(url, AuthService.getHeaders(),);
+            const calificationsResponse: Calification[] = califications.data.map(mapCalification);
+            return calificationsResponse; 
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },  
+    getCalificationsPassenger: async (passengerId: number, skip: number, take: number): Promise<Calification[] | null> => {
+        try {
+            const url = `http://fiuumber-api-trips.herokuapp.com/api/trips/calification/passenger/${passengerId}?skip=${skip}&limit=${take}`; // desmockear 68
+
+            let califications =  await axios.get(url, AuthService.getHeaders(),);
+            const calificationsResponse: Calification[] = califications.data.map(mapCalification);
+            return calificationsResponse; 
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },  
 };

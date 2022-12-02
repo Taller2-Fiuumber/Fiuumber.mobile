@@ -10,6 +10,8 @@ import { User } from '../models/user';
 import { Passenger } from "../models/passenger";
 import { Wallet } from "../models/wallet";
 import { AuthService } from "../services/AuthService";
+import { TripsService } from "../services/TripsService";
+import { Calification } from "../models/trip";
 
 interface PassengerPublicProfileFormProps {
 }
@@ -18,6 +20,7 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
   const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about passenger");
   const [numberOfComments, setNumberOfComments] = useState<number>(5);
   let user = AuthService.getCurrentUserToken()?.user;
+  const [califications, setCalifications] = useState<Calification[] | null>([]);
 
   const [firstName, setName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -55,19 +58,13 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
       setNumberOfComments(numberOfComments+5);
     }
 
-    const comments = [
-      {comm: "Muy buen viaje! Excelente experiencia"},
-      {comm: "La verdad un desastre, casi chocamos, se peleo con un taxista y me echo del auto"},
-      {comm: "Me pidio mi whatsapp..."},
-      {comm: "mmmmuuuuy buen viaje!! hablamos de cosas interesantes"},
-      {comm: "me dejo a dos cuadras del destino y encima me cobro de mas"},
-      {comm: "un capooo"},
-      {comm: "Me borrare fiuumber por esta experiencia tan desagradable"},
-      {comm: "como siempre fiuumber no defrauda, llego rapidisimo y me cobro re barato, me tomaria un fiuumber todos los dias"},
-      {comm: "El mejor driver que vi en mi vida."},
-      {comm: "pesimo."},
-      {comm: "increible."},
-    ] // desmockearlo
+    useEffect(() => {
+      TripsService.getCalificationsPassenger(1, 0, numberOfComments).then((califications: Calification[] | null) => {
+        setCalifications(califications);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }, [califications, numberOfComments]);
 
   return (
     <>
@@ -93,14 +90,14 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
       <TextInput label="Trips made" style={{marginBottom: 20}} editable={false}
         value={ trips}
       />
-      {(labelCommentsAboutDriver=="Hide comments") && 
+      {(labelCommentsAboutDriver=="Hide comments") && (califications!=null)&&
         <>
         <Text style={styles.subtitle}>Comments on passenger</Text>
         <View style={styles.containerCom}>
-        {comments.slice(0,numberOfComments).map((comment) => {
+        {califications.slice(0,numberOfComments).map((calification) => {
         return (
           <View>
-            <Text style={styles.item}>{comment.comm}</Text>
+            <Text style={styles.item}>{calification.comments}</Text>
           </View>
         );
       })}

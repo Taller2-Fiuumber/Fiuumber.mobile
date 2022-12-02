@@ -128,5 +128,5 @@ export const AuthService = {
             console.log(error);
             throw error;
         }
-    },    
+    },      
 };

@@ -13,6 +13,8 @@ import { DriverVehicle } from "../models/driver_vehicle";
 import { Vehicle } from "../models/vehicle";
 // import {Table, TableWrapper, Row, Rows, Col} from 'react-native-table-component';
 import { AuthService } from "../services/AuthService";
+import { TripsService } from "../services/TripsService";
+import { Calification } from "../models/trip";
 
 interface DriverPublicProfileFormProps {
 }
@@ -22,7 +24,9 @@ interface DriverPublicProfileFormProps {
 export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): ReactElement => {
 
     const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about driver");
-    const [numberOfComments, setNumberOfComments] = useState<number>(5);
+    const [numberOfComments, setNumberOfComments] = useState<number>(3);
+    // const [califications, setCalifications] = useState({id: "", passengerId: "string", driverId: "", tripId: "", stars: "", comments: "", reviewer: ""});
+    const [califications, setCalifications] = useState<Calification[] | null>([]);
 
     /*------------------------States Initialization----------------------------*/
 
@@ -79,27 +83,20 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
       return;
     }
     setShowComments("Show comments about driver");
-    setNumberOfComments(5);
+    setNumberOfComments(3);
   }
 
   const moreCommentsButtonPressed = () => {
-    setNumberOfComments(numberOfComments+5);
+    setNumberOfComments(numberOfComments+3);
   }
 
-  const comments = [
-    {comm: "Muy buen viaje! Excelente experiencia"},
-    {comm: "La verdad un desastre, casi chocamos, se peleo con un taxista y me echo del auto"},
-    {comm: "Me pidio mi whatsapp..."},
-    {comm: "mmmmuuuuy buen viaje!! hablamos de cosas interesantes"},
-    {comm: "me dejo a dos cuadras del destino y encima me cobro de mas"},
-    {comm: "un capooo"},
-    {comm: "Me borrare fiuumber por esta experiencia tan desagradable"},
-    {comm: "como siempre fiuumber no defrauda, llego rapidisimo y me cobro re barato, me tomaria un fiuumber todos los dias"},
-    {comm: "El mejor driver que vi en mi vida."},
-    {comm: "pesimo."},
-    {comm: "increible."},
-  ] // desmockearlo
-
+  useEffect(() => {
+    TripsService.getCalificationsDriver(68, 0, numberOfComments).then((califications: Calification[] | null) => {
+      setCalifications(califications);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }, [califications, numberOfComments]);
   return (
     <>
       <Text style={styles.subtitle}>Driver Information</Text>
@@ -142,14 +139,14 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
       <TextInput label="Brand" style={{marginBottom: 20}} editable={false}
         value={ brand}
       />
-      {(labelCommentsAboutDriver=="Hide comments") && 
+      {(labelCommentsAboutDriver=="Hide comments") && (califications!=null) &&
         <>
         <Text style={styles.subtitle}>Comments on driver</Text>
         <View style={styles.containerCom}>
-        {comments.slice(0,numberOfComments).map((comment) => {
+        {califications.slice(0,numberOfComments).map((calification) => {
         return (
-          <View>
-            <Text style={styles.item}>{comment.comm}</Text>
+          <View> 
+            <Text style={styles.item}>{calification.comments}</Text>
           </View>
         );
       })}
@@ -192,6 +189,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 30
 },
+  rowContainer: {
+    flexDirection: 'row',
+  },
   title: {
       color: '#000',
       marginBottom: 70,
@@ -234,6 +234,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 5,
     textAlign: 'center',
+    backgroundColor: Pallete.lightColor
+  },
+  item2: {
+    padding: 10,
+    fontSize: 20,
+    marginTop: 5,
+    textAlign: 'center',
+    fontWeight: 'bold',
     backgroundColor: Pallete.lightColor
   },
   but: {
