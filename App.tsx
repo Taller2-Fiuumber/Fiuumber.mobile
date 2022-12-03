@@ -16,7 +16,6 @@ export default function App() {
   const colorScheme = useColorScheme();  
 
   const [expoPushToken, setExpoPushToken] = useState<string>("");
-  const [notification, setNotification] = useState<Notifications.Notification>();
 
   const registerForPushNotificationsAsync = async () => {
     try {
@@ -52,19 +51,8 @@ export default function App() {
     }
   };
 
-  const handleNotification = (notification: Notifications.Notification) => {
-    console.log(notification);
-    setNotification(notification);
-  }
-
-  const handleNotificationResponse = (response: Notifications.NotificationResponse) => {
-    console.log(response);
-  }
-
   useEffect(() => {
     registerForPushNotificationsAsync();
-    Notifications.addNotificationReceivedListener(handleNotification);
-    Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
   }, []);
 
   if (!isLoadingComplete) {
@@ -72,18 +60,18 @@ export default function App() {
   } else {
     return (
       <>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Your expo push token: {expoPushToken}</Text>
-        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Title: {notification?.request.content.title}</Text>
-          <Text>Body: {notification?.request.content.body}</Text>
-          <Text>Data: {JSON.stringify(notification?.request.content.data)}</Text>
-        </View>
-      </View>
-        {/* <SafeAreaProvider>
+        {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Your expo push token: {expoPushToken}</Text>
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text>Title: {notification?.request.content.title}</Text>
+            <Text>Body: {notification?.request.content.body}</Text>
+            <Text>Data: {JSON.stringify(notification?.request.content.data)}</Text>
+          </View>
+        </View> */}
+        <SafeAreaProvider>
           <Navigation colorScheme={colorScheme} />
           <StatusBar />
-        </SafeAreaProvider> */}
+        </SafeAreaProvider>
       </>
     );
   }

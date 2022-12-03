@@ -19,6 +19,7 @@ import { TripsService } from "../services/TripsService";
 import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
 import { Unsubscribe } from "@firebase/util";
+import * as Notifications from 'expo-notifications';
 
 interface DriverHomeScreenProps { }
 
@@ -42,6 +43,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [destination, setDestination] = React.useState<LatLng | null>(null);
 
     const [loading, setLoading] = React.useState<boolean>(false);
+
+    const [notification, setNotification] = useState<Notifications.Notification>();
 
     const myLocation = useRealtimeLocation(5000);
     useStreamLocation(currentTrip, myLocation, "DRIVER");
@@ -117,7 +120,9 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     };
 
     useEffect(() => {
-        unsubscribeWatchForNewTrips = watchForNewTrips();
+        unsubscribeWatchForNewTrips = watchForNewTrips();    
+        Notifications.addNotificationReceivedListener(handleNotification);
+        Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
     }, []);
 
 
@@ -135,6 +140,15 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
     }, []);
+
+    const handleNotification = (notification: Notifications.Notification) => {
+        console.log(notification);
+        setNotification(notification);
+    }
+
+    const handleNotificationResponse = (response: Notifications.NotificationResponse) => {
+        console.log(response);
+    }
 
     return (
         <>
