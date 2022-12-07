@@ -7,6 +7,7 @@ export const UsersService = {
     getUser: async (userId: number): Promise<User | null> => {
         try {
             const url = `${URL_USERS}/user/${userId}`;
+            console.log(url);
             const response = await axios.get(url, AuthService.getHeaders(),);
             const user: User = response.data;
             return user;

@@ -50,6 +50,7 @@ export const AuthService = {
         try {
             if (_userToken != null) {
                 const url = `${URL_USERS}/passenger`;
+                console.log(url)
                 await axios.put(url, passenger, AuthService.getHeaders(),);
                 _userToken.user = passenger;
                 return true;
@@ -105,7 +106,6 @@ export const AuthService = {
         try {
             if (_userToken != null) {
                 const passenger_url = `${URL_USERS}/passenger/${_userToken.user.id}`;
-
                 let user =  await axios.get(passenger_url, AuthService.getHeaders(),);
                 return user.data
             }
