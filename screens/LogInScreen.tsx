@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import { useState, useContext, useEffect} from "react";
 import { StyleSheet } from "react-native";
 import LogInForm from "../components/LogInForm";
 import { Text, View } from "../components/Themed";
@@ -7,7 +6,6 @@ import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
 import { Button } from 'react-native-paper';
 
-import { ResponseType } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
 import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 
@@ -35,7 +33,7 @@ const styles = StyleSheet.create({
 });
 export const LogInScreen = () => {
 
-  const { logIn } = React.useContext(AuthContext);
+  const { logIn } = useContext(AuthContext);
 
   const [message, setMessage] = useState<string | null>(null);
 
@@ -49,14 +47,15 @@ export const LogInScreen = () => {
   const [request, response, promptAsync] = Google.useAuthRequest({
     webClientId: '268160515802-k4rqi1559edp7d9fbovpe9mhdlmvhpe0.apps.googleusercontent.com',
     expoClientId: '275328991698-4jdkntpb9s4v887v02upijk087a7i3i2.apps.googleusercontent.com',
+    androidClientId: '275328991698-1phmpp0dcu2hoipcfujb16ebsum6ord1.apps.googleusercontent.com',
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
     }
   }, [response]);
-
+ q
 
     return (
       <>
@@ -68,6 +67,7 @@ export const LogInScreen = () => {
         }
 
       <Button mode="contained"
+            icon="google"
             style={{ backgroundColor: Pallete.primaryColor, marginTop: "3%"}}
             disabled={!request}
             onPress={() => { promptAsync();}}>
