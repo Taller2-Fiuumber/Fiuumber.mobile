@@ -55,21 +55,14 @@ export const LogInScreen = () => {
   useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
-      console.log("__________________________authentication: ", authentication);
       if (authentication) {
         setAccessToken(authentication.accessToken);
-        console.log("__________________________authentication.accessToken", authentication.accessToken);
 
-        fetchUserInfo(authentication.accessToken).then(userInfo => {
-          console.log("__________________________userInfo", userInfo);
-
+        fetchUserInfo(authentication.accessToken).then(async userInfo => {
+          await handleLogin(userInfo.email, userInfo.id);
         })
 
       }
-      /*
-       LOG  __________________________authentication:  {"accessToken": "ya29.a0AeTM1idVu2mF93Nh9JSYMCf6a_VAmRBcBK8uxU_EmLUFOq5M8FbJUY47h-EaDc14P9uXUgBJGCzChbD-rgGC8V194JgNUKucJuQpvE5zuklWKdo3Ds27dx3L_hdp0WjEZLojhTjq39RsIylveFUE0AZ2EPIiaCgYKAToSARASFQHWtWOmZ6QV0_6K-lgqNce9UrYrnw0163", "expiresIn": "3599", "idToken": undefined, "issuedAt": 1670691227, "refreshToken": undefined, "scope": "email profile openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile", "state": "dBcuZQpJp1", "tokenType": "Bearer"}
-
-      */
     }
   }, [response]);
 
