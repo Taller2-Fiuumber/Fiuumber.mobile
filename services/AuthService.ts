@@ -107,11 +107,7 @@ export const AuthService = {
         try {
             if (_userToken != null) {
                 const url = `${URL_USERS}/driver`;
-                const driver_data = new Driver(
-                    driver.user,
-                    driver.driverVehicle
-                )
-                await axios.put(url, driver_data, AuthService.getHeaders(),);
+                await axios.put(url, driver, AuthService.getHeaders(),);
                 return true;
             }
             return false;
@@ -127,7 +123,10 @@ export const AuthService = {
                 const driver_url = `${URL_USERS}/driver/${_userToken.user.id}`;
 
                 let user =  await axios.get(driver_url, AuthService.getHeaders(),);
-                return user.data
+
+                let res = user.data.user
+                res["vehicle"] = user.data.driverVehicle
+                return res
             }
             return undefined;
         }
@@ -156,8 +155,9 @@ export const AuthService = {
             const url = `${URL_USERS}/driver/${driverId}`;
 
             let user =  await axios.get(url, AuthService.getHeaders(),);
-
-            return user.data
+            let res = user.data.user
+            res["vehicle"] = user.data.driverVehicle
+            return res
         }
         catch (error: any) {
             console.log(error);

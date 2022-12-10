@@ -2,7 +2,6 @@ import * as React from 'react';
 import { StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
-import { DirectionsBoxNative } from '../components/DirectionsBoxNative';
 import { User } from '../models/user';
 import { AuthService } from '../services/AuthService';
 import DriverHomeScreen from './DriverHomeScreen';
