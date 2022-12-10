@@ -28,6 +28,7 @@ export type RootStackParamList = {
   CalificationScreen: undefined;
   SignUpSuccessfullyScreen: undefined;
   TripScreen: undefined;
+  TripLogScreen: undefined;
   ProfileNavBarScreen: undefined;
   MyProfileScreen: undefined;
   HomeScreen: undefined;

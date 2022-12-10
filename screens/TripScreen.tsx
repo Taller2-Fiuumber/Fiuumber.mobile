@@ -32,11 +32,6 @@ export const TripScreen = () => {
       {user?.profile == "DRIVER" ?
         <DriverHomeScreen></DriverHomeScreen> :
         <PassengerHomeScreen></PassengerHomeScreen>
-        // <View style={styles.container}>
-        //   <View style={styles.contentContainer}>
-        //     <DirectionsBoxNative></DirectionsBoxNative>
-        //   </View>
-        // </View>
       }
     </>
   );
