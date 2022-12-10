@@ -3,7 +3,6 @@ import { Wallet } from "./wallet";
 
 export class Passenger extends User {
   profile: string;
-  wallet: Wallet;
 
   constructor(
     userId: number,
@@ -13,11 +12,12 @@ export class Passenger extends User {
     address: string,
     password: string,
     username: string,
-    wallet: Wallet,
+    walletPrivateKey: string,
+    accountType: string,
   ) {
 
-    super(userId, email, firstName, lastName, address, password, username, wallet.walletPrivateKey);
-    this.wallet = wallet;
+    super(userId, email, firstName, lastName, address, password, username, walletPrivateKey, accountType);
+    this.walletPrivateKey = walletPrivateKey;
 
     this.profile = "PASSENGER";
   }

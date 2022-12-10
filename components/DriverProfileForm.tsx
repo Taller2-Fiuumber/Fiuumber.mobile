@@ -210,7 +210,7 @@ export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement =>
         onChangeText={(text) => isEditable ? setEditableLastName(text) : setLastName(text)}
       />
 
-      <TextInput label="Email or phone number" style={{marginBottom: 20}} editable={isEditable}
+      <TextInput label="Email" style={{marginBottom: 20}} editable={isEditable}
         value={isEditable ? editableEmail : email}
         onChangeText={(text) => setEmail(text)}
       />

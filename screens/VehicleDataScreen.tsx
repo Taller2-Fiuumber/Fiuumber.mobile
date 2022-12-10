@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import { StyleSheet,Pressable } from "react-native";
-import VehicleDataForm from "../components/VehicleDataForm";
 import { Text, View } from "../components/Themed";
 import { Pallete } from "../constants/Pallete";
 import AuthContext from "../contexts/AuthContext";
@@ -61,30 +60,34 @@ const styles = StyleSheet.create({
 export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
 
+  const [brand, setBrand] = useState<string>("");
+  const [model, setModel] = useState<string>("");
+  const [image, setImage] = useState<string>("");
   const [domain, setDomain] = useState<string>("");
-  const [brandAndModel, setBrandAndModel] = useState<string>("");
-  const [license, setLicense] = useState<string>("");
+  const [modelYear, setModelYear] = useState<string>("");
+  const [colorName, setColorName] = useState<string>("");
 
   const { vehicleData } = React.useContext(AuthContext);
 
   const onPressNextButton = async () => {
-    if (domain == "" || brandAndModel == "" || license == ""){
+    if (brand == "" || model == "" || domain == ""){
       setMissingFieldsErrorText(true);
     }
     else {
       setMissingFieldsErrorText(false);
-      const strDriver: string | null = await StorageService.getData("temp_user");
+      const strDriver: string | null = await StorageService.getData("temp_driver");
       if (!strDriver) return;
-      const driver: Driver = JSON.parse(strDriver);
-      const vehicle = new Vehicle(-1, "Toyota", "Ethos", "link")
+      const driver: Driver= JSON.parse(strDriver);
+      const vehicle = new Vehicle(-1, brand, model, image)
       const driverVehicle = new DriverVehicle(
         -1,
         domain,
-        brandAndModel,
-        license,
+        modelYear,
+        colorName,
         vehicle
       )
       driver.vehicle = driverVehicle;
+
       await AuthService.registerDriver(driver);
       navigation.navigate('SignUpSuccessfullyScreen');
     }
@@ -94,9 +97,12 @@ export const VehicleDataScreen = ({ navigation }: NavigationProps) => {
       <>
       <View style={styles.container}>
       <Text style={styles.header}>Vehicle Data</Text>
-        <TextInput label="Domain" style={{marginBottom: 20}} onChangeText={(text) => setDomain(text)}/>
-        <TextInput label="Brand and Model" style={{marginBottom: 20}} onChangeText={(text) => setBrandAndModel(text)}/>
-        <TextInput label="License (file)" style={{marginBottom: 20}} onChangeText={(text) => setLicense(text)}/>
+      <TextInput label="Brand" style={{marginBottom: 20}} onChangeText={(text) => setBrand(text)}/>
+      <TextInput label="Model" style={{marginBottom: 20}} onChangeText={(text) => setModel(text)}/>
+      <TextInput label="Image" style={{marginBottom: 20}} onChangeText={(text) => setImage(text)}/>
+      <TextInput label="Domain" style={{marginBottom: 20}} onChangeText={(text) => setDomain(text)}/>
+      <TextInput label="Model year" style={{marginBottom: 20}} onChangeText={(text) => setModelYear(text)}/>
+      <TextInput label="Color" style={{marginBottom: 20}} onChangeText={(text) => setColorName(text)}/>
         {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
         <Pressable style={{...styles.button, ...styles.bgSignUp, ...{marginBottom: 20}}} onPress={() => onPressNextButton()}>
           <Text style={{...styles.buttonText, ...styles.colorSignUp}}>Next</Text>

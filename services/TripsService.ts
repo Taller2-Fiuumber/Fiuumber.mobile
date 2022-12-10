@@ -130,22 +130,5 @@ export const TripsService = {
             throw error;
             return null
         }
-    },
-    getCalification: async (userId: string, profile: string): Promise<number> => {
-
-        const url = `${URL_TRIPS}/calification/${profile.toLowerCase()}/${userId}/avg`;
-        try {
-            const response = await axios.get(url, AuthService.getHeaders());
-            if (response.data.size() == 0) {
-                return 0;
-            };
-            const userCalification: number = response.data.avg_stars;
-            return userCalification;
-        }
-        catch (error: any) {
-            console.log(`TripsService getFare(): ${url} ${error}`);
-            if (error && error.response && error.response.status == 404) return 0;
-            throw error;
-        }
-    },
+    }
 };

@@ -95,7 +95,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
       const _userId = user?.id
 
       if (_userId) {
-        const passenger: Passenger = new Passenger(_userId, email, firstName, lastName, address, password, "username", new Wallet("", "address", "password"));
+        const passenger: Passenger = new Passenger(_userId, email, firstName, lastName, address, password, "username", "address", "EMAIL");
         await AuthService.updatePassenger(passenger);
         setPassword("")
         user = AuthService.getCurrentUserToken()?.user;
@@ -128,7 +128,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
         onChangeText={(text) => setLastName(text)}
       />
 
-      <TextInput label="Email or phone number" style={{marginBottom: 20}} editable={isEditable}
+      <TextInput label="Email" style={{marginBottom: 20}} editable={isEditable}
         value={isEditable ? email : user?.email}
         onChangeText={(text) => setEmail(text)}
       />

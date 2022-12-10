@@ -53,7 +53,7 @@ export const PassengerProfileScreen= ({ navigation }: NavigationProps) => {
       setMissingFieldsErrorText(false);
       setPasswordIsTooShortErrorText(false);
       setPasswordErrorText(false);
-      const passenger: Passenger = new Passenger(-1, email, name, lastName, "address", password, "username", new Wallet("", "address", "password"));
+      const passenger: Passenger = new Passenger(-1, email, name, lastName, "", password, "", "", "EMAIL");
       await StorageService.storeData("temp_user", JSON.stringify(passenger));
       navigation.navigate('RoleSelectionScreen')
     }
@@ -76,7 +76,6 @@ export const PassengerProfileScreen= ({ navigation }: NavigationProps) => {
         <TextInput label="Name" style={{marginBottom: 20}} onChangeText={(text) => setName(text)}/>
         <TextInput label="Last Name" style={{marginBottom: 20}} onChangeText={(text) => setLastName(text)}/>
         <TextInput label="Email" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
-        <TextInput label="Phone number" style={{marginBottom: 20}} onChangeText={(text) => setEmail(text)}/>
 
         {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
         {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
