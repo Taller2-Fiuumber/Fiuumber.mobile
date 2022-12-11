@@ -1,7 +1,7 @@
 import React, { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { StyleSheet, View, Image } from "react-native";
-import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton, MD3Colors } from 'react-native-paper';
+import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton, MD3Colors, ProgressBar } from 'react-native-paper';
 import InfoCard from "../components/InfoCard";
 import { Trip } from "../models/trip";
 import FiuumberMap from "../components/FiuumberMap";
@@ -227,7 +227,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         TripsService.getLastTripPassenger(currentUser.id)
             .then(trip => setViewStateByTrip(trip))
             .catch(error => console.error(error))
-            .then(() => setLoading(false));
+            .finally(() => setLoading(false));
     }
 
     useEffect(() => {
@@ -243,7 +243,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     {calificationsModalVisible && lastTripId ? <CalificationModal onDismiss={dismissCalificationModal} tripId={lastTripId} visible={true}></CalificationModal> : <></>}
                 </Portal>
                 <FiuumberMap passengerPosition={myLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
-                <IconButton mode="contained" icon="refresh" iconColor={MD3Colors.primary100} style={{ bottom: (getBottomSheetPercentage() + 7) + '%', alignSelf: 'flex-end' }} onPress={refreshTrip}></IconButton>
+                <IconButton mode="contained" icon="refresh" disabled={loading} iconColor={MD3Colors.primary100} style={{ bottom: (getBottomSheetPercentage() + 7) + '%', alignSelf: 'flex-end' }} onPress={refreshTrip}></IconButton>
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={0}
@@ -251,6 +251,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     onChange={handleSheetChanges}
                     backgroundStyle={{ backgroundColor: (viewState == "DRIVER_ASSIGNED") ? Pallete.lightColor : Pallete.whiteColor }}
                 >
+                    {loading && (<ProgressBar indeterminate color={Pallete.greenBackground} />)}
                     {
                         viewState == "DRIVER_ARRIVED" && (<Text style={{ textAlign: 'center', fontWeight: 'bold', color: 'orange' }}>Your driver is waiting for you</Text>)
                     }

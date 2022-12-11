@@ -135,28 +135,27 @@ export const TripsService = {
     getLastTripPassenger: async (userId: number): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/passenger/${userId}?skip=0&limit=1`;
-            console.log(url);
             const response = await axios.get(url, AuthService.getHeaders(),);
             if (!response.data[0]) return null;
             const tripResponse: Trip = mapTrip(response.data[0]);
             return tripResponse;
         }
         catch (error: any) {
-            console.log(`TripsService getCurrentTripPassenger(): ${error}`);
+            console.log(`TripsService getLastTripPassenger(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
     },
-    getLastTripDriver: async (): Promise<Trip | null> => {
+    getLastTripDriver: async (userId: number): Promise<Trip | null> => {
         try {
-            const userId = AuthService.getCurrentUserToken()?.user.userId;
             const url = `${URL_TRIPS}/driver/${userId}?skip=0&limit=1`;
             const response = await axios.get(url, AuthService.getHeaders(),);
+            if (!response.data[0]) return null;
             const tripResponse: Trip = mapTrip(response.data[0]);
             return tripResponse;
         }
         catch (error: any) {
-            console.log(`TripsService getCurrentTripDriver(): ${error}`);
+            console.log(`TripsService getLastTripDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }

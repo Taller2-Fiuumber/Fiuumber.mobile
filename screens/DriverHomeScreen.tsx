@@ -4,7 +4,7 @@ import { Pallete } from "../constants/Pallete";
 import { Dimensions, StyleSheet } from "react-native";
 import { View } from "../components/Themed";
 import FiuumberMap from "../components/FiuumberMap";
-import { Button, Divider, Portal, Provider } from "react-native-paper";
+import { Button, Divider, IconButton, MD3Colors, Portal, ProgressBar, Provider } from "react-native-paper";
 import { ref, onChildAdded, query } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import RequestedTripModal from "../modals/RequestedTripModal";
@@ -20,10 +20,14 @@ import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
 import { Unsubscribe } from "@firebase/util";
 import CalificationModal from "../modals/CalificationModal";
+import { User } from "../models/user";
+import { AuthService } from "../services/AuthService";
 
 interface DriverHomeScreenProps { }
 
 export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
+
+    const currentUser: User | undefined = AuthService.getCurrentUserToken()?.user;
 
     let unsubscribeWatchForNewTrips: Unsubscribe | null = null;
 
@@ -122,21 +126,40 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         });
     };
 
+    const setViewStateByTrip = (trip: Trip | null) => {
+        if (!trip || trip.status == TripStatus.Terminated || trip.status == TripStatus.Canceled) {
+            cleanupTrip();
+            unsubscribeWatchForNewTrips = watchForNewTrips();
+            return;
+        }
+
+        setCurrentTrip(trip);
+    }
+
+    const refreshTrip = () => {
+        if (!currentUser) return;
+        setLoading(true);
+        TripsService.getLastTripDriver(currentUser.id)
+            .then(trip => setViewStateByTrip(trip))
+            .catch(error => console.error(error))
+            .finally(() => setLoading(false));
+    }
+
     useEffect(() => {
-        unsubscribeWatchForNewTrips = watchForNewTrips();
+        refreshTrip();
     }, []);
 
 
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
 
-    const setMinHeightBottomSheet = () => {
-        if (!currentTrip) return '12%';
-        return '20%';
+    const getBottomSheetPercentage = () => {
+        if (!currentTrip) return 20;
+        return 12;
     }
 
     // variables
-    const snapPoints = useMemo(() => [setMinHeightBottomSheet(), '100%'], [currentTrip]);
+    const snapPoints = useMemo(() => [getBottomSheetPercentage() + '%', '100%'], [currentTrip]);
 
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
@@ -162,12 +185,14 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                             </View>)}
                         <FiuumberMap passengerPosition={null} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={myLocation}></FiuumberMap>
                     </View>
+                    <IconButton mode="contained" icon="refresh" disabled={loading} iconColor={MD3Colors.primary100} style={{ bottom: (getBottomSheetPercentage() + 7) + '%', alignSelf: 'flex-end' }} onPress={refreshTrip}></IconButton>
                     <BottomSheet
                         ref={bottomSheetRef}
                         index={0}
                         snapPoints={snapPoints}
                         onChange={handleSheetChanges}
                     >
+                        {loading && (<ProgressBar indeterminate color={Pallete.greenBackground} />)}
                         <View style={styles.contentContainer}>
                             {
                                 currentTrip ?
