@@ -4,7 +4,6 @@ import { TextInput, Button } from 'react-native-paper';
 import { useState } from "react";
 import { Pallete } from "../constants/Pallete";
 import {  StyleSheet, Text, View} from "react-native";
-import { User } from '../models/user';
 
 // import * as dotenv from "dotenv";
 import { Passenger } from "../models/passenger";
@@ -29,6 +28,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
   const [buttonValue, setButtonValue] = useState<string>("Edit");
 
   useEffect(() => {
+    console.log("Passenger")
     AuthService.getCurrentPassenger().then(p => {
       if (p) {
         setPassenger(p);

@@ -143,7 +143,10 @@ export const AuthService = {
                 const passenger_url = `${URL_USERS}/passenger/${_userToken.user.id}`;
 
                 let user =  await axios.get(passenger_url, AuthService.getHeaders(),);
-                return user.data
+                let res = user.data.user
+                res["userId"] = _userToken.user.id
+
+                return res
             }
             return undefined;
         }

@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: Pallete.greenBackground,
+    padding: 10,
   },
   contentContainer: {
     flex: 1,
@@ -18,13 +19,20 @@ const styles = StyleSheet.create({
     backgroundColor: Pallete.greenBackground,
   },
   scrollView: {
-    marginHorizontal: "3%",
+  },
+  safeAreaView: {
+    flex: 1,
+    justifyContent: 'center',
   },
   title: {
     color: Pallete.darkColor,
     textAlign: 'center',
     fontSize: 18
   },
+  cell: {
+    padding: 10,
+
+  }
 });
 
 export const TripLogScreen = () => {
@@ -43,18 +51,18 @@ export const TripLogScreen = () => {
     <>
       <View style={styles.container}>
           <View style={styles.contentContainer}>
-          <SafeAreaView style={styles.container}>
+          <SafeAreaView style={styles.safeAreaView}>
           <ScrollView horizontal style={styles.scrollView}>
 
             <DataTable>
               <DataTable.Header>
-                <DataTable.Title>Passenger Id</DataTable.Title>
-                <DataTable.Title>Driver Id</DataTable.Title>
-                <DataTable.Title>From</DataTable.Title>
-                <DataTable.Title>To</DataTable.Title>
-                <DataTable.Title>When</DataTable.Title>
-                <DataTable.Title>Status</DataTable.Title>
-                <DataTable.Title>Final price</DataTable.Title>
+                <DataTable.Title style={styles.cell}>Passenger Id</DataTable.Title>
+                <DataTable.Title style={styles.cell}>Driver Id</DataTable.Title>
+                <DataTable.Title style={styles.cell}>From</DataTable.Title>
+                <DataTable.Title style={styles.cell}>To</DataTable.Title>
+                <DataTable.Title style={styles.cell}>When</DataTable.Title>
+                <DataTable.Title style={styles.cell}>Status</DataTable.Title>
+                <DataTable.Title style={styles.cell}>Final price</DataTable.Title>
 
                 <DataTable.Title>
                   My trips
@@ -67,24 +75,25 @@ export const TripLogScreen = () => {
 
                   <DataTable.Row
                     key={trip._id}
+
                   >
-                    {<DataTable.Cell>
+                    {<DataTable.Cell style={styles.cell}>
                       {trip.passengerId}
                     </DataTable.Cell>
                     }
-                    <DataTable.Cell>
+                    <DataTable.Cell style={styles.cell}>
                       {trip.driverId}
                     </DataTable.Cell>
-                    <DataTable.Cell>
+                    <DataTable.Cell style={styles.cell}>
                       {trip.fromAddress}
                     </DataTable.Cell>
-                    <DataTable.Cell>
+                    <DataTable.Cell style={styles.cell}>
                       {trip.toAddress}
                     </DataTable.Cell>
-                    <DataTable.Cell>
+                    <DataTable.Cell style={styles.cell}>
                       {trip.status}
                     </DataTable.Cell>
-                    <DataTable.Cell>
+                    <DataTable.Cell style={styles.cell}>
                       {trip.finalPrice}
                     </DataTable.Cell>
                   </DataTable.Row>
