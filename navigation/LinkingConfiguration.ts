@@ -17,8 +17,9 @@ const linking: LinkingOptions<RootStackParamList> = {
       VehicleDataScreen: 'VehicleData',
       SignUpSuccessfullyScreen: 'SignUpSuccesfully',
       TripScreen: 'Trip',
-      MyProfileScreeen: 'MyProfile',
+      MyProfileScreen: 'MyProfile',
       CalificationScreen: 'Calification',
+      MyBalanceScreen: 'MyBalanceScreen',
     //   Root: {
     //     screens: {
     //       TabOne: {
