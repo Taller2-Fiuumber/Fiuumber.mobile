@@ -66,8 +66,6 @@ export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement =>
         setEmail(driver.email)
         setAddress(driver.address)
 
-        // Wallet id
-
         // Car values states
         setBrand(driver.vehicle.vehicle.brand)
         setModel(driver.vehicle.vehicle.model)
@@ -108,6 +106,8 @@ export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement =>
 
     if (firstName == "" || lastName == "" || email == ""){
       setMissingFieldsErrorText(true);
+      setIsEditable(false);
+      setButtonValue("Edit");
     }
     else {
 
@@ -125,6 +125,7 @@ export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement =>
         currentDriver.lastName = editableLastName;
         currentDriver.address = editableAddress;
 
+        console.log("___________currentDriver", currentDriver)
         await AuthService.updateDriver(currentDriver);
       }
 
@@ -133,13 +134,7 @@ export const DriverProfileForm: FC<DriverProfileFormProps> = (): ReactElement =>
     setIsEditable(false);
     setButtonValue("Edit");
 
-    // navigation.navigate('RoleSelectionScreen')
-
   }
-
-  // TODO:
-  // Validar email con una regex
-  // PErmitir cambiar contraseña
 
   return (
     <>

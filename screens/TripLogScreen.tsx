@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
 import { TripsService } from '../services/TripsService';
@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: Pallete.greenBackground,
+  },
+  scrollView: {
+    marginHorizontal: "3%",
   },
   title: {
     color: Pallete.darkColor,
@@ -40,7 +43,8 @@ export const TripLogScreen = () => {
     <>
       <View style={styles.container}>
           <View style={styles.contentContainer}>
-          <ScrollView horizontal>
+          <SafeAreaView style={styles.container}>
+          <ScrollView horizontal style={styles.scrollView}>
 
             <DataTable>
               <DataTable.Header>
@@ -87,7 +91,10 @@ export const TripLogScreen = () => {
               )})}
 
             </DataTable>
+
           </ScrollView>
+          </SafeAreaView>
+
           </View>
       </View>
     </>

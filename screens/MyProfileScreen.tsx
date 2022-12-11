@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, SafeAreaView, ScrollView, StatusBar} from "react-native";
-import { Text, View } from "../components/Themed";
+import { View } from "../components/Themed";
 import { Pallete } from '../constants/Pallete';
-import { User } from '../models/user';
 import { AuthService } from '../services/AuthService';
 import {PassengerProfileForm} from "../components/PassengerProfileForm";
 import {DriverProfileForm} from "../components/DriverProfileForm";
 
-import { useState } from "react";
 import AuthContext from "../contexts/AuthContext";
 
 const styles = StyleSheet.create({

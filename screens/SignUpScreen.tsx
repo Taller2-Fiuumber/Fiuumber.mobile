@@ -108,7 +108,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
       fetchUserInfo(accessToken).then(async userInfo => {
         const passenger: Passenger = new Passenger(-1, userInfo.email, userInfo.given_name, userInfo.family_name, "", userInfo.id, "", "", "GOOGLE");
         const driverVehicle:  DriverVehicle = new DriverVehicle(-1, "", "", "", new Vehicle(-1, "", "", ""));
-        const driver: Driver = new Driver(-1, userInfo.email, userInfo.given_name, userInfo.family_name, "", userInfo.id, "", "", "EMAIL", driverVehicle);
+        const driver: Driver = new Driver(-1, userInfo.email, userInfo.given_name, userInfo.family_name, "", userInfo.id, "", "", "GOOGLE", driverVehicle);
 
 
         await StorageService.storeData("temp_passenger", JSON.stringify(passenger));

@@ -126,6 +126,8 @@ export const AuthService = {
 
                 let res = user.data.user
                 res["vehicle"] = user.data.driverVehicle
+                res["userId"] = _userToken.user.id
+
                 return res
             }
             return undefined;
@@ -157,6 +159,7 @@ export const AuthService = {
             let user =  await axios.get(url, AuthService.getHeaders(),);
             let res = user.data.user
             res["vehicle"] = user.data.driverVehicle
+
             return res
         }
         catch (error: any) {
