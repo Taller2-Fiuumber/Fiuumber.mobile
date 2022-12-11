@@ -1,7 +1,7 @@
-import React, { FC, ReactElement, useCallback, useMemo, useRef, useState } from "react";
+import React, { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { StyleSheet, View, Image } from "react-native";
-import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton } from 'react-native-paper';
+import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton, MD3Colors, ProgressBar } from 'react-native-paper';
 import InfoCard from "../components/InfoCard";
 import { Trip } from "../models/trip";
 import FiuumberMap from "../components/FiuumberMap";
@@ -19,10 +19,14 @@ import { useStreamLocation } from "../hooks/useStreamLocation";
 import { TripStatus } from "../enums/trip-status";
 import InfoModal, { ActionButton } from "../modals/InfoModal";
 import CalificationModal from "../modals/CalificationModal";
+import { User } from "../models/user";
+import { diffHours } from "../utils/math";
 
 interface PassengerHomeScreenProps { }
 
 export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElement => {
+
+    const currentUser: User | undefined = AuthService.getCurrentUserToken()?.user;
 
     const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
 
@@ -117,18 +121,19 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
 
-    const setMinHeightBottomSheet = () => {
-        if (viewState == "DRIVER_ASSIGNED") return '40%';
-        if (origin && destination) return '30%';
-        if (!currentTrip) return '20%';
-        return '20%';
+    const getBottomSheetPercentage = () => {
+        if (viewState == "DRIVER_ASSIGNED") return 40;
+        if (origin && destination) return 30;
+        if (!currentTrip) return 20;
+        return 20;
     }
 
     // variables
-    const snapPoints = useMemo(() => [setMinHeightBottomSheet(), '100%'], [currentTrip, origin, destination, viewState]);
+    const snapPoints = useMemo(() => [getBottomSheetPercentage() + '%', '100%'], [currentTrip, origin, destination, viewState]);
 
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
+        console.log("INDEX: ", index);
     }, []);
 
     const focusTextField = () => {
@@ -139,6 +144,51 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         setOrigin(null);
         setDestination(null);
         setViewState("DIRECTIONS");
+    }
+
+    const setViewStateByTrip = async (trip: Trip | null) => {
+        if (!trip || trip.status == TripStatus.Canceled || trip.status == TripStatus.Terminated) {
+            cleanupTrip();
+            return;
+        }
+
+        setCurrentTrip(trip);
+
+        unsubscribeWatchTripStatus = watchTripStatus(trip._id);
+
+        setOrigin({ latitude: trip.fromLatitude, longitude: trip.fromLongitude });
+        setDestination({ latitude: trip.toLatitude, longitude: trip.toLongitude });
+
+        setOriginAddress(trip.fromAddress);
+        setDestinationAddress(trip.toAddress);
+
+        if (trip.driverId) {
+            const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
+            setCurrentDriver(driver);
+        }
+
+        switch (trip.status) {
+            case (TripStatus.Requested):
+                refreshFare();
+                showFindTripModal();
+                setViewState("FARE");
+                break;
+            case (TripStatus.DriverAssigned):
+                setViewState("DRIVER_ASSIGNED");
+                break;
+            case (TripStatus.DriverArrived):
+
+                showDriverArrivedVisible();
+                setViewState("DRIVER_ARRIVED");
+                break;
+            case (TripStatus.InProgress):
+                hideDriverArrivedVisible();
+                setViewState("IN_PROGRESS");
+                break;
+            default:
+                setViewState("DIRECTIONS");
+                break;
+        }
     }
 
     const refreshFare = async () => {
@@ -171,15 +221,29 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         textColor: Pallete.primaryColor,
     };
 
+    const refreshTrip = () => {
+        if (!currentUser) return;
+        setLoading(true);
+        TripsService.getLastTripPassenger(currentUser.id)
+            .then(trip => setViewStateByTrip(trip))
+            .catch(error => console.error(error))
+            .finally(() => setLoading(false));
+    }
+
+    useEffect(() => {
+        refreshTrip();
+    }, []);
+
     return (
         <>
             <Provider>
                 <Portal>
-                    {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress}></FindTripModal> : <></>}
+                    {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress} currentTrip={currentTrip}></FindTripModal> : <></>}
                     {driverArrivedVisible && (<InfoModal title={"Your Fiuumber has arrived ;)"} description={`Hurry up, ${currentDriver?.user.firstName} is waiting for you`} visible={driverArrivedVisible} onDismiss={hideDriverArrivedVisible} button={actionButtonDialogArrived}></InfoModal>)}
                     {calificationsModalVisible && lastTripId ? <CalificationModal onDismiss={dismissCalificationModal} tripId={lastTripId} visible={true}></CalificationModal> : <></>}
                 </Portal>
                 <FiuumberMap passengerPosition={myLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
+                <IconButton mode="contained" icon="refresh" disabled={loading} iconColor={MD3Colors.primary100} style={{ bottom: (getBottomSheetPercentage() + 7) + '%', alignSelf: 'flex-end' }} onPress={refreshTrip}></IconButton>
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={0}
@@ -187,6 +251,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                     onChange={handleSheetChanges}
                     backgroundStyle={{ backgroundColor: (viewState == "DRIVER_ASSIGNED") ? Pallete.lightColor : Pallete.whiteColor }}
                 >
+                    {loading && (<ProgressBar indeterminate color={Pallete.greenBackground} />)}
                     {
                         viewState == "DRIVER_ARRIVED" && (<Text style={{ textAlign: 'center', fontWeight: 'bold', color: 'orange' }}>Your driver is waiting for you</Text>)
                     }
