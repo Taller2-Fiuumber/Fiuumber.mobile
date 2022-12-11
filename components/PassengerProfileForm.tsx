@@ -15,9 +15,7 @@ interface PassengerProfileFormProps {
 
 export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElement => {
 
-  const [showPasswordErrorText, setPasswordErrorText] = useState(false);
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
-  const [showPasswordIsTooShortErrorText, setPasswordIsTooShortErrorText] = useState(false);
 
   const [passenger, setPassenger] = useState<Passenger | undefined>(undefined);
 
@@ -64,6 +62,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
 
       if (passenger) {
         const update_passenger: Passenger = new Passenger(passenger.id, email, firstName, lastName, address, passenger.password, passenger.username, passenger.walletPrivateKey, passenger.accountType);
+        await AuthService.updatePassenger(update_passenger);
         AuthService.getCurrentPassenger().then(p => {
           if (p) {
             setPassenger(p);
@@ -105,8 +104,6 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
       />
 
     {showMissingFieldsErrorText ? <Text style={styles.error}>Complete missing fields!</Text> : null}
-    {showPasswordIsTooShortErrorText ? <Text style={styles.error}>Password should be at least 8 characters long!</Text> : null}
-    {showPasswordErrorText ? <Text style={styles.error}>Passwords do not match. Retry!</Text> : null}
     <Button mode="contained" style={{backgroundColor: Pallete.primaryColor, margin: "2%"}} onPress={onPressButton}>{buttonValue}</Button>
 
     </>
