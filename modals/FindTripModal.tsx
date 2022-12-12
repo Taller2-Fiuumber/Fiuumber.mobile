@@ -33,12 +33,13 @@ interface FindTripModalPros extends BasicModalProps {
   originAddress: string;
   destinationAddress: string;// TODO juntar todo en un solo objeto
   onAcceptedTrip: (trip: Trip) => void;
+  currentTrip: Trip | null;
   fare: number;
 }
 
 const defaultStyles = { backgroundColor: 'white', padding: 20, margin: 10 };
 
-export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss, contentContainerStyle, origin, destination, originAddress, destinationAddress, onAcceptedTrip }: FindTripModalPros) => {
+export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss, contentContainerStyle, origin, destination, originAddress, destinationAddress, onAcceptedTrip, currentTrip }: FindTripModalPros) => {
 
   // Logged in user
   const user: User | undefined = AuthService.getCurrentUserToken()?.user;
@@ -90,7 +91,7 @@ export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss,
 
   const requestTrip = async () => {
 
-    const createdTrip: Trip | null = await addTrip();
+    const createdTrip: Trip | null = currentTrip ? currentTrip : await addTrip();
 
     if (createdTrip) {
       await FirebaseService.appendRequestedTrip(createdTrip._id,);

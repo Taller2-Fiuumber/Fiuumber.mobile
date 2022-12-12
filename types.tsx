@@ -32,6 +32,7 @@ export type RootStackParamList = {
   ProfileNavBarScreen: undefined;
   MyProfileScreen: undefined;
   HomeScreen: undefined;
+  MyBalanceScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

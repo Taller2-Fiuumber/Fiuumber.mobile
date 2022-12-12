@@ -125,6 +125,7 @@ export const TripsService = {
     },
     getFare: async (fromLatitude: number, toLatitude: number, fromLongitude: number, toLongitude: number): Promise<number> => {
         const url = `${URL_TRIPS}/fare?from_latitude=${fromLatitude}&to_latitude=${toLatitude}&from_longitude=${fromLongitude}&to_longitude=${toLongitude}`;
+        console.log(url);
         try {
             const response = await axios.get(url, AuthService.getHeaders());
             const tripResponse: number = response.data;
@@ -160,6 +161,35 @@ export const TripsService = {
             return null
         }
     },
+
+    getLastTripPassenger: async (userId: number): Promise<Trip | null> => {
+        try {
+            const url = `${URL_TRIPS}/passenger/${userId}?skip=0&limit=1`;
+            const response = await axios.get(url, AuthService.getHeaders(),);
+            if (!response.data[0]) return null;
+            const tripResponse: Trip = mapTrip(response.data[0]);
+            return tripResponse;
+        }
+        catch (error: any) {
+            console.log(`TripsService getLastTripPassenger(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+    getLastTripDriver: async (userId: number): Promise<Trip | null> => {
+        try {
+            const url = `${URL_TRIPS}/driver/${userId}?skip=0&limit=1`;
+            const response = await axios.get(url, AuthService.getHeaders(),);
+            if (!response.data[0]) return null;
+            const tripResponse: Trip = mapTrip(response.data[0]);
+            return tripResponse;
+        }
+        catch (error: any) {
+            console.log(`TripsService getLastTripDriver(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
     getCalification: async (userId: string, profile: string): Promise<number> => {
 
         const url = `${URL_TRIPS}/calification/${profile.toLowerCase()}/${userId}/avg`;
@@ -177,4 +207,5 @@ export const TripsService = {
             throw error;
         }
     },
+
 };

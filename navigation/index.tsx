@@ -21,6 +21,7 @@ import { AuthService } from '../services/AuthService';
 import { CONFIG } from '../config';
 import { Passenger } from '../models/passenger';
 import { Wallet } from '../models/wallet';
+import MyBalanceScreen from '../screens/MyBalanceScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -83,14 +84,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
   const authContext = React.useMemo(
     () => ({
-      logIn: async (email:string, password:string): Promise<string | null> => {
+      logIn: async (email: string, password: string): Promise<string | null> => {
 
         if (CONFIG.bypassLogin) {
           const userToken: UserToken = {
             user: new Passenger(666, "email", "firstName", "lastName", "address", "password", "username", new Wallet("", "address", "password")),
             token: 'EL_TOKEN'
           }
-          const authAction: AuthAction = {userToken: userToken, type: 'SIGN_IN'};
+          const authAction: AuthAction = { userToken: userToken, type: 'SIGN_IN' };
           dispatch(authAction);
           return null;
         }
@@ -101,11 +102,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
           return "Usuario o contraseña incorrectos";
         }
 
-        if(userToken.user.blocked){
+        if (userToken.user.blocked) {
           return "Usuario Bloqueado";
         }
 
-        const authAction: AuthAction = {userToken: userToken, type: 'SIGN_IN'};
+        const authAction: AuthAction = { userToken: userToken, type: 'SIGN_IN' };
 
         dispatch(authAction);
 
@@ -125,32 +126,32 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   );
 
   return (
-      <AuthContext.Provider value={authContext}>
-       <NavigationContainer
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer
         linking={LinkingConfiguration}
         theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack.Navigator>
-        {
-          state.userToken !== null ? (
-            <>
-              <Stack.Screen name="ProfileNavBarScreen" component={ProfileNavBarScreen} options={{ headerShown: false }} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="LogInScreen" component={LogInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              <Stack.Screen name="CalificationScreen" component={CalificationScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-
-            </>
-          )
-        }
-      </Stack.Navigator>
+          {
+            state.userToken !== null ? (
+              <>
+                <Stack.Screen name="ProfileNavBarScreen" component={ProfileNavBarScreen} options={{ headerShown: false }} />
+              </>
+            ) : (
+              <>
+                <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="LogInScreen" component={LogInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                <Stack.Screen name="CalificationScreen" component={CalificationScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                <Stack.Screen name="MyBalanceScreen" component={MyBalanceScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+              </>
+            )
+          }
+        </Stack.Navigator>
 
       </NavigationContainer>
     </AuthContext.Provider>

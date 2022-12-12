@@ -1,16 +1,10 @@
-import React, { FC, ReactElement, useCallback, useMemo, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, ScrollView, StatusBar } from "react-native";
-import { Text, View } from "../components/Themed";
+import React, { FC, useState } from "react";
+import { StyleSheet, StatusBar, View } from "react-native";
 import { Pallete } from '../constants/Pallete';
-import { User } from '../models/user';
-import { Image, Pressable } from "react-native";
 import { AuthService } from '../services/AuthService';
 
-import AuthContext from "../contexts/AuthContext";
-import { Rating, AirbnbRating } from 'react-native-ratings';
-import { TextInput, Button } from 'react-native-paper';
-import axios from "axios";
-// import { HEADERS, RAW_HEADERS, URL_AUTH, URL_USERS } from "../Constants";
+import { Rating } from 'react-native-ratings';
+import { TextInput, Button, Text } from 'react-native-paper';
 import { Trip, Calification } from '../models/trip';
 import { TripsService } from '../services/TripsService';
 
@@ -26,8 +20,7 @@ const styles = StyleSheet.create({
     marginHorizontal: "3%",
   },
   contentContainer: {
-    flex: 1,
-    margin: "5%",
+    margin: 5,
     backgroundColor: Pallete.whiteColor,
   },
   description: {
@@ -36,32 +29,42 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   title: {
-    fontSize: 35,
-    fontWeight: 'bold',
+    fontSize: 22,
     color: Pallete.darkColor,
     textAlign: "center",
-    margin: '3%',
   },
   subtitle: {
-    fontSize: 25,
+    fontSize: 18,
     color: Pallete.darkBackground,
     textAlign: "center",
     margin: '3%',
   },
+  congratsText: {
+    fontSize: 20,
+    color: Pallete.greenBackground,
+    textAlign: 'center',
+    marginTop: 10
+  }
 });
 
+interface CalificationScreenProps {
+  tripId: string;
+  onCalification: (Calification: Calification) => void;
+}
 
-export const CalificationScreen = (tripId: string) => {
+export const CalificationScreen: FC<CalificationScreenProps> = ({ tripId, onCalification }: CalificationScreenProps) => {
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
 
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [calification, setCalification] = useState<Calification | null>(null);
+
   const ratingCompleted = (_rating: number) => {
-    // console.log("Rating is: " + rating)
     setRating(_rating);
   }
 
   const createReview = (_review: string) => {
-    // console.log(review);
     setReview(_review);
   }
 
@@ -69,43 +72,60 @@ export const CalificationScreen = (tripId: string) => {
 
   const createCalification = async () => {
 
-    const tripStatus = "066de609-b04a-4b30-b46c-32537c7f1f6e"
+    try {
+      setLoading(true);
+      const trip: Trip | null = await TripsService.get(tripId);
 
-    const trip: Trip | null = await TripsService.get(tripStatus);
-
-    if (trip != null) {
-      const _calification: Calification | null = await TripsService.createCalification(
-        trip.passengerId,
-        trip.driverId,
-        trip._id,
-        rating,
-        review,
-        user?.profile);
-      return true;
+      if (trip != null) {
+        const _calification: Calification | null = await TripsService.createCalification(
+          trip.passengerId,
+          trip.driverId,
+          trip._id,
+          rating,
+          review,
+          user?.profile);
+        if (_calification) {
+          setCalification(_calification);
+          onCalification(_calification)
+        }
+        return true;
+      }
+    }
+    catch (e: any) {
+      console.error(e);
+      throw e;
+    }
+    finally {
+      setLoading(false);
     }
   }
 
   return (
-
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.subtitle}>Rate your {user?.profile == "PASSENGER" ?
-            "driver" :
-            "passenger"
-          }</Text>
-          <Rating
-            showRating
-            onFinishRating={ratingCompleted}
-            style={{ paddingVertical: 10 }}
-          />
-          <Text style={styles.subtitle}>How was your trip? Give a compliment! </Text>
-          <TextInput label="Write a note" style={{ marginBottom: 20 }} onChangeText={text => createReview(text)} />
-          <Button mode="contained" style={{ backgroundColor: Pallete.primaryColor }} onPress={createCalification}> Submit </Button>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-
+    <>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>Rate your {user?.profile == "PASSENGER" ?
+          "driver" :
+          "passenger"
+        }</Text>
+        <Rating
+          showRating
+          onFinishRating={ratingCompleted}
+          style={{ paddingVertical: 10 }}
+        />
+        {
+          !calification && (
+            <>
+              <Text style={styles.subtitle}>How was your trip? Give a compliment!</Text>
+              <TextInput mode="outlined" label="Write a note" style={{ marginBottom: 20, backgroundColor: Pallete.whiteColor, }} onChangeText={text => createReview(text)} />
+              <Button mode="contained" buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} loading={loading} onPress={createCalification}>Submit</Button>
+            </>
+          )
+        }
+        {
+          calification && (<Text style={styles.congratsText}>Rating submitted</Text>)
+        }
+      </View>
+    </>
   );
 }
 
