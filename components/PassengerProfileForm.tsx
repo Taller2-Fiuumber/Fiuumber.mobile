@@ -61,7 +61,7 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
       setMissingFieldsErrorText(false);
 
       if (passenger) {
-        const update_passenger: Passenger = new Passenger(passenger.id, email, firstName, lastName, address, passenger.password, passenger.username, passenger.walletPrivateKey, passenger.accountType);
+        const update_passenger: Passenger = new Passenger(passenger.id, email, firstName, lastName, address, passenger.password, passenger.username, passenger.walletAddress, passenger.accountType);
         await AuthService.updatePassenger(update_passenger);
         AuthService.getCurrentPassenger().then(p => {
           if (p) {

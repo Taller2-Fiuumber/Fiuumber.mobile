@@ -20,7 +20,6 @@ import { AuthAction } from '../models/auth-action';
 import { AuthService } from '../services/AuthService';
 import { CONFIG } from '../config';
 import { Passenger } from '../models/passenger';
-import { Wallet } from '../models/wallet';
 import MyBalanceScreen from '../screens/MyBalanceScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -88,7 +87,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
         if (CONFIG.bypassLogin) {
           const userToken: UserToken = {
-            user: new Passenger(666, "email", "firstName", "lastName", "address", "password", "username", new Wallet("", "address", "password")),
+            user: new Passenger(666, "email", "firstName", "lastName", "address", "password", "username", "walletAddress", "EMAIL"),
             token: 'EL_TOKEN'
           }
           const authAction: AuthAction = { userToken: userToken, type: 'SIGN_IN' };
