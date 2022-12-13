@@ -4,7 +4,7 @@ import { Pallete } from "../constants/Pallete";
 import { Dimensions, StyleSheet } from "react-native";
 import { View } from "../components/Themed";
 import FiuumberMap from "../components/FiuumberMap";
-import { Button, Divider, Portal, Provider } from "react-native-paper";
+import { Button, Divider, IconButton, MD3Colors, Portal, ProgressBar, Provider } from "react-native-paper";
 import { ref, onChildAdded, query } from "firebase/database";
 import { FirebaseService } from "../services/FirebaseService";
 import RequestedTripModal from "../modals/RequestedTripModal";
@@ -20,10 +20,15 @@ import { useRealtimeLocation } from "../hooks/useRealtimeLocation";
 import { useStreamLocation } from "../hooks/useStreamLocation";
 import { Unsubscribe } from "@firebase/util";
 import * as Notifications from 'expo-notifications';
+import CalificationModal from "../modals/CalificationModal";
+import { User } from "../models/user";
+import { AuthService } from "../services/AuthService";
 
 interface DriverHomeScreenProps { }
 
 export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
+
+    const currentUser: User | undefined = AuthService.getCurrentUserToken()?.user;
 
     let unsubscribeWatchForNewTrips: Unsubscribe | null = null;
 
@@ -45,6 +50,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     const [loading, setLoading] = React.useState<boolean>(false);
 
     const [notification, setNotification] = useState<Notifications.Notification>();
+    const [calificationsModalVisible, setCalificationsModalVisible] = React.useState(false);
+    const [lastTripId, setLastTripId] = React.useState<string | null>(null);
 
     const myLocation = useRealtimeLocation(5000);
     useStreamLocation(currentTrip, myLocation, "DRIVER");
@@ -61,6 +68,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     }
     const onClickFinishTrip = async () => {
         await changeTripStatus(TripStatus.Terminated);
+        if (currentTrip) setLastTripId(currentTrip._id);
+        setCalificationsModalVisible(true);
         cleanupTrip();
     }
 
@@ -119,23 +128,43 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         });
     };
 
+    const setViewStateByTrip = (trip: Trip | null) => {
+        if (!trip || trip.status == TripStatus.Terminated || trip.status == TripStatus.Canceled) {
+            cleanupTrip();
+            unsubscribeWatchForNewTrips = watchForNewTrips();
+            return;
+        }
+
+        setCurrentTrip(trip);
+    }
+
+    const refreshTrip = () => {
+        if (!currentUser) return;
+        setLoading(true);
+        TripsService.getLastTripDriver(currentUser.id)
+            .then(trip => setViewStateByTrip(trip))
+            .catch(error => console.error(error))
+            .finally(() => setLoading(false));
+    }
+
     useEffect(() => {
-        unsubscribeWatchForNewTrips = watchForNewTrips();    
+        unsubscribeWatchForNewTrips = watchForNewTrips();
         Notifications.addNotificationReceivedListener(handleNotification);
         Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
+        refreshTrip();
     }, []);
 
 
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
 
-    const setMinHeightBottomSheet = () => {
-        if (!currentTrip) return '12%';
-        return '20%';
+    const getBottomSheetPercentage = () => {
+        if (!currentTrip) return 20;
+        return 12;
     }
 
     // variables
-    const snapPoints = useMemo(() => [setMinHeightBottomSheet(), '100%'], [currentTrip]);
+    const snapPoints = useMemo(() => [getBottomSheetPercentage() + '%', '100%'], [currentTrip]);
 
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
@@ -150,11 +179,17 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
         console.log(response);
     }
 
+    const dismissCalificationModal = () => {
+        setLastTripId(null);
+        setCalificationsModalVisible(false);
+    }
+
     return (
         <>
             <Provider>
                 <Portal>
                     {requestedTripId !== "" ? <RequestedTripModal visible={requestedTripvisible} onDismiss={hideRequestedTripModal} onAccepted={onTripAccepted} contentContainerStyle={{}} tripId={requestedTripId}></RequestedTripModal> : <></>}
+                    {lastTripId && calificationsModalVisible ? <CalificationModal onDismiss={dismissCalificationModal} tripId={lastTripId} visible={true}></CalificationModal> : <></>}
                 </Portal>
                 <View>
                     <View>
@@ -164,18 +199,20 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                             </View>)}
                         <FiuumberMap passengerPosition={null} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={myLocation}></FiuumberMap>
                     </View>
+                    <IconButton mode="contained" icon="refresh" disabled={loading} iconColor={MD3Colors.primary100} style={{ bottom: (getBottomSheetPercentage() + 7) + '%', alignSelf: 'flex-end' }} onPress={refreshTrip}></IconButton>
                     <BottomSheet
                         ref={bottomSheetRef}
                         index={0}
                         snapPoints={snapPoints}
                         onChange={handleSheetChanges}
                     >
+                        {loading && (<ProgressBar indeterminate color={Pallete.greenBackground} />)}
                         <View style={styles.contentContainer}>
                             {
                                 currentTrip ?
                                     <>
                                         <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
-                                        {currentTrip.status == TripStatus.Requested && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
+                                        {(currentTrip.status == TripStatus.Requested || currentTrip.status == TripStatus.DriverAssigned) && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
                                         {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickStartTrip}>Start trip</Button>)}
                                         {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
                                         <Divider style={{ marginTop: 10, marginBottom: 10, backgroundColor: Pallete.primaryColor }}></Divider>

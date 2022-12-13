@@ -6,6 +6,7 @@ import { MyProfileScreen } from '../screens/MyProfileScreen';
 
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import AuthContext from '../contexts/AuthContext';
+import MyBalanceScreen from './MyBalanceScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -36,7 +37,7 @@ export const ProfileNavBarScreen = () => {
     <Drawer.Navigator useLegacyImplementation initialRouteName="Home" drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={TripScreen} />
       <Drawer.Screen name="My Profile" component={MyProfileScreen} />
-      <Drawer.Screen name="My trips" component={MyProfileScreen} />
+      <Drawer.Screen name="My balance" component={MyBalanceScreen} />
       {/* <Drawer.Screen name="Calification" component={CalificationScreen} /> */}
     </Drawer.Navigator>
 

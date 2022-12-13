@@ -21,6 +21,7 @@ import { AuthService } from '../services/AuthService';
 import { CONFIG } from '../config';
 import { Passenger } from '../models/passenger';
 import { Wallet } from '../models/wallet';
+import MyBalanceScreen from '../screens/MyBalanceScreen';
 
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
@@ -119,7 +120,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
         dispatch(authAction);
 
-        await UsersService.setNotificationsToken(userToken.user.id, expoPushToken);
+        // await UsersService.setNotificationsToken(userToken.user.id, expoPushToken);
 
         return null;
       },
@@ -135,7 +136,6 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
     }),
     []
   );
-
 
   const [expoPushToken, setExpoPushToken] = React.useState<string>("");
   const [notification, setNotification] = React.useState<Notifications.Notification | null>(null);
@@ -206,7 +206,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
                   <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
                   <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
                   <Stack.Screen name="CalificationScreen" component={CalificationScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-
+                  <Stack.Screen name="MyBalanceScreen" component={MyBalanceScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
                 </>
               )
             }
