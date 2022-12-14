@@ -32,7 +32,8 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.taller2.fiuumber",
-      "config": { "googleMaps": { "apiKey": "AIzaSyANbv3JEv2HV3r4Sj9j7Y5yrX3KYQcSmew" } }
+      "config": { "googleMaps": { "apiKey": "AIzaSyANbv3JEv2HV3r4Sj9j7Y5yrX3KYQcSmew" } },
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

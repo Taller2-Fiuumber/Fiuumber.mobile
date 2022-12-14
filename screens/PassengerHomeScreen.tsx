@@ -21,12 +21,15 @@ import InfoModal, { ActionButton } from "../modals/InfoModal";
 import CalificationModal from "../modals/CalificationModal";
 import { User } from "../models/user";
 import { diffHours } from "../utils/math";
+import NotificationsContext from "../contexts/NotificationsContext";
 
 interface PassengerHomeScreenProps { }
 
 export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElement => {
 
     const currentUser: User | undefined = AuthService.getCurrentUserToken()?.user;
+
+    const notification = React.useContext(NotificationsContext);
 
     const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
 
@@ -233,6 +236,10 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     useEffect(() => {
         refreshTrip();
     }, []);
+
+    useEffect(() => {
+        console.log("PASSENGER NOTIFICATION:", notification);
+    }, [notification]);
 
     return (
         <>

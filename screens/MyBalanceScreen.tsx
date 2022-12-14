@@ -157,9 +157,9 @@ export const MyBalanceScreen = () => {
       <ScrollView style={styles.scrollView}>
         <View style={styles.card}>
           {loading && <ProgressBar indeterminate color={Pallete.greenBackground} />}
-
           {!loading && viewState === "INITIAL" &&
             <>
+              <IconButton icon="refresh" style={{ alignSelf: 'flex-end', position: 'absolute' }} onPress={getBalance}></IconButton>
               <Avatar.Icon size={40} icon="ethereum" style={{ marginRight: 10, backgroundColor: Pallete.darkBackground, alignSelf: 'center' }} />
               <Text style={styles.ammount}>ETH {balance}</Text>
               <View style={styles.actionsContainer}>
@@ -230,18 +230,19 @@ export const MyBalanceScreen = () => {
         </View>
         {viewState === "INITIAL" && (
           <>
-            <Button mode='text' style={{ alignSelf: 'flex-end' }} onPress={getDeposits}>Refresh</Button>
-            <View style={{ ...styles.card }}>
-              <Text style={{ color: Pallete.darkBackground }}>Transactions</Text>
+            {/* <Button mode='text' style={{ alignSelf: 'flex-end' }} onPress={getDeposits}>Refresh</Button> */}
+            <View style={{ ...styles.card, marginTop: 20 }}>
+              <Text style={{ color: Pallete.darkBackground, marginTop: 5, fontWeight: '600' }}>Transactions</Text>
+              {!loadingDeposits && <IconButton icon="refresh" style={{ alignSelf: 'flex-end', position: 'absolute' }} onPress={getDeposits}></IconButton>}
               {loadingDeposits && <ProgressBar indeterminate color={Pallete.greenBackground} />}
               {!loadingDeposits &&
-                deposits.map(deposit => (
+                deposits.reverse().map(deposit => (
                   <View style={{ ...styles.actionsContainer, marginTop: 10 }}>
                     {deposit.type === "WITHDRAW" ?
                       <Avatar.Icon size={14} icon="arrow-down" style={{ backgroundColor: 'red' }} /> :
                       <Avatar.Icon size={14} style={{ backgroundColor: Pallete.greenBackground }} icon="arrow-up" />}
-                    <Text style={{ color: Pallete.darkBackground, flex: 1, fontSize: 11, paddingLeft: 5 }}>{deposit.txHash}</Text>
-                    <Text style={{ color: Pallete.darkBackground, flex: 1, textAlign: 'right', fontSize: 12, fontWeight: '500' }}>ETH {deposit.ammountSent}</Text>
+                    {/* <Text style={{ color: Pallete.darkBackground, flex: 1, fontSize: 11, paddingLeft: 5 }}>{deposit.txHash}</Text> */}
+                    <Text style={{ color: Pallete.darkBackground, flex: 1, textAlign: 'left', marginLeft: 10, fontSize: 12, fontWeight: '500' }}>ETH {deposit.ammountSent}</Text>
                   </View>
                 ))
               }
