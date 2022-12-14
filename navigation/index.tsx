@@ -31,6 +31,14 @@ import { UsersService } from '../services/UsersService';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 
   const [state, dispatch] = React.useReducer(
@@ -120,7 +128,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
         dispatch(authAction);
 
-        // await UsersService.setNotificationsToken(userToken.user.id, expoPushToken);
+        await UsersService.setNotificationsToken(userToken.user.id, expoPushToken);
 
         return null;
       },
@@ -175,12 +183,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   };
 
   const handleNotification = (notification: Notifications.Notification) => {
-    console.log(notification);
     setNotification(notification);
   }
 
   const handleNotificationResponse = (response: Notifications.NotificationResponse) => {
-    console.log(response);
+    // console.log(response);
   }
 
   return (

@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   priceContainer: {
     flex: 1,
   },
-  ammount: { textAlign: 'right', paddingTop: 5, fontWeight: 'bold', color: Pallete.darkColor }
+  ammount: { textAlign: 'right', paddingTop: 5, fontWeight: 'bold', color: Pallete.darkColor, fontSize: 18 }
 });
 
 

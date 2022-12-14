@@ -10,8 +10,8 @@ interface LogInFormProps {
 
 export const LogInForm: FC<LogInFormProps> = ({ handleLogin }: LogInFormProps): ReactElement => {
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("gsilva@fiuumber.com");
+  const [password, setPassword] = useState<string>("12345678");
   const [showMissingFieldsErrorText, setMissingFieldsErrorText] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 

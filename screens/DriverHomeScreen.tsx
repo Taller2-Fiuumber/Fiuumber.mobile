@@ -23,12 +23,15 @@ import * as Notifications from 'expo-notifications';
 import CalificationModal from "../modals/CalificationModal";
 import { User } from "../models/user";
 import { AuthService } from "../services/AuthService";
+import NotificationsContext from "../contexts/NotificationsContext";
 
 interface DriverHomeScreenProps { }
 
 export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const currentUser: User | undefined = AuthService.getCurrentUserToken()?.user;
+
+    const notification = React.useContext(NotificationsContext);
 
     let unsubscribeWatchForNewTrips: Unsubscribe | null = null;
 
@@ -49,7 +52,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const [loading, setLoading] = React.useState<boolean>(false);
 
-    const [notification, setNotification] = useState<Notifications.Notification>();
     const [calificationsModalVisible, setCalificationsModalVisible] = React.useState(false);
     const [lastTripId, setLastTripId] = React.useState<string | null>(null);
 
@@ -149,10 +151,12 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     useEffect(() => {
         unsubscribeWatchForNewTrips = watchForNewTrips();
-        Notifications.addNotificationReceivedListener(handleNotification);
-        Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
         refreshTrip();
     }, []);
+
+    useEffect(() => {
+        console.log("Notification:", notification);
+    }, [notification]);
 
 
     // ref
@@ -160,7 +164,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const getBottomSheetPercentage = () => {
         if (!currentTrip) return 20;
-        return 12;
+        return 27;
     }
 
     // variables
@@ -169,15 +173,6 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
     }, []);
-
-    const handleNotification = (notification: Notifications.Notification) => {
-        console.log(notification);
-        setNotification(notification);
-    }
-
-    const handleNotificationResponse = (response: Notifications.NotificationResponse) => {
-        console.log(response);
-    }
 
     const dismissCalificationModal = () => {
         setLastTripId(null);
@@ -212,9 +207,9 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                                 currentTrip ?
                                     <>
                                         <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
-                                        {(currentTrip.status == TripStatus.Requested || currentTrip.status == TripStatus.DriverAssigned) && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 10 }} onPress={onClickIArrived}>I Arrived!</Button>)}
-                                        {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickStartTrip}>Start trip</Button>)}
-                                        {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} style={{ marginTop: 10 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
+                                        {(currentTrip.status == TripStatus.Requested || currentTrip.status == TripStatus.DriverAssigned) && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 15 }} onPress={onClickIArrived}>I Arrived!</Button>)}
+                                        {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} textColor={Pallete.whiteColor} style={{ marginTop: 15 }} onPress={onClickStartTrip}>Start trip</Button>)}
+                                        {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} style={{ marginTop: 15 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
                                         <Divider style={{ marginTop: 10, marginBottom: 10, backgroundColor: Pallete.primaryColor }}></Divider>
                                         <Button loading={loading} disabled={loading} mode="outlined" buttonColor='red' textColor="white" style={{ marginTop: 10 }} onPress={onClickCancelTrip}>Cancel trip</Button>
                                     </> :
