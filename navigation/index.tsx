@@ -41,6 +41,9 @@ Notifications.setNotificationHandler({
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 
+  const [expoPushToken, setExpoPushToken] = React.useState<string>("");
+  const [notification, setNotification] = React.useState<Notifications.Notification | null>(null);
+
   const [state, dispatch] = React.useReducer(
     (prevState: any, action: AuthAction) => {
       switch (action.type) {
@@ -93,11 +96,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
       dispatch({ type: 'RESTORE_TOKEN', userToken: userToken });
     };
 
-    bootstrapAsync();
-
     registerForPushNotificationsAsync();
     Notifications.addNotificationReceivedListener(handleNotification);
     Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
+
+    bootstrapAsync();
   }, []);
 
   const authContext = React.useMemo(
@@ -128,7 +131,9 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
         dispatch(authAction);
 
-        await UsersService.setNotificationsToken(userToken.user.id, expoPushToken);
+        console.log("ID: ", userToken.user.id);
+        console.log("TOKEN: ", expoPushToken);
+        UsersService.setNotificationsToken(userToken.user.id, expoPushToken);
 
         return null;
       },
@@ -142,11 +147,8 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         dispatch({ type: 'SIGN_UP', userToken: null });
       },
     }),
-    []
+    [expoPushToken]
   );
-
-  const [expoPushToken, setExpoPushToken] = React.useState<string>("");
-  const [notification, setNotification] = React.useState<Notifications.Notification | null>(null);
 
   const registerForPushNotificationsAsync = async () => {
     try {
@@ -162,8 +164,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
           return;
         }
         const token = (await Notifications.getExpoPushTokenAsync()).data;
+
         console.log(token);
+
         setExpoPushToken(token);
+
       } else {
         alert('Must use physical device for Push Notifications');
       }
