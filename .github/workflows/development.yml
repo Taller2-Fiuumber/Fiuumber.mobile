@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 18.x
       - name: Install dependencies
-        run:  npm install
+        run:  npm install --legacy-peer-deps
       - name: Format
         run: npm run prettier-format
       - name: Lint
@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run:  npm install
+        run:  npm install --legacy-peer-deps
       - name: Use Node.js 16.x
         uses: actions/setup-node@v2
         with:
