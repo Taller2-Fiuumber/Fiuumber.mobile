@@ -7,7 +7,6 @@ import AuthContext from "../contexts/AuthContext";
 import { Button } from 'react-native-paper';
 
 import * as Google from 'expo-auth-session/providers/google';
-import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 
 const styles = StyleSheet.create({
     container: {
