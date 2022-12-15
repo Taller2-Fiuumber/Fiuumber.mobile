@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Pallete } from "../constants/Pallete";
 import { Passenger } from "../models/passenger";
@@ -8,12 +8,17 @@ import { NavigationProps } from "../types";
 
 export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
 
+    const [registerIsSuccessful, setRegisterIsSuccessful] = useState<boolean>(true);
+
     const createPassenger = async () => {
-      const strPassenger: string | null = await StorageService.getData("temp_user");
+      const strPassenger: string | null = await StorageService.getData("temp_passenger");
       if (!strPassenger) return;
       const passenger: Passenger = JSON.parse(strPassenger);
-      await AuthService.registerPassenger(passenger);
-      navigation.navigate('SignUpSuccessfullyScreen');
+      let registerSuccessful = await AuthService.registerPassenger(passenger);
+      if (registerSuccessful) {
+        setRegisterIsSuccessful(registerSuccessful);
+        navigation.navigate('SignUpSuccessfullyScreen');
+      }
     }
 
     return (
@@ -30,6 +35,9 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
         <Pressable style={{...styles.button, ...styles.bgDriver}} onPress={() => navigation.navigate('VehicleDataScreen')}>
           <Text style={{...styles.buttonText, ...styles.colorPassenger}}>I'm a <Text style={{...styles.buttonText, ...styles.colorPassenger,...{fontWeight: "bold"}}}>driver</Text></Text>
         </Pressable>
+
+        {!registerIsSuccessful ? <Text style={styles.error}>Error</Text> : null}
+
       </View>
     </View>
     </>
@@ -37,6 +45,13 @@ export const RoleSelectionScreen = ({ navigation }: NavigationProps) => {
   }
 
   const styles = StyleSheet.create({
+    error: {
+      color: '#FF0000',
+      marginBottom: 10,
+      textAlign: 'center',
+      justifyContent: 'center',
+      fontSize: 15,
+    },
     mainContainer: {
       flex: 1,
       alignItems: 'center',

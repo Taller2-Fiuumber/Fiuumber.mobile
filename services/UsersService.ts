@@ -10,13 +10,14 @@ export const UsersService = {
             const response = await axios.get(url, AuthService.getHeaders(),);
             const user: User = response.data;
             return user;
-        } 
+        }
         catch (error: any) {
             console.log(`UsersService getUser: ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
     },
+
     setNotificationsToken: async (userId: number, token: string): Promise<User | null> => {
         try {
             const url = `${URL_USERS}/user/${userId}/notifications-token`;

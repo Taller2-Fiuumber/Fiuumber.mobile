@@ -8,8 +8,8 @@ export abstract class User {
   password: string;
   blocked:boolean;
   username: string
-  walletPrivateKey: string
   walletAddress: string
+  accountType: string;
 
   abstract profile: string;
 
@@ -21,7 +21,7 @@ export abstract class User {
     address: string,
     password: string,
     username: string,
-    walletPrivateKey: string,
+    accountType: string,
     walletAddress: string
   ) {
     this.userId = userId;
@@ -33,7 +33,7 @@ export abstract class User {
     this.password = password;
     this.blocked = false;
     this.username = username;
-    this.walletPrivateKey = walletPrivateKey;
+    this.accountType = accountType;
     this.walletAddress = walletAddress;
   }
 }

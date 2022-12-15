@@ -330,8 +330,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                         <Card.Content>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <View style={{ flex: 1 }}>
-                                                    <Title style={styles.cardTitle}>{currentDriver.driverVehicle.domain}</Title>
-                                                    <Paragraph style={{ color: Pallete.contentColor }}>{currentDriver.driverVehicle.vehicle.brand} {currentDriver.driverVehicle.vehicle.model}</Paragraph>
+                                                    <Title style={styles.cardTitle}>{currentDriver.vehicle.domain}</Title>
+                                                    <Paragraph style={{ color: Pallete.contentColor }}>{currentDriver.vehicle.vehicle.brand} {currentDriver.vehicle.vehicle.model}</Paragraph>
                                                 </View>
                                                 <View>
                                                     <Image
@@ -345,7 +345,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                             <Divider style={styles.divider} />
                                             <View style={{ flexDirection: 'row', }}>
                                                 <View style={{ flex: 1 }}>
-                                                    <InfoCard icon="account" title={currentDriver.user.firstName} subtitle={"★ 4.5 +420 trips"}></InfoCard>
+                                                    <InfoCard icon="account" title={currentDriver.firstName} subtitle={"★ 4.5 +420 trips"}></InfoCard>
                                                 </View>
                                                 <View>
                                                     <IconButton

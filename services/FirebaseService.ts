@@ -1,8 +1,10 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getDatabase, ref, remove, set } from "firebase/database";
 import { LatLng } from "react-native-maps";
 import { TripStatus } from "../enums/trip-status";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,6 +23,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const _app = initializeApp(firebaseConfig);
+const auth = getAuth(_app)
 
 export const FirebaseService = {
   app: _app,
