@@ -5,7 +5,6 @@ import { TripScreen } from '../screens/TripScreen';
 import { TripLogScreen } from '../screens/TripLogScreen';
 
 import { MyProfileScreen } from '../screens/MyProfileScreen';
-import { CalificationScreen } from '../screens/CalificationScreen';
 
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import AuthContext from '../contexts/AuthContext';
@@ -35,7 +34,6 @@ export const ProfileNavBarScreen = () => {
       </DrawerContentScrollView>
     );
   }
-
 
   return (
     <Drawer.Navigator useLegacyImplementation initialRouteName="Home" drawerContent={props => <CustomDrawerContent {...props} />}>

@@ -22,9 +22,26 @@ import { CONFIG } from '../config';
 import { Passenger } from '../models/passenger';
 import MyBalanceScreen from '../screens/MyBalanceScreen';
 
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import { Platform, Text } from 'react-native';
+import NotificationsContext from '../contexts/NotificationsContext';
+import { UsersService } from '../services/UsersService';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+
+  const [expoPushToken, setExpoPushToken] = React.useState<string>("");
+  const [notification, setNotification] = React.useState<Notifications.Notification | null>(null);
 
   const [state, dispatch] = React.useReducer(
     (prevState: any, action: AuthAction) => {
@@ -78,6 +95,10 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
       dispatch({ type: 'RESTORE_TOKEN', userToken: userToken });
     };
 
+    registerForPushNotificationsAsync();
+    Notifications.addNotificationReceivedListener(handleNotification);
+    Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
+
     bootstrapAsync();
   }, []);
 
@@ -109,6 +130,10 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 
         dispatch(authAction);
 
+        console.log("ID: ", userToken.user.id);
+        console.log("TOKEN: ", expoPushToken);
+        UsersService.setNotificationsToken(userToken.user.id, expoPushToken);
+
         return null;
       },
       signOut: () => dispatch({ type: 'SIGN_OUT', userToken: null }),
@@ -121,38 +146,85 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
         dispatch({ type: 'SIGN_UP', userToken: null });
       },
     }),
-    []
+    [expoPushToken]
   );
+
+  const registerForPushNotificationsAsync = async () => {
+    try {
+      if (Device.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+        }
+        const token = (await Notifications.getExpoPushTokenAsync()).data;
+
+        console.log(token);
+
+        setExpoPushToken(token);
+
+      } else {
+        alert('Must use physical device for Push Notifications');
+      }
+
+      if (Platform.OS === 'android') {
+        Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
+    }
+    catch (e) {
+      console.error("Error in registerForPushNotificationsAsync(): " + e);
+    }
+  };
+
+  const handleNotification = (notification: Notifications.Notification) => {
+    setNotification(notification);
+  }
+
+  const handleNotificationResponse = (response: Notifications.NotificationResponse) => {
+    // console.log(response);
+  }
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer
-        linking={LinkingConfiguration}
-        theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack.Navigator>
-          {
-            state.userToken !== null ? (
-              <>
-                <Stack.Screen name="ProfileNavBarScreen" component={ProfileNavBarScreen} options={{ headerShown: false }} />
-              </>
-            ) : (
-              <>
-                <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="LogInScreen" component={LogInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-                <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-                <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-                <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-                <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-                <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-                <Stack.Screen name="CalificationScreen" component={CalificationScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-                <Stack.Screen name="MyBalanceScreen" component={MyBalanceScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
-              </>
-            )
-          }
-        </Stack.Navigator>
+      <NotificationsContext.Provider value={notification}>
+        <NavigationContainer
+          linking={LinkingConfiguration}
+          theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack.Navigator>
+            {
+              state.userToken !== null ? (
+                <>
+                  <Stack.Screen name="ProfileNavBarScreen" component={ProfileNavBarScreen} options={{ headerShown: false }} />
+                </>
+              ) : (
+                <>
+                  <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
+                  <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} options={{ headerShown: false }} />
+                  <Stack.Screen name="LogInScreen" component={LogInScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                  <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                  <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                  <Stack.Screen name="VehicleDataScreen" component={VehicleDataScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                  <Stack.Screen name="SignUpSuccessfullyScreen" component={SignUpSuccessfullyScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                  <Stack.Screen name="MyProfileScreen" component={MyProfileScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                  <Stack.Screen name="CalificationScreen" component={CalificationScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                  <Stack.Screen name="MyBalanceScreen" component={MyBalanceScreen} options={{ headerBackButtonMenuEnabled: true, headerTransparent: true, headerTitle: '' }} />
+                </>
+              )
+            }
+          </Stack.Navigator>
 
-      </NavigationContainer>
+        </NavigationContainer>
+      </NotificationsContext.Provider>
     </AuthContext.Provider>
   );
 }

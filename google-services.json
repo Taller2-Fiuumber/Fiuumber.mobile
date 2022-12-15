@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "268160515802",
+    "firebase_url": "https://fiuumber-default-rtdb.firebaseio.com",
+    "project_id": "fiuumber",
+    "storage_bucket": "fiuumber.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268160515802:android:7c78961adc3fe76e83afe3",
+        "android_client_info": {
+          "package_name": "com.taller2.fiuumber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "268160515802-k4rqi1559edp7d9fbovpe9mhdlmvhpe0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm_F0SJhkqf5EYnhNzhSEKWqxbiS3Qpcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "268160515802-k4rqi1559edp7d9fbovpe9mhdlmvhpe0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

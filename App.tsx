@@ -19,10 +19,21 @@ export default function App() {
     return null;
   } else {
     return (
-      <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </SafeAreaProvider>
+      <>
+        {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Your expo push token: {expoPushToken}</Text>
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text>Title: {notification?.request.content.title}</Text>
+            <Text>Body: {notification?.request.content.body}</Text>
+            <Text>Data: {JSON.stringify(notification?.request.content.data)}</Text>
+          </View>
+        </View> */}
+        <SafeAreaProvider>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </SafeAreaProvider>
+      </>
     );
   }
 }
+

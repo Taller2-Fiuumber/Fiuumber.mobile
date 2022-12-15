@@ -125,7 +125,6 @@ export const TripsService = {
     },
     getFare: async (fromLatitude: number, toLatitude: number, fromLongitude: number, toLongitude: number): Promise<number> => {
         const url = `${URL_TRIPS}/fare?from_latitude=${fromLatitude}&to_latitude=${toLatitude}&from_longitude=${fromLongitude}&to_longitude=${toLongitude}`;
-        console.log(url);
         try {
             const response = await axios.get(url, AuthService.getHeaders());
             const tripResponse: number = response.data;
