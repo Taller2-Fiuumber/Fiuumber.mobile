@@ -35,7 +35,7 @@
       "config": {
         "googleMaps": { "apiKey": "AIzaSyANbv3JEv2HV3r4Sj9j7Y5yrX3KYQcSmew" },
         "googleSignIn": {"apiKey": "AIzaSyBfs3U9Y_wu6bVrUKC737-Dj_JkWWHGU1I", "certificateHash": "17027DC8AD29943F5B8954D16CB1BAFEF306FA5A"}
-      }
+      },
       "googleServicesFile": "./google-services.json"
     },
     "web": {
