@@ -19,20 +19,4 @@ jobs:
         run:  npm install --legacy-peer-deps
       - name: Format
         run: npm run prettier-format
-      - name: Lint
-        run: npm run lint
 
-  unit-test:
-    needs: [linter]
-    name: Unit test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run:  npm install --legacy-peer-deps
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-      - name: Run unit tests
-        run: npm test
