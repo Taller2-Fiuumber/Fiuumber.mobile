@@ -45,7 +45,7 @@ export const SignUpScreen= ({ navigation }: NavigationProps) => {
   }
 
   const onSignUp = async () => {
-    let exists = await AuthService.checkEmailIsUsed(email);
+    // let exists = await AuthService.checkEmailIsUsed(email);
     resetErrorMsg();
     if (firstName == "" || lastName == "" || email == "" || password == "" || passwordChecker == ""){
       setMissingFieldsErrorText(true);
