@@ -164,7 +164,7 @@ export const TripsService = {
 
     getLastTripPassenger: async (userId: number): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/passenger/${userId}?skip=0&limit=1`;
+            const url = `${URL_TRIPS}/passenger/${userId}?skip=0&limit=1&in_progress=false`;
             const response = await axios.get(url, AuthService.getHeaders(),);
             if (!response.data[0]) return null;
             const tripResponse: Trip = mapTrip(response.data[0]);
@@ -178,7 +178,7 @@ export const TripsService = {
     },
     getLastTripDriver: async (userId: number): Promise<Trip | null> => {
         try {
-            const url = `${URL_TRIPS}/driver/${userId}?skip=0&limit=1`;
+            const url = `${URL_TRIPS}/driver/${userId}?skip=0&limit=1&in_progress=false`;
             const response = await axios.get(url, AuthService.getHeaders(),);
             if (!response.data[0]) return null;
             const tripResponse: Trip = mapTrip(response.data[0]);
@@ -187,23 +187,6 @@ export const TripsService = {
         catch (error: any) {
             console.log(`TripsService getLastTripDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
-            throw error;
-        }
-    },
-    getCalification: async (userId: string, profile: string): Promise<number> => {
-
-        const url = `${URL_TRIPS}/calification/${profile.toLowerCase()}/${userId}/avg`;
-        try {
-            const response = await axios.get(url, AuthService.getHeaders());
-            if (response.data.size() == 0) {
-                return 0;
-            };
-            const userCalification: number = response.data.avg_stars;
-            return userCalification;
-        }
-        catch (error: any) {
-            console.log(`TripsService getFare(): ${url} ${error}`);
-            if (error && error.response && error.response.status == 404) return 0;
             throw error;
         }
     },

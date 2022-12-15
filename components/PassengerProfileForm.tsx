@@ -28,7 +28,6 @@ export const PassengerProfileForm: FC<PassengerProfileFormProps> = (): ReactElem
   const [buttonValue, setButtonValue] = useState<string>("Edit");
 
   useEffect(() => {
-    console.log("Passenger")
     AuthService.getCurrentPassenger().then(p => {
       if (p) {
         setPassenger(p);
