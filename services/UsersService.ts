@@ -21,7 +21,8 @@ export const UsersService = {
     },
     createReport: async (passengerId: number, driverId: number, reason: string): Promise<Report | null> => {
         try {
-            const url = `${URL_USERS}/report}`;
+            const url = `${URL_USERS}/report`;
+            console.log(url)
             const req = {
                 "passengerId": passengerId,
                 "driverId": driverId,

@@ -9,4 +9,5 @@ export const Pallete = {
     mediumDarkColor: "#7B7B7B",
     coral: "#FF8360",
     blueGoogle: "#689df6",
+    dangerColor: "#FF0000"
 };

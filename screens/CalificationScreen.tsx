@@ -108,7 +108,7 @@ export const CalificationScreen: FC<CalificationScreenProps> = ({ tripId, onCali
       setLoading(true);
       const trip: Trip | null = await TripsService.get(tripId);
 
-      if (trip != null) {
+      if (trip) {
         const _: Report | null = await UsersService.createReport(
           Number(trip.passengerId),
           Number(trip.driverId),
@@ -123,6 +123,10 @@ export const CalificationScreen: FC<CalificationScreenProps> = ({ tripId, onCali
     finally {
       setLoading(false);
     }
+  }
+
+  const qualifyAndReport = async () => {
+    Promise.all([createCalification(), createReport()]).catch((error) => console.error(error))
   }
 
   return (
@@ -142,9 +146,8 @@ export const CalificationScreen: FC<CalificationScreenProps> = ({ tripId, onCali
             <>
               <Text style={styles.subtitle}>How was your trip? Give a compliment!</Text>
               <TextInput mode="outlined" label="Write a note" style={{ marginBottom: 20, backgroundColor: Pallete.whiteColor, }} onChangeText={text => createReview(text)} />
-              <Button mode="contained" buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} loading={loading} onPress={createCalification}>Submit</Button>
-              <Button mode="contained" buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} loading={loading} onPress={createReport}>Report driver</Button>
-
+              <Button mode="contained" disabled={loading} buttonColor={Pallete.dangerColor} textColor={Pallete.whiteColor} loading={loading} onPress={qualifyAndReport}>Submit and report</Button>
+              <Button mode="contained" disabled={loading} style={{ marginTop: 10 }} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} loading={loading} onPress={createCalification}>Submit</Button>
             </>
           )
         }

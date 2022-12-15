@@ -28,20 +28,32 @@ export const ProfileNavBarScreen = () => {
 
   const CustomDrawerContent = (props: any) => {
     return (
-      <DrawerContentScrollView {...props}>
+      <DrawerContentScrollView {...props} >
         <DrawerItemList {...props} />
-        <DrawerItem label="Log out" onPress={signOut} />
+        <DrawerItem label="Log out" labelStyle={{ color: Pallete.darkColor }} onPress={signOut} />
       </DrawerContentScrollView>
     );
   }
 
   return (
-    <Drawer.Navigator useLegacyImplementation initialRouteName="Home" drawerContent={props => <CustomDrawerContent {...props} />}>
+    <Drawer.Navigator screenOptions={{
+      drawerStyle: {
+        backgroundColor: Pallete.whiteColor,
+      },
+      headerStyle: {
+        backgroundColor: Pallete.whiteColor,
+      },
+      headerTitleStyle: {
+        color: Pallete.darkColor,
+      },
+      drawerLabelStyle: {
+        color: Pallete.darkColor
+      }
+    }} useLegacyImplementation initialRouteName="Home" drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={TripScreen} />
       <Drawer.Screen name="My Profile" component={MyProfileScreen} />
       <Drawer.Screen name="My trips" component={TripLogScreen} />
       <Drawer.Screen name="My balance" component={MyBalanceScreen} />
-
     </Drawer.Navigator>
 
   );
