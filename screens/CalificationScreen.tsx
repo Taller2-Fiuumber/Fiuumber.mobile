@@ -6,8 +6,10 @@ import { AuthService } from '../services/AuthService';
 import { Rating } from 'react-native-ratings';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { Trip, Calification } from '../models/trip';
-import { TripsService } from '../services/TripsService';
+import { Report } from '../models/report';
 
+import { TripsService } from '../services/TripsService';
+import { UsersService } from '../services/UsersService';
 
 const styles = StyleSheet.create({
   container: {
@@ -100,6 +102,29 @@ export const CalificationScreen: FC<CalificationScreenProps> = ({ tripId, onCali
     }
   }
 
+  const createReport = async () => {
+
+    try {
+      setLoading(true);
+      const trip: Trip | null = await TripsService.get(tripId);
+
+      if (trip != null) {
+        const _: Report | null = await UsersService.createReport(
+          Number(trip.passengerId),
+          Number(trip.driverId),
+          review);
+        return true;
+      }
+    }
+    catch (e: any) {
+      console.error(e);
+      throw e;
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       <View style={styles.contentContainer}>
@@ -118,6 +143,8 @@ export const CalificationScreen: FC<CalificationScreenProps> = ({ tripId, onCali
               <Text style={styles.subtitle}>How was your trip? Give a compliment!</Text>
               <TextInput mode="outlined" label="Write a note" style={{ marginBottom: 20, backgroundColor: Pallete.whiteColor, }} onChangeText={text => createReview(text)} />
               <Button mode="contained" buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} loading={loading} onPress={createCalification}>Submit</Button>
+              <Button mode="contained" buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} loading={loading} onPress={createReport}>Report driver</Button>
+
             </>
           )
         }
