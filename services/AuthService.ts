@@ -82,7 +82,6 @@ export const AuthService = {
         try {
             driver.accountType = "EMAIL";
             const url = `${URL_AUTH}/register-driver`;
-            console.log("______________driver", {driver});
             await axios.post(url, {driver}, HEADERS);
             return true;
         }

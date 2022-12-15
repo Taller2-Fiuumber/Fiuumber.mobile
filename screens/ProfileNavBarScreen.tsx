@@ -41,7 +41,7 @@ export const ProfileNavBarScreen = () => {
       <Drawer.Screen name="My Profile" component={MyProfileScreen} />
       <Drawer.Screen name="My trips" component={TripLogScreen} />
       <Drawer.Screen name="My balance" component={MyBalanceScreen} />
-      {/* <Drawer.Screen name="Calification" component={CalificationScreen} /> */}
+
     </Drawer.Navigator>
 
   );
