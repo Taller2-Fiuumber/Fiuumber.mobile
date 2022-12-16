@@ -75,10 +75,10 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         hideFindTripModal();
         setCurrentTrip(trip);
         unsubscribeWatchTripStatus = watchTripStatus(trip._id);
-        setViewState("DRIVER_ASSIGNED");
-
+        console.log("DRIVER_ID:   ", trip.driverId)
         const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
         setCurrentDriver(driver);
+        setViewState("DRIVER_ASSIGNED");
     };
 
     const watchTripStatus = (tripId: string): Unsubscribe => {
@@ -166,7 +166,9 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         setDestinationAddress(trip.toAddress);
 
         if (trip.driverId) {
+            console.log("DRIVER_ID IN REFRESH:   ", trip.driverId)
             const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
+            console.log(driver)
             setCurrentDriver(driver);
         }
 
@@ -180,7 +182,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                 setViewState("DRIVER_ASSIGNED");
                 break;
             case (TripStatus.DriverArrived):
-
+                console.log(trip.status)
                 showDriverArrivedVisible();
                 setViewState("DRIVER_ARRIVED");
                 break;
@@ -246,8 +248,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
             <Provider>
                 <Portal>
                     {origin && destination && findTripvisible && originAddress && destinationAddress ? <FindTripModal fare={fare} onAcceptedTrip={onAcceptedTrip} visible={findTripvisible} onDismiss={hideFindTripModal} contentContainerStyle={{}} origin={origin} destination={destination} originAddress={originAddress} destinationAddress={destinationAddress} currentTrip={currentTrip}></FindTripModal> : <></>}
-                    {driverArrivedVisible && (<InfoModal title={"Your Fiuumber has arrived ;)"} description={`Hurry up, ${currentDriver?.user.firstName} is waiting for you`} visible={driverArrivedVisible} onDismiss={hideDriverArrivedVisible} button={actionButtonDialogArrived}></InfoModal>)}
-                    {calificationsModalVisible && lastTripId ? <CalificationModal onDismiss={dismissCalificationModal} tripId={lastTripId} visible={true}></CalificationModal> : <></>}
+                    {driverArrivedVisible && (<InfoModal title={"Your Fiuumber has arrived ;)"} description={`Hurry up, your driver is waiting for you`} visible={driverArrivedVisible} onDismiss={hideDriverArrivedVisible} button={actionButtonDialogArrived}></InfoModal>)}
+                    {(calificationsModalVisible && lastTripId) ? <CalificationModal onDismiss={dismissCalificationModal} tripId={lastTripId} visible={true}></CalificationModal> : <></>}
                 </Portal>
                 <FiuumberMap passengerPosition={myLocation} onMapRef={setMapRef} origin={origin} destination={destination} driverLocation={driverRealtimeLocation}></FiuumberMap>
                 <IconButton mode="contained" icon="refresh" disabled={loading} iconColor={MD3Colors.primary100} style={{ bottom: (getBottomSheetPercentage() + 7) + '%', alignSelf: 'flex-end' }} onPress={refreshTrip}></IconButton>
