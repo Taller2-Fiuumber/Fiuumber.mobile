@@ -161,6 +161,34 @@ export const TripsService = {
         }
     },
 
+    getCalificationAveragePassenger: async (userId: number): Promise<number | null> => {
+        try {
+            const url = `${URL_TRIPS}/calification/passenger/${userId}/avg`;
+            const response = await axios.get(url, AuthService.getHeaders(),);
+            if (!response.data) return null;
+            return response.data;
+        }
+        catch (error: any) {
+            console.log(`Calification getCalificationAveragePassenger(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+
+    getAmountOfTripsPassenger: async (userId: number): Promise<number | null> => {
+        try {
+            const url = `${URL_TRIPS}/passenger/${userId}/count`;
+            const response = await axios.get(url, AuthService.getHeaders(),);
+            if (!response.data) return null;
+            return response.data;
+        }
+        catch (error: any) {
+            console.log(`Calification getAmountOfTripsPassenger(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+
     getLastTripPassenger: async (userId: number): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/passenger/${userId}?skip=0&limit=1&in_progress=false`;
@@ -186,6 +214,30 @@ export const TripsService = {
         catch (error: any) {
             console.log(`TripsService getLastTripDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+    getCalificationsDriver: async (driverId: number, skip: number, take: number): Promise<Calification[] | null> => {
+        try {
+            const url = `${URL_TRIPS}/calification/driver/${driverId}?skip=${skip}&limit=${1}&in_progress=false`;
+            let califications =  await axios.get(url, AuthService.getHeaders(),);
+            const calificationsResponse: Calification[] = califications.data.map(mapCalification);
+            return calificationsResponse; 
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },
+    getCalificationsPassenger: async (passengerId: number, skip: number, take: number): Promise<Calification[] | null> => {
+        try {
+            const url = `${URL_TRIPS}/calification/passenger/${passengerId}?skip=${skip}&limit=${1}&in_progress=false`;
+            let califications =  await axios.get(url, AuthService.getHeaders(),);
+            const calificationsResponse: Calification[] = califications.data.map(mapCalification);
+            return calificationsResponse; 
+        }
+        catch (error: any) {
+            console.log(error);
             throw error;
         }
     },

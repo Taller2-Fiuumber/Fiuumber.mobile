@@ -8,7 +8,7 @@ import { User } from '../models/user';
 
 // import * as dotenv from "dotenv";
 import { Passenger } from "../models/passenger";
-import { Wallet } from "../models/wallet";
+// import { Wallet } from "../models/wallet";
 import { AuthService } from "../services/AuthService";
 import { TripsService } from "../services/TripsService";
 import { Calification } from "../models/trip";
@@ -24,23 +24,36 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
 
   const [firstName, setName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
-  const [calification, setCalification] = useState<string>("");
-  const [created_at, setCreatedAt] = useState<string>("");
-  const [trips, setTrips] = useState<string>("");
-
-
+  const [calification, setCalification] = useState<number>(5);
+  const [trips, setTrips] = useState<number>(0);
 
 
     AuthService.getCurrentPassenger().then((passenger: Passenger | undefined) => {
       if (passenger != undefined) {
         // passenger values states
-        const _userId = user?.id
+        const userId = user?.id
+        if(userId){
+          TripsService.getCalificationAveragePassenger(userId).then((average: number | null) => {
+            if (average != null) {
+              setCalification(average)
+            } else {
+              setCalification(0)
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+          TripsService.getAmountOfTripsPassenger(userId).then((numberOfTrips: number | null) => {
+            if (numberOfTrips != null) {
+              setTrips(numberOfTrips)
+            } else {
+              setTrips(0)
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+        }
         setName(passenger.firstName)
         setLastName(passenger.lastName)
-        setCalification(passenger.calification)
-        setCreatedAt(passenger.createdAt)
-        setTrips(passenger.trips)
-
       }
     }).catch((error) => {
       console.log(error);
@@ -83,9 +96,6 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
         value={ calification}
       />
 
-      <TextInput label="In the app since" style={{marginBottom: 20}} editable={false}
-        value={ created_at}
-      />
 
       <TextInput label="Trips made" style={{marginBottom: 20}} editable={false}
         value={ trips}

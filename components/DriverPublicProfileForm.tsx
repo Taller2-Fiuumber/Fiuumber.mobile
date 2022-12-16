@@ -56,23 +56,23 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     AuthService.getCurrentDriver().then((driver: Driver | undefined) => {
       if (driver != undefined) {
         // User values states
-        setUserId(driver.user.id)
-        setFirstName(driver.user.firstName)
-        setLastName(driver.user.lastName)
-        setCalification(driver.user.calification)
-        setCreatedAt(driver.user.createdAt)
-        setTrips(driver.user.trips)
+        setUserId(driver.id)
+        setFirstName(driver.firstName)
+        setLastName(driver.lastName)
+        setCalification(driver.calification)
+        setCreatedAt(driver.createdAt)
+        setTrips(driver.trips)
 
 
         // Car values states
-        setDriverVehicleId(driver.driverVehicle.id)
-        setVehicleId(driver.driverVehicle.vehicle.id)
-        setBrand(driver.driverVehicle.vehicle.brand)
-        setModel(driver.driverVehicle.vehicle.model)
-        setImage(driver.driverVehicle.vehicle.image)
-        setDomain(driver.driverVehicle.domain)
-        setModelYear(driver.driverVehicle.modelYear)
-        setColorName(driver.driverVehicle.colorName)
+        setDriverVehicleId(driver.vehicle.id)
+        setVehicleId(driver.vehicle.vehicle.id)
+        setBrand(driver.vehicle.vehicle.brand)
+        setModel(driver.vehicle.vehicle.model)
+        setImage(driver.vehicle.vehicle.image)
+        setDomain(driver.vehicle.domain)
+        setModelYear(driver.vehicle.modelYear)
+        setColorName(driver.vehicle.colorName)
       }
     }).catch((error) => {
       console.log(error);
