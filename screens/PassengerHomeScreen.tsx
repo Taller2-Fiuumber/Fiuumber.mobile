@@ -350,8 +350,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                                 <View style={{ flex: 1 }}>
                                                
                                                     <InfoCard icon="account" title={currentDriver.firstName} subtitle={"★ 4.5 +420 trips"} >
-                    
-                                                    </InfoCard> <Button mode="contained" buttonColor={Pallete.dangerColor} textColor={Pallete.whiteColor} onPress={OthersProfileScreen}>View Profile</Button>
+                                                    <Button mode="contained" buttonColor={Pallete.dangerColor} textColor={Pallete.whiteColor} onPress={OthersProfileScreen}>View Profile</Button>
+                                                    </InfoCard> 
                                                
                                                 </View>
                                                 <View>

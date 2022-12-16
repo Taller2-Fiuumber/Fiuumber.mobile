@@ -22,7 +22,7 @@ interface DriverPublicProfileFormProps {
 
 
 export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): ReactElement => {
-
+  let user = AuthService.getCurrentUserToken()?.user;
     const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about driver");
     const [numberOfComments, setNumberOfComments] = useState<number>(3);
     // const [califications, setCalifications] = useState({id: "", passengerId: "string", driverId: "", tripId: "", stars: "", comments: "", reviewer: ""});
@@ -34,9 +34,9 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     const [userId, setUserId] = useState<number>(-1);
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
-    const [calification, setCalification] = useState<string>("");
-    const [created_at, setCreatedAt] = useState<string>("");
-    const [trips, setTrips] = useState<string>("");
+    const [calification, setCalification] = useState<number>(0);
+    
+    const [trips, setTrips] = useState<number>(0);
 
 
     // DriverVehicle states
@@ -56,13 +56,33 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     AuthService.getCurrentDriver().then((driver: Driver | undefined) => {
       if (driver != undefined) {
         // User values states
+
+        const userId = user?.id
+        if(userId){
+          TripsService.getCalificationAverageDriver(userId).then((average: number | null) => {
+            if (average != null) {
+              setCalification(average)
+            } else {
+              setCalification(0)
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+          TripsService.getAmountOfTripsDriver(userId).then((numberOfTrips: number | null) => {
+            if (numberOfTrips != null) {
+              setTrips(numberOfTrips)
+            } else {
+              setTrips(0)
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+        }
+          
         setUserId(driver.id)
         setFirstName(driver.firstName)
         setLastName(driver.lastName)
-        setCalification(driver.calification)
-        setCreatedAt(driver.createdAt)
-        setTrips(driver.trips)
-
+        
 
         // Car values states
         setDriverVehicleId(driver.vehicle.id)
@@ -73,11 +93,11 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
         setDomain(driver.vehicle.domain)
         setModelYear(driver.vehicle.modelYear)
         setColorName(driver.vehicle.colorName)
-      }
+    }
     }).catch((error) => {
-      console.log(error);
+        console.log(error);
     });
-  const commentsButtonPressed = () => {
+    const commentsButtonPressed = () => {
     if(labelCommentsAboutDriver=="Show comments about driver"){
       setShowComments("Hide comments");
       return;
@@ -113,9 +133,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
         value={ calification}
       />
 
-      <TextInput label="In the app since" style={{marginBottom: 20}} editable={false}
-        value={ created_at}
-      />
 
       <TextInput label="Trips made" style={{marginBottom: 20}} editable={false}
         value={ trips}

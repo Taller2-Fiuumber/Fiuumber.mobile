@@ -1,7 +1,7 @@
 import axios from 'axios';// For API consuming
 import { TripStatus } from '../enums/trip-status';
 import { Trip, Calification } from '../models/trip';
-import { mapTrip } from '../utils/mappings';
+import { mapTrip , mapCalification} from '../utils/mappings';
 import { AuthService } from './AuthService';
 import { HEADERS, URL_TRIPS } from "./Constants";
 import { FirebaseService } from './FirebaseService';
@@ -175,6 +175,20 @@ export const TripsService = {
         }
     },
 
+    getCalificationAverageDriver: async (userId: number): Promise<number | null> => {
+        try {
+            const url = `${URL_TRIPS}/calification/driver/${userId}/avg`;
+            const response = await axios.get(url, AuthService.getHeaders(),);
+            if (!response.data) return null;
+            return response.data;
+        }
+        catch (error: any) {
+            console.log(`Calification getCalificationAverageDriver(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+
     getAmountOfTripsPassenger: async (userId: number): Promise<number | null> => {
         try {
             const url = `${URL_TRIPS}/passenger/${userId}/count`;
@@ -184,6 +198,20 @@ export const TripsService = {
         }
         catch (error: any) {
             console.log(`Calification getAmountOfTripsPassenger(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+
+    getAmountOfTripsDriver: async (userId: number): Promise<number | null> => {
+        try {
+            const url = `${URL_TRIPS}/driver/${userId}/count`;
+            const response = await axios.get(url, AuthService.getHeaders(),);
+            if (!response.data) return null;
+            return response.data;
+        }
+        catch (error: any) {
+            console.log(`Calification getAmountOfTripsDriver(): ${error}`);
             if (error && error.response && error.response.status == 401) return null;
             throw error;
         }
