@@ -22,6 +22,7 @@ import CalificationModal from "../modals/CalificationModal";
 import { User } from "../models/user";
 import { diffHours } from "../utils/math";
 import NotificationsContext from "../contexts/NotificationsContext";
+import OthersProfileScreen from "../components/OtherProfile";
 
 interface PassengerHomeScreenProps { }
 
@@ -347,7 +348,11 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                             <Divider style={styles.divider} />
                                             <View style={{ flexDirection: 'row', }}>
                                                 <View style={{ flex: 1 }}>
-                                                    <InfoCard icon="account" title={currentDriver.firstName} subtitle={"★ 4.5 +420 trips"}></InfoCard>
+                                               
+                                                    <InfoCard icon="account" title={currentDriver.firstName} subtitle={"★ 4.5 +420 trips"} >
+                    
+                                                    </InfoCard> <Button mode="contained" buttonColor={Pallete.dangerColor} textColor={Pallete.whiteColor} onPress={OthersProfileScreen}>View Profile</Button>
+                                               
                                                 </View>
                                                 <View>
                                                     <IconButton
