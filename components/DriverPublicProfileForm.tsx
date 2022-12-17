@@ -8,7 +8,6 @@ import { User } from '../models/user';
 // import * as dotenv from "dotenv";
 import { UserData } from "../models/user_data";
 import { Driver } from "../models/driver";
-import { Wallet } from "../models/wallet";
 import { DriverVehicle } from "../models/driver_vehicle";
 import { Vehicle } from "../models/vehicle";
 // import {Table, TableWrapper, Row, Rows, Col} from 'react-native-table-component';
@@ -58,6 +57,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
         // User values states
 
         const userId = user?.id
+        
         if(userId){
           TripsService.getCalificationAverageDriver(userId).then((average: number | null) => {
             if (average != null) {
@@ -65,6 +65,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
             } else {
               setCalification(0)
             }
+            console.log("---------------------------getcaliff", average)
           }).catch((error) => {
             console.log(error)
           })
@@ -74,6 +75,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
             } else {
               setTrips(0)
             }
+            console.log("---------------------------gettrips", numberOfTrips)
           }).catch((error) => {
             console.log(error)
           })
@@ -111,8 +113,9 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
   }
 
   useEffect(() => {
-    TripsService.getCalificationsDriver(68, 0, numberOfComments).then((califications: Calification[] | null) => {
+    TripsService.getCalificationsDriver(userId, 0, numberOfComments).then((califications: Calification[] | null) => {
       setCalifications(califications);
+      console.log("---------------------------getcaliffDriv", califications)
     }).catch((error) => {
       console.log(error);
     });
