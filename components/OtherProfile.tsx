@@ -38,14 +38,14 @@ const styles = StyleSheet.create({
 
 export const OthersProfileScreen = () => {
 
-  const { logIn } = React.useContext(AuthContext);
+  // const { logIn } = React.useContext(AuthContext);
 
-  const [message, setMessage] = useState<string | null>(null);
+  // const [message, setMessage] = useState<string | null>(null);
 
-  const handleEditUserBasicInfo = async (user: User) => {
-    //const message = await logIn(email, password);
-    //setMessage(message);
-  }
+  // const handleEditUserBasicInfo = async (user: User) => {
+  //   //const message = await logIn(email, password);
+  //   //setMessage(message);
+  // }
 
     const user = AuthService.getCurrentUserToken()?.user;
 

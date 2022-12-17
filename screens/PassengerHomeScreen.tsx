@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BottomSheet from '@gorhom/bottom-sheet';
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, Modal } from "react-native";
 import { Button, Portal, Provider, Text, Card, Title, Paragraph, Divider, IconButton, MD3Colors, ProgressBar } from 'react-native-paper';
 import InfoCard from "../components/InfoCard";
 import { Trip } from "../models/trip";
@@ -63,6 +63,9 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
 
     const hideDriverArrivedVisible = () => setDriverArrivedVisible(false);
     const showDriverArrivedVisible = () => setDriverArrivedVisible(true);
+
+    const [showOtherProfile, setShowOtherProfile] = React.useState(false);
+
 
     const onClickContinue = () => {
         bottomSheetRef.current?.snapToIndex(0);
@@ -349,9 +352,12 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                             <View style={{ flexDirection: 'row', }}>
                                                 <View style={{ flex: 1 }}>
                                                
-                                                    <InfoCard icon="account" title={currentDriver.firstName} subtitle={"★ 4.5 +420 trips"} >
-                                                    <Button mode="contained" buttonColor={Pallete.dangerColor} textColor={Pallete.whiteColor} onPress={OthersProfileScreen}>View Profile</Button>
+                                                    <InfoCard icon="account" title={currentDriver.firstName} subtitle={"Fiuumber Driver"}  >
                                                     </InfoCard> 
+                                                    <Button mode="contained" style={{margin: "5%", backgroundColor:Pallete.lightColor}} onPress={()=>setShowOtherProfile(true)}>View Profile</Button>
+                                                    <Modal visible={showOtherProfile} >
+                                                        <OthersProfileScreen></OthersProfileScreen>
+                                                    </Modal>
                                                
                                                 </View>
                                                 <View>
