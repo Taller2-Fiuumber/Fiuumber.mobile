@@ -41,6 +41,24 @@ const defaultStyles = { backgroundColor: 'white', padding: 20, margin: 10 };
 
 export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss, contentContainerStyle, origin, destination, originAddress, destinationAddress, onAcceptedTrip, currentTrip }: FindTripModalPros) => {
 
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const onClickCancelTrip = async () => {
+
+      if (currentTrip) {
+          setLoading(true);
+          TripsService.cancelTripPassenger(currentTrip._id)
+              .then(trip=> {
+              })
+              .catch( (e) => {
+                  console.log(`Canceled trip failed: ${e.message}`)
+              })
+              .finally(() => {
+                setLoading(false)
+                onDismiss();
+              })
+      }
+  }
   // Logged in user
   const user: User | undefined = AuthService.getCurrentUserToken()?.user;
 
@@ -111,7 +129,7 @@ export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss,
       <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={{ ...defaultStyles, ...contentContainerStyle }}>
         <Text variant="titleMedium" style={styles.title}>{statusText}</Text>
         <ProgressBar indeterminate color={Pallete.greenBackground} />
-        <Button style={styles.cancelButton} textColor='red' mode='outlined' onPress={onDismiss}>
+        <Button loading={loading} disabled={loading} style={styles.cancelButton} textColor='red' mode='outlined' onPress={onClickCancelTrip}>
           CANCEL TRIP
         </Button>
       </Modal>

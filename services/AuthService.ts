@@ -40,7 +40,7 @@ export const AuthService = {
     },
     loginWithGoogle: async (email: string, password: string): Promise<UserToken | null> => {
         try {
-            const url = `${URL_AUTH}/login?email=${email}&password=${password}`;
+            const url = `${URL_AUTH}/loginGoogle?email=${email}&password=${password}`;
             const response = await axios.get(url, HEADERS);
             const userToken: UserToken = response.data;
             return userToken;

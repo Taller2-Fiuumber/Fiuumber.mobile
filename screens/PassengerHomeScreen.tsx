@@ -121,6 +121,22 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         setCurrentTrip(null);
     }
 
+    const onClickCancelTrip = async () => {
+        if (currentTrip) {
+            setLoading(true);
+            TripsService.cancelTripPassenger(currentTrip._id)
+                .then(trip=> {
+                })
+                .catch( (e) => {
+                    console.log(`Canceled trip failed: ${e.message}`)
+                })
+                .finally(() => {
+                    setLoading(false);
+                    cleanupTrip();
+                })
+        }
+    }
+
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -369,6 +385,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                         </View>
                                         <Text style={{ color: Pallete.darkColor, width: '100%', overflow: 'hidden', textAlign: 'center' }}>{currentTrip?.toAddress}</Text>
                                     </View>
+                                    <Button loading={loading} disabled={loading} mode="outlined" buttonColor='red' textColor="white" style={{ marginTop: 10 }} onPress={onClickCancelTrip}>Cancel trip</Button>
+
                                 </View>
                             </>
                         )
