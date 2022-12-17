@@ -189,5 +189,32 @@ export const TripsService = {
             throw error;
         }
     },
-
+    cancelTripDriver: async (tripId: string): Promise<Trip | null> => {
+        try {
+            const url = `${URL_TRIPS}/driver/cancel-trip/${tripId}`;
+            const response = await axios.post(url, {},AuthService.getHeaders(),);
+            if (!response.data[0]) return null;
+            const tripResponse: Trip = mapTrip(response.data[0]);
+            return tripResponse;
+        }
+        catch (error: any) {
+            console.log(`TripsService cancelTripDriver(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
+    cancelTripPassenger: async (tripId: string, latitude:number, longitude:number): Promise<Trip | null> => {
+        try {
+            const url = `${URL_TRIPS}/passenger/cancel-trip/${tripId}`;
+            const response = await axios.post(url, {"latitude": latitude, "longitude": longitude},AuthService.getHeaders(),);
+            if (!response.data[0]) return null;
+            const tripResponse: Trip = mapTrip(response.data[0]);
+            return tripResponse;
+        }
+        catch (error: any) {
+            console.log(`TripsService cancelTripPassenger(): ${error}`);
+            if (error && error.response && error.response.status == 401) return null;
+            throw error;
+        }
+    },
 };

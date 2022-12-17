@@ -76,8 +76,23 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
     }
 
     const onClickCancelTrip = async () => {
-        await changeTripStatus(TripStatus.Canceled);
-        cleanupTrip();
+
+        if (currentTrip) {
+            setLoading(true);
+            TripsService.cancelTripDriver(currentTrip._id)
+                .then(trip=> {
+                    console.log(`Trip ${currentTrip._id} now has status:  ${currentTrip.status}.`)
+                    setCurrentTrip(trip);
+                })
+                .catch( (e) => {
+                    console.log(`Canceled trip failed: ${e.message}`)
+                })
+                .finally(() => {
+                    setLoading(false);
+                    cleanupTrip();
+
+                })
+        }
     }
 
     const cleanupTrip = () => {
