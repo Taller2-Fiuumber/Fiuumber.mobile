@@ -81,6 +81,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
             setLoading(true);
             TripsService.cancelTripDriver(currentTrip._id)
                 .then(trip=> {
+                    console.log(`Trip ${currentTrip._id} now has status:  ${currentTrip.status}.`)
+                    setCurrentTrip(trip);
                 })
                 .catch( (e) => {
                     console.log(`Canceled trip failed: ${e.message}`)

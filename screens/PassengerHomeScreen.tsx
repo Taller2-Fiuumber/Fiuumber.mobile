@@ -126,6 +126,8 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
             setLoading(true);
             TripsService.cancelTripPassenger(currentTrip._id)
                 .then(trip=> {
+                    console.log(`Trip ${currentTrip._id} now has status:  ${currentTrip.status}.`)
+                    setCurrentTrip(trip);
                 })
                 .catch( (e) => {
                     console.log(`Canceled trip failed: ${e.message}`)
