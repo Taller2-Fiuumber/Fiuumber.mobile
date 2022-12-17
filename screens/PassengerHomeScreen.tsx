@@ -124,7 +124,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
     const onClickCancelTrip = async () => {
         if (currentTrip) {
             setLoading(true);
-            TripsService.cancelTripPassenger(currentTrip._id)
+            TripsService.cancelTripPassenger(currentTrip._id, currentTrip.toLatitude, currentTrip.toLongitude)
                 .then(trip=> {
                     console.log(`Trip ${currentTrip._id} now has status:  ${currentTrip.status}.`)
                     setCurrentTrip(trip);

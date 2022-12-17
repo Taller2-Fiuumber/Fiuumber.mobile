@@ -192,7 +192,7 @@ export const TripsService = {
     cancelTripDriver: async (tripId: string): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/driver/cancel-trip/${tripId}`;
-            const response = await axios.post(url, null,AuthService.getHeaders(),);
+            const response = await axios.post(url, {},AuthService.getHeaders(),);
             if (!response.data[0]) return null;
             const tripResponse: Trip = mapTrip(response.data[0]);
             return tripResponse;
@@ -203,10 +203,10 @@ export const TripsService = {
             throw error;
         }
     },
-    cancelTripPassenger: async (tripId: string): Promise<Trip | null> => {
+    cancelTripPassenger: async (tripId: string, latitude:number, longitude:number): Promise<Trip | null> => {
         try {
             const url = `${URL_TRIPS}/passenger/cancel-trip/${tripId}`;
-            const response = await axios.post(url, null,AuthService.getHeaders(),);
+            const response = await axios.post(url, {"latitude": latitude, "longitude": longitude},AuthService.getHeaders(),);
             if (!response.data[0]) return null;
             const tripResponse: Trip = mapTrip(response.data[0]);
             return tripResponse;

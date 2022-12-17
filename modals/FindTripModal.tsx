@@ -47,7 +47,7 @@ export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss,
 
       if (currentTrip) {
           setLoading(true);
-          TripsService.cancelTripPassenger(currentTrip._id)
+          TripsService.cancelTripPassenger(currentTrip._id,destination.latitude,destination.longitude)
               .then(trip=> {
               })
               .catch( (e) => {
@@ -101,6 +101,10 @@ export const FindTripModal: FC<FindTripModalPros> = ({ fare, visible, onDismiss,
         const trip: Trip | null = await TripsService.get(tripId);
         if (trip && trip.status == TripStatus.DriverAssigned) {
           onAcceptedTrip(trip);
+        }
+        if (trip && trip.status == TripStatus.Canceled) {
+          setLoading(false)
+          onDismiss();
         }
       }
     });
