@@ -357,7 +357,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                                     </InfoCard>
                                                     <Button mode="contained" style={{margin: "5%", backgroundColor:Pallete.lightColor}} onPress={()=>setShowOtherProfile(true)}>View Profile</Button>
                                                     <Modal visible={showOtherProfile} >
-                                                        <OthersProfileScreen driverId={currentDriver.id}></OthersProfileScreen>
+                                                        <OthersProfileScreen userId={currentDriver.id}></OthersProfileScreen>
                                                     </Modal>
 
                                                 </View>
