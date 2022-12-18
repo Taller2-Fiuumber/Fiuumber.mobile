@@ -36,7 +36,12 @@ const styles = StyleSheet.create({
     },
 });
 
-export const OthersProfileScreen = () => {
+interface OthersProfileScreenProps {
+  driverId: number;
+
+}
+
+export const OthersProfileScreen : React.FC<OthersProfileScreenProps> = ({ driverId }: OthersProfileScreenProps): React.ReactElement => {
 
   // const { logIn } = React.useContext(AuthContext);
 
@@ -53,7 +58,7 @@ export const OthersProfileScreen = () => {
 
         <View style={styles.contentContainer}>
           { user?.profile == "PASSENGER" ?
-            <DriverPublicProfileForm driverId={74}></DriverPublicProfileForm>:
+            <DriverPublicProfileForm driverId={driverId}></DriverPublicProfileForm>:
             <PassengerPublicProfileForm></PassengerPublicProfileForm>
           }
         </View>

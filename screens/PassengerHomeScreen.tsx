@@ -351,14 +351,14 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                             <Divider style={styles.divider} />
                                             <View style={{ flexDirection: 'row', }}>
                                                 <View style={{ flex: 1 }}>
-                                               
+
                                                     <InfoCard icon="account" title={currentDriver.firstName} subtitle={"Fiuumber Driver"}  >
-                                                    </InfoCard> 
+                                                    </InfoCard>
                                                     <Button mode="contained" style={{margin: "5%", backgroundColor:Pallete.lightColor}} onPress={()=>setShowOtherProfile(true)}>View Profile</Button>
                                                     <Modal visible={showOtherProfile} >
-                                                        <OthersProfileScreen></OthersProfileScreen>
+                                                        <OthersProfileScreen driverId={currentDriver.userId}></OthersProfileScreen>
                                                     </Modal>
-                                               
+
                                                 </View>
                                                 <View>
                                                     <IconButton
