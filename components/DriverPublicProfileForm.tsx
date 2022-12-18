@@ -3,7 +3,7 @@ import React, { FC, ReactElement } from "react";
 import { TextInput, Button } from 'react-native-paper';
 import { useState, useEffect } from "react";
 import { Pallete } from "../constants/Pallete";
-import {  StyleSheet, Text, View} from "react-native";
+import {  Pressable, StyleSheet, Text, View} from "react-native";
 import { User } from '../models/user';
 // import * as dotenv from "dotenv";
 import { UserData } from "../models/user_data";
@@ -14,13 +14,18 @@ import { Vehicle } from "../models/vehicle";
 import { AuthService } from "../services/AuthService";
 import { TripsService } from "../services/TripsService";
 import { Calification } from "../models/trip";
+import PassengerHomeScreen from "../screens/PassengerHomeScreen";
+import { Navigate } from "react-router";
+import navigation from "../navigation";
+import {OthersProfileScreen } from '../screens/OtherProfile';
+import { NavigationProps } from "../types";
 
 interface DriverPublicProfileFormProps {
   driverId: number;
 
 }
 
-export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driverId }: DriverPublicProfileFormProps): ReactElement => {
+export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driverId }: DriverPublicProfileFormProps, { navigation }: NavigationProps): ReactElement => {
     const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about driver");
     const [numberOfComments, setNumberOfComments] = useState<number>(3);
     // const [califications, setCalifications] = useState({id: "", passengerId: "string", driverId: "", tripId: "", stars: "", comments: "", reviewer: ""});
@@ -144,6 +149,9 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
 
   return (
     <>
+      {/* <Button mode="contained" style={{backgroundColor: Pallete.greenBackground, margin: "0%"}}
+        onPress={() => navigation.navigate('HomeScreen')}>{"Go back"}
+      </Button> */}
     
       <Text style={styles.subtitle}>Driver Information</Text>
 

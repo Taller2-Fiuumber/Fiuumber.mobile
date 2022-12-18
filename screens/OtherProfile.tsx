@@ -61,7 +61,7 @@ export const OthersProfileScreen : React.FC<OthersProfileScreenProps> = ({ userI
       <View style={styles.contentContainer}>
           { user?.profile == "PASSENGER" ?
             <DriverPublicProfileForm driverId={userId}></DriverPublicProfileForm>:
-            <PassengerPublicProfileForm userId={userId}></PassengerPublicProfileForm>
+            <PassengerPublicProfileForm passengerId={userId}></PassengerPublicProfileForm>
           }
         </View>
         </ScrollView>

@@ -21,6 +21,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       MyProfileScreen: 'MyProfile',
       CalificationScreen: 'Calification',
       MyBalanceScreen: 'MyBalanceScreen',
+      OthersProfileScreen: 'OthersProfileScreen',
     //   Root: {
     //     screens: {
     //       TabOne: {

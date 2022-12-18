@@ -22,7 +22,7 @@ import CalificationModal from "../modals/CalificationModal";
 import { User } from "../models/user";
 import { diffHours } from "../utils/math";
 import NotificationsContext from "../contexts/NotificationsContext";
-import OthersProfileScreen from "../components/OtherProfile";
+import {OthersProfileScreen } from '../screens/OtherProfile';
 
 interface PassengerHomeScreenProps { }
 
@@ -357,6 +357,10 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                                     </InfoCard>
                                                     <Button mode="contained" style={{margin: "5%", backgroundColor:Pallete.lightColor}} onPress={()=>setShowOtherProfile(true)}>View Profile</Button>
                                                     <Modal visible={showOtherProfile} >
+                                                    <Button mode="contained" style={{backgroundColor: Pallete.greenBackground, margin: "0%"}}
+                                                        onPress={() => setShowOtherProfile(false)}>{"Go back"}
+                                                    </Button>
+                                                                                                        
                                                         <OthersProfileScreen userId={currentDriver.id}></OthersProfileScreen>
                                                     </Modal>
 
