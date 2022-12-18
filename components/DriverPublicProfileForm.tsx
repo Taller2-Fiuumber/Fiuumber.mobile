@@ -21,7 +21,6 @@ interface DriverPublicProfileFormProps {
 
 
 export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): ReactElement => {
-  let user = AuthService.getCurrentUserToken()?.user;
     const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about driver");
     const [numberOfComments, setNumberOfComments] = useState<number>(3);
     // const [califications, setCalifications] = useState({id: "", passengerId: "string", driverId: "", tripId: "", stars: "", comments: "", reviewer: ""});
@@ -34,11 +33,13 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [calification, setCalification] = useState<number>(0);
-    
+
     const [trips, setTrips] = useState<number>(0);
 
 
     // DriverVehicle states
+    const [driver, setDriver] = useState<Driver | undefined>(undefined);
+
     const [driverVehicleId, setDriverVehicleId] = useState<number>(-1);
     const [domain, setDomain] = useState<string>("");
     const [modelYear, setModelYear] = useState<string>("");
@@ -52,54 +53,74 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
 
   /*--------------------------Getting driver data------------------------------*/
 
-    AuthService.getCurrentDriver().then((driver: Driver | undefined) => {
-      if (driver != undefined) {
-        // User values states
+  const setDriverValues = (driver: Driver) => {
+      setUserId(driver.id)
+      setFirstName(driver.firstName)
+      setLastName(driver.lastName)
+      setDriverVehicleId(driver.vehicle.id)
+      setVehicleId(driver.vehicle.vehicle.id)
+      setBrand(driver.vehicle.vehicle.brand)
+      setModel(driver.vehicle.vehicle.model)
+      setImage(driver.vehicle.vehicle.image)
+      setDomain(driver.vehicle.domain)
+      setModelYear(driver.vehicle.modelYear)
+      setColorName(driver.vehicle.colorName)
+  }
 
-        const userId = user?.id
-        
-        if(userId){
-          TripsService.getCalificationAverageDriver(userId).then((average: number | null) => {
-            if (average != null) {
-              setCalification(average)
-            } else {
-              setCalification(0)
-            }
-            console.log("---------------------------getcaliff", average)
-          }).catch((error) => {
-            console.log(error)
-          })
-          TripsService.getAmountOfTripsDriver(userId).then((numberOfTrips: number | null) => {
-            if (numberOfTrips != null) {
-              setTrips(numberOfTrips)
-            } else {
-              setTrips(0)
-            }
-            console.log("---------------------------gettrips", numberOfTrips)
-          }).catch((error) => {
-            console.log(error)
-          })
-        }
-          
-        setUserId(driver.id)
-        setFirstName(driver.firstName)
-        setLastName(driver.lastName)
-        
-
-        // Car values states
-        setDriverVehicleId(driver.vehicle.id)
-        setVehicleId(driver.vehicle.vehicle.id)
-        setBrand(driver.vehicle.vehicle.brand)
-        setModel(driver.vehicle.vehicle.model)
-        setImage(driver.vehicle.vehicle.image)
-        setDomain(driver.vehicle.domain)
-        setModelYear(driver.vehicle.modelYear)
-        setColorName(driver.vehicle.colorName)
-    }
+  useEffect(() => {
+    AuthService.getCurrentDriver().then((a_driver: Driver | undefined) => {
+      if (a_driver != undefined) {
+        setDriver(a_driver);
+        setDriverValues(a_driver);
+      }
     }).catch((error) => {
         console.log(error);
     });
-    const commentsButtonPressed = () => {
+  }, [driver, setDriver]);
+
+  useEffect(() => {
+    if (driver != undefined) {
+      TripsService.getCalificationAverageDriver(driver.userId).then((average: number | null) => {
+        if (average != null) {
+          setCalification(average)
+          console.log("---------------------------getcaliff", average)
+        } else {
+          setCalification(0)
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    }
+  }, [driver]);
+
+  useEffect(() => {
+    if (driver != undefined) {
+      TripsService.getAmountOfTripsDriver(driver.userId).then((numberOfTrips: number | null) => {
+        if (numberOfTrips != null) {
+          setTrips(numberOfTrips)
+          console.log("---------------------------gettrips", numberOfTrips)
+        } else {
+          setTrips(0)
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    }
+  }, [driver]);
+
+  useEffect(() => {
+    if (driver != undefined) {
+      TripsService.getCalificationsDriver(driver.userId, 0, numberOfComments).then((califications: Calification[] | null) => {
+        setCalifications(califications);
+        console.log("---------------------------getcaliffDriv", califications)
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  }, [driver]);
+
+
+  const commentsButtonPressed = () => {
     if(labelCommentsAboutDriver=="Show comments about driver"){
       setShowComments("Hide comments");
       return;
@@ -112,14 +133,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     setNumberOfComments(numberOfComments+3);
   }
 
-  useEffect(() => {
-    TripsService.getCalificationsDriver(userId, 0, numberOfComments).then((califications: Calification[] | null) => {
-      setCalifications(califications);
-      console.log("---------------------------getcaliffDriv", califications)
-    }).catch((error) => {
-      console.log(error);
-    });
-  }, [califications, numberOfComments]);
   return (
     <>
       <Text style={styles.subtitle}>Driver Information</Text>
@@ -140,7 +153,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
       <TextInput label="Trips made" style={{marginBottom: 20}} editable={false}
         value={ trips}
       />
-  
+
       <Text style={styles.subtitle}>Car Information</Text>
 
       <TextInput label="Domain" style={{marginBottom: 20}} editable={false}
@@ -149,7 +162,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
 
       <TextInput label="Model year" style={{marginBottom: 20}} editable={false}
         value={ modelYear}
-        
+
       />
 
       <TextInput label="Color" style={{marginBottom: 20}} editable={false}
@@ -165,7 +178,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
         <View style={styles.containerCom}>
         {califications.slice(0,numberOfComments).map((calification) => {
         return (
-          <View> 
+          <View>
             <Text style={styles.item}>{calification.comments}</Text>
           </View>
         );
@@ -182,7 +195,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
         onPress={commentsButtonPressed}>{labelCommentsAboutDriver}
       </Button>
 
-      
+
     </>
   )
 };

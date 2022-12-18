@@ -247,10 +247,10 @@ export const TripsService = {
     },
     getCalificationsDriver: async (driverId: number, skip: number, take: number): Promise<Calification[] | null> => {
         try {
-            const url = `${URL_TRIPS}/calification/driver/${driverId}?skip=${skip}&limit=${1}&in_progress=false`;
+            const url = `${URL_TRIPS}/calification/driver/${driverId}?skip=${skip}&limit=${take}&in_progress=false`;
             let califications =  await axios.get(url, AuthService.getHeaders(),);
             const calificationsResponse: Calification[] = califications.data.map(mapCalification);
-            return calificationsResponse; 
+            return calificationsResponse;
         }
         catch (error: any) {
             console.log(error);
@@ -259,10 +259,10 @@ export const TripsService = {
     },
     getCalificationsPassenger: async (passengerId: number, skip: number, take: number): Promise<Calification[] | null> => {
         try {
-            const url = `${URL_TRIPS}/calification/passenger/${passengerId}?skip=${skip}&limit=${1}&in_progress=false`;
+            const url = `${URL_TRIPS}/calification/passenger/${passengerId}?skip=${skip}&limit=${take}&in_progress=false`;
             let califications =  await axios.get(url, AuthService.getHeaders(),);
             const calificationsResponse: Calification[] = califications.data.map(mapCalification);
-            return calificationsResponse; 
+            return calificationsResponse;
         }
         catch (error: any) {
             console.log(error);
