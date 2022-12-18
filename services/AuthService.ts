@@ -160,11 +160,9 @@ export const AuthService = {
     getDriver: async (driverId: number): Promise<Driver | null> => {
         try {
             const url = `${URL_USERS}/driver/${driverId}`;
-            console.log(url, "-----------------url")
             let user =  await axios.get(url, AuthService.getHeaders(),);
             let res = user.data.user
             res["vehicle"] = user.data.driverVehicle
-            console.log(res, driverId, "---------------------------user y driverid")
             return res
         }
         catch (error: any) {
@@ -175,7 +173,10 @@ export const AuthService = {
     getPassenger: async (passengerId: number): Promise<Passenger | null> => {
         try {
             const url = `${URL_USERS}/passenger/${passengerId}`;
-            return await axios.get(url, AuthService.getHeaders(),);
+
+            const user= await axios.get(url, AuthService.getHeaders(),);
+            let res = user.data.user
+            return res
         }
         catch (error: any) {
             console.log(error);

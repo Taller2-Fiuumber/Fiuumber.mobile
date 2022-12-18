@@ -81,7 +81,6 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         unsubscribeWatchTripStatus = watchTripStatus(trip._id);
         console.log("DRIVER_ID:   ", trip.driverId)
         const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
-        console.log("-----------------------------------EL driver ---------", driver)
         setCurrentDriver(driver);
         setViewState("DRIVER_ASSIGNED");
     };
@@ -173,7 +172,6 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         if (trip.driverId) {
             console.log("DRIVER_ID IN REFRESH:   ", trip.driverId)
             const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
-            console.log(driver)
             setCurrentDriver(driver);
         }
 
@@ -357,7 +355,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                                     </InfoCard>
                                                     <Button mode="contained" style={{margin: "5%", backgroundColor:Pallete.lightColor}} onPress={()=>setShowOtherProfile(true)}>View Profile</Button>
                                                     <Modal visible={showOtherProfile} >
-                                                    <Button mode="contained" style={{backgroundColor: Pallete.greenBackground, margin: "0%"}}
+                                                    <Button mode="contained" style={{backgroundColor: Pallete.greenBackground, margin: "5%", marginBottom: "10%"}}
                                                         onPress={() => setShowOtherProfile(false)}>{"Go back"}
                                                     </Button>
                                                                                                         

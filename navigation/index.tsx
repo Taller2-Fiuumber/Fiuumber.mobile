@@ -192,7 +192,6 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   }
 
   const handleNotificationResponse = (response: Notifications.NotificationResponse) => {
-    // console.log(response);
   }
 
   return (

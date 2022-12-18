@@ -74,13 +74,9 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
 
   useEffect(() => {
 
-    console.log("---------------------entre al console log")
     if(driverId != undefined){
-      console.log("---------------------entre al console log del if")
       AuthService.getDriver(driverId).then((a_driver: Driver | null) => {
-        console.log("---------------------entre al driver0", a_driver )
         if (a_driver != null) {
-          console.log("---------------------entre al driver", a_driver )
           setDriver(a_driver);
           setDriverValues(a_driver);
         }
@@ -92,12 +88,10 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
   }, []);
 
   useEffect(() => {
-   // console.log("---------------------entre al console log")
     if (driver != null) {
       TripsService.getCalificationAverageDriver(driver.userId).then((average: number | null) => {
         if (average != null) {
           setCalification(average)
-          console.log("---------------------------getcaliff", average)
         } else {
           setCalification(0)
         }
@@ -112,7 +106,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
       TripsService.getAmountOfTripsDriver(driver.userId).then((numberOfTrips: number | null) => {
         if (numberOfTrips != null) {
           setTrips(numberOfTrips)
-          console.log("---------------------------gettrips", numberOfTrips)
         } else {
           setTrips(0)
         }
@@ -126,7 +119,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
     if (driver != undefined) {
       TripsService.getCalificationsDriver(driver.userId, 0, numberOfComments).then((califications: Calification[] | null) => {
         setCalifications(califications);
-        console.log("---------------------------getcaliffDriv", califications)
       }).catch((error) => {
         console.log(error);
       });
@@ -149,9 +141,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
 
   return (
     <>
-      {/* <Button mode="contained" style={{backgroundColor: Pallete.greenBackground, margin: "0%"}}
-        onPress={() => navigation.navigate('HomeScreen')}>{"Go back"}
-      </Button> */}
     
       <Text style={styles.subtitle}>Driver Information</Text>
 
