@@ -1,7 +1,7 @@
 import React, { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Pallete } from "../constants/Pallete";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet ,Modal} from "react-native";
 import { View } from "../components/Themed";
 import FiuumberMap from "../components/FiuumberMap";
 import { Button, Divider, IconButton, MD3Colors, Portal, ProgressBar, Provider } from "react-native-paper";
@@ -24,6 +24,7 @@ import CalificationModal from "../modals/CalificationModal";
 import { User } from "../models/user";
 import { AuthService } from "../services/AuthService";
 import NotificationsContext from "../contexts/NotificationsContext";
+import OthersProfileScreen from "./OtherProfile";
 
 interface DriverHomeScreenProps { }
 
@@ -57,6 +58,8 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
 
     const myLocation = useRealtimeLocation(5000);
     useStreamLocation(currentTrip, myLocation, "DRIVER");
+
+    const [showOtherProfile, setShowOtherProfile] = React.useState(false);
 
     const onClickIArrived = async () => changeTripStatus(TripStatus.DriverArrived);
     const onClickStartTrip = async () => {
@@ -206,7 +209,18 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = (): ReactElement => {
                             {
                                 currentTrip ?
                                     <>
+
+                                        <Button mode="contained" style={{margin: "5%", backgroundColor:Pallete.darkBackground}} onPress={()=>setShowOtherProfile(true)}>View Profile</Button>
+                                        <Modal visible={showOtherProfile} >
+                                        <Button mode="contained" style={{backgroundColor: Pallete.greenBackground, margin: "0%"}}
+                                            onPress={() => setShowOtherProfile(false)}>{"Go back"}
+                                        </Button>
+                                            <OthersProfileScreen userId={Number(currentTrip.passengerId)}></OthersProfileScreen>
+                                        </Modal>
                                         <PaymentInfoCard ammount={currentTrip.finalPrice}></PaymentInfoCard>
+
+                                        
+
                                         {(currentTrip.status == TripStatus.Requested || currentTrip.status == TripStatus.DriverAssigned) && (<Button mode="contained" disabled={loading} loading={loading} style={{ marginTop: 15 }} onPress={onClickIArrived}>I Arrived!</Button>)}
                                         {currentTrip.status == TripStatus.DriverArrived && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.primaryColor} textColor={Pallete.whiteColor} style={{ marginTop: 15 }} onPress={onClickStartTrip}>Start trip</Button>)}
                                         {currentTrip.status == TripStatus.InProgress && (<Button mode="contained" disabled={loading} loading={loading} buttonColor={Pallete.greenBackground} textColor={Pallete.whiteColor} style={{ marginTop: 15 }} onPress={onClickFinishTrip}>Finish trip</Button>)}
