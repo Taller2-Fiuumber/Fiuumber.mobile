@@ -81,6 +81,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
         unsubscribeWatchTripStatus = watchTripStatus(trip._id);
         console.log("DRIVER_ID:   ", trip.driverId)
         const driver: Driver | null = await AuthService.getDriver(Number(trip.driverId));
+        console.log("-----------------------------------EL driver ---------", driver)
         setCurrentDriver(driver);
         setViewState("DRIVER_ASSIGNED");
     };
@@ -356,7 +357,7 @@ export const PassengerHomeScreen: FC<PassengerHomeScreenProps> = (): ReactElemen
                                                     </InfoCard>
                                                     <Button mode="contained" style={{margin: "5%", backgroundColor:Pallete.lightColor}} onPress={()=>setShowOtherProfile(true)}>View Profile</Button>
                                                     <Modal visible={showOtherProfile} >
-                                                        <OthersProfileScreen driverId={currentDriver.userId}></OthersProfileScreen>
+                                                        <OthersProfileScreen driverId={currentDriver.id}></OthersProfileScreen>
                                                     </Modal>
 
                                                 </View>

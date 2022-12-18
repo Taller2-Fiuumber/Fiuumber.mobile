@@ -65,19 +65,30 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
       setColorName(driver.vehicle.colorName)
   }
 
-  useEffect(() => {
-    AuthService.getDriver(driverId).then((a_driver: Driver | undefined) => {
-      if (a_driver != undefined) {
-        setDriver(a_driver);
-        setDriverValues(a_driver);
-      }
-    }).catch((error) => {
-        console.log(error);
-    });
-  }, [driver, setDriver]);
+
 
   useEffect(() => {
-    if (driver != undefined) {
+
+    console.log("---------------------entre al console log")
+    if(driverId != undefined){
+      console.log("---------------------entre al console log del if")
+      AuthService.getDriver(driverId).then((a_driver: Driver | null) => {
+        console.log("---------------------entre al driver0", a_driver )
+        if (a_driver != null) {
+          console.log("---------------------entre al driver", a_driver )
+          setDriver(a_driver);
+          setDriverValues(a_driver);
+        }
+      }).catch((error) => {
+          console.log(error);
+      });
+    }
+    
+  }, []);
+
+  useEffect(() => {
+   // console.log("---------------------entre al console log")
+    if (driver != null) {
       TripsService.getCalificationAverageDriver(driver.userId).then((average: number | null) => {
         if (average != null) {
           setCalification(average)
@@ -92,7 +103,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
   }, [driver]);
 
   useEffect(() => {
-    if (driver != undefined) {
+    if (driver != null) {
       TripsService.getAmountOfTripsDriver(driver.userId).then((numberOfTrips: number | null) => {
         if (numberOfTrips != null) {
           setTrips(numberOfTrips)
@@ -133,6 +144,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driv
 
   return (
     <>
+    
       <Text style={styles.subtitle}>Driver Information</Text>
 
       <TextInput label="First name" style={{marginBottom: 20}} editable={false}
