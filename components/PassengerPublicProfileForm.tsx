@@ -14,9 +14,10 @@ import { TripsService } from "../services/TripsService";
 import { Calification } from "../models/trip";
 
 interface PassengerPublicProfileFormProps {
+  passengerId: number
 }
 
-export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (): ReactElement => {
+export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = ({ passengerId }: PassengerPublicProfileFormProps): ReactElement => {
   const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about passenger");
   const [numberOfComments, setNumberOfComments] = useState<number>(5);
   let user = AuthService.getCurrentUserToken()?.user;
@@ -27,37 +28,45 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
   const [calification, setCalification] = useState<number>(5);
   const [trips, setTrips] = useState<number>(0);
 
+  const [passenger, setPassenger] = useState<Passenger | undefined>(undefined);
 
-    AuthService.getCurrentPassenger().then((passenger: Passenger | undefined) => {
-      if (passenger != undefined) {
-        // passenger values states
-        const userId = user?.id
-        if(userId){
-          TripsService.getCalificationAveragePassenger(userId).then((average: number | null) => {
-            if (average != null) {
-              setCalification(average)
-            } else {
-              setCalification(0)
-            }
-          }).catch((error) => {
-            console.log(error)
-          })
-          TripsService.getAmountOfTripsPassenger(userId).then((numberOfTrips: number | null) => {
-            if (numberOfTrips != null) {
-              setTrips(numberOfTrips)
-            } else {
-              setTrips(0)
-            }
-          }).catch((error) => {
-            console.log(error)
-          })
+    useEffect(() => {
+      AuthService.getPassenger(passengerId).then((passenger: Passenger | null) => {
+        if (passenger != null) {
+          setPassenger(passenger);
+          setName(passenger.firstName);
+          setLastName(passenger.lastName);
         }
-        setName(passenger.firstName)
-        setLastName(passenger.lastName)
-      }
-    }).catch((error) => {
-      console.log(error);
-    });
+      }).catch((error) => {
+        console.log(error);
+      });
+    }, [passenger, setPassenger]);
+
+    useEffect(() => {
+      TripsService.getCalificationAveragePassenger(passengerId).then((average: number | null) => {
+        if (average != null) {
+          setCalification(average)
+        } else {
+          setCalification(0)
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    }, [passenger]);
+
+    useEffect(() => {
+      TripsService.getAmountOfTripsPassenger(passengerId).then((numberOfTrips: number | null) => {
+        if (numberOfTrips != null) {
+          setTrips(numberOfTrips)
+        } else {
+          setTrips(0)
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    }, [passenger]);
+
+
    const commentsButtonPressed = () => {
       if(labelCommentsAboutDriver=="Show comments about passenger"){
         setShowComments("Hide comments");
@@ -66,7 +75,7 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
       setShowComments("Show comments about passenger");
       setNumberOfComments(5);
     }
-  
+
     const moreCommentsButtonPressed = () => {
       setNumberOfComments(numberOfComments+5);
     }
@@ -104,10 +113,10 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
         <>
         <Text style={styles.subtitle}>Comments on passenger</Text>
         <View style={styles.containerCom}>
-        {califications.slice(0,numberOfComments).map((calification) => {
+        {califications.slice(0,numberOfComments).map((_calification) => {
         return (
           <View>
-            <Text style={styles.item}>{calification.comments}</Text>
+            <Text style={styles.item}>{_calification.comments}</Text>
           </View>
         );
       })}
@@ -123,7 +132,7 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
         onPress={commentsButtonPressed}>{labelCommentsAboutDriver}
       </Button>
 
-      
+
     </>
   )
 };

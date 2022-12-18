@@ -172,4 +172,14 @@ export const AuthService = {
             throw error;
         }
     },
+    getPassenger: async (passengerId: number): Promise<Passenger | null> => {
+        try {
+            const url = `${URL_USERS}/passenger/${passengerId}`;
+            return await axios.get(url, AuthService.getHeaders(),);
+        }
+        catch (error: any) {
+            console.log(error);
+            throw error;
+        }
+    },
 };
