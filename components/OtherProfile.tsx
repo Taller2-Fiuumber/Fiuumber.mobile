@@ -67,8 +67,7 @@ export const OthersProfileScreen : React.FC<OthersProfileScreenProps> = ({ drive
         </ScrollView>
     </SafeAreaView>
 
-        
-
+      
     );
   }
 
