@@ -16,11 +16,11 @@ import { TripsService } from "../services/TripsService";
 import { Calification } from "../models/trip";
 
 interface DriverPublicProfileFormProps {
+  driverId: number;
+
 }
 
-
-
-export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): ReactElement => {
+export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = ({ driverId }: DriverPublicProfileFormProps): ReactElement => {
     const [labelCommentsAboutDriver, setShowComments] = useState<string>("Show comments about driver");
     const [numberOfComments, setNumberOfComments] = useState<number>(3);
     // const [califications, setCalifications] = useState({id: "", passengerId: "string", driverId: "", tripId: "", stars: "", comments: "", reviewer: ""});
@@ -29,7 +29,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
     /*------------------------States Initialization----------------------------*/
 
     // User states
-    const [userId, setUserId] = useState<number>(-1);
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [calification, setCalification] = useState<number>(0);
@@ -54,7 +53,6 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
   /*--------------------------Getting driver data------------------------------*/
 
   const setDriverValues = (driver: Driver) => {
-      setUserId(driver.id)
       setFirstName(driver.firstName)
       setLastName(driver.lastName)
       setDriverVehicleId(driver.vehicle.id)
@@ -68,7 +66,7 @@ export const DriverPublicProfileForm: FC<DriverPublicProfileFormProps> = (): Rea
   }
 
   useEffect(() => {
-    AuthService.getCurrentDriver().then((a_driver: Driver | undefined) => {
+    AuthService.getDriver(driverId).then((a_driver: Driver | undefined) => {
       if (a_driver != undefined) {
         setDriver(a_driver);
         setDriverValues(a_driver);

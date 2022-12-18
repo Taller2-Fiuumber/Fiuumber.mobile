@@ -53,11 +53,11 @@ export const OthersProfileScreen = () => {
 
         <View style={styles.contentContainer}>
           { user?.profile == "PASSENGER" ?
-            <DriverPublicProfileForm></DriverPublicProfileForm>:
+            <DriverPublicProfileForm driverId={74}></DriverPublicProfileForm>:
             <PassengerPublicProfileForm></PassengerPublicProfileForm>
           }
         </View>
-       
+
     );
   }
 
