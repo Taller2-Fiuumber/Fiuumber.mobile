@@ -14,8 +14,6 @@ const styles = StyleSheet.create({
   container: {
       flex: 1,
       backgroundColor: Pallete.whiteColor,
-      paddingTop: StatusBar.currentHeight,
-
     },
     contentContainer: {
       flex: 1,
@@ -55,7 +53,7 @@ export const OthersProfileScreen : React.FC<OthersProfileScreenProps> = ({ userI
     const user = AuthService.getCurrentUserToken()?.user;
 
     return (
-        
+
       <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container}>
       <View style={styles.contentContainer}>
@@ -67,7 +65,7 @@ export const OthersProfileScreen : React.FC<OthersProfileScreenProps> = ({ userI
         </ScrollView>
     </SafeAreaView>
 
-      
+
     );
   }
 

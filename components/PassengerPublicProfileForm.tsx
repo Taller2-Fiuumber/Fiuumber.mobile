@@ -31,8 +31,13 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
   const [passenger, setPassenger] = useState<Passenger | undefined>(undefined);
 
     useEffect(() => {
+      console.log("_______________AuthService el passenger id", passengerId)
       AuthService.getPassenger(passengerId).then((passenger: Passenger | null) => {
+        console.log("_______________AuthService el passenger id entro al if")
+
         if (passenger != null) {
+          console.log("_______________AuthService is not null", passenger)
+
           setPassenger(passenger);
           setName(passenger.firstName);
           setLastName(passenger.lastName);
@@ -40,7 +45,7 @@ export const PassengerPublicProfileForm: FC<PassengerPublicProfileFormProps> = (
       }).catch((error) => {
         console.log(error);
       });
-    }, [passenger, setPassenger]);
+    }, []);
 
     useEffect(() => {
       TripsService.getCalificationAveragePassenger(passengerId).then((average: number | null) => {
