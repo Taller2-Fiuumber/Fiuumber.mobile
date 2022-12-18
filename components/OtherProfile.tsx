@@ -55,13 +55,19 @@ export const OthersProfileScreen : React.FC<OthersProfileScreenProps> = ({ drive
     const user = AuthService.getCurrentUserToken()?.user;
 
     return (
-
-        <View style={styles.contentContainer}>
+        
+      <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.container}>
+      <View style={styles.contentContainer}>
           { user?.profile == "PASSENGER" ?
             <DriverPublicProfileForm driverId={driverId}></DriverPublicProfileForm>:
             <PassengerPublicProfileForm></PassengerPublicProfileForm>
           }
         </View>
+        </ScrollView>
+    </SafeAreaView>
+
+        
 
     );
   }
